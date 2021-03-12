@@ -432,7 +432,7 @@ Public Class ext
                                 End Try
                             End If
 
-                            DeckTitle = fn.RemoveShit(DeckTitle)
+                            DeckTitle = fn.RemoveStuffs(DeckTitle)
                             Deck = Replace(Deck, "King Caesar, Ancient Guardian", "Huntmaster Liger")
                             Deck = Replace(Deck, "Godzilla, Doom Inevitable", "Yidaro, Wandering Monster")
                             Deck = Replace(Deck, "Gigan, Cyberclaw Terror", "Gyruda, Doom of Depths")
@@ -455,7 +455,7 @@ Public Class ext
 
                             Deck = fn.FormatDeck(Deck, DeckTitle, MyCmd)
                             If InStr(Deck, "1 Companion") > 0 Then
-                                Dim hola = ""
+                                Dim hasacompanion = ""
                             End If
 
                             fn.WriteUserLog(fn.StringToDeck(MyFolder, Deck, DeckTitle))

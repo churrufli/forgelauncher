@@ -53,16 +53,15 @@ Public Class fl
         SetComboboxes()
         fn.CheckIfPreviousProfileProperties()
         DisableStuffs()
-
         fn.HitToLauncherUpdates()
         fn.CheckLauncherUpdates()
 
         fn.CheckForgeVersion(False, True)
         Dim result = fn.ReadLogUser("enableprompt", False, False)
         If result = "yes" Then
-
             fn.AlertAboutVersion(True)
         End If
+
         fn.ShowingWhatsNew()
         fn.SearchFolders(True)
     End Sub
@@ -82,6 +81,7 @@ Public Class fl
         comboSource2.Add("25", "Last 25")
         comboSource2.Add("50", "Last 50")
 
+        '// a little trick to get more decks
         If File.Exists("gimmiemoredecks.txt") Then
             comboSource.Add("99", "Top 99")
             comboSource.Add("120", "Top 120")
@@ -108,7 +108,6 @@ Public Class fl
         Catch
             typeofupdate.SelectedItem = typeofupdate.Items(1)
         End Try
-
 
         ComboBox2.SelectedItem = ComboBox2.Items(0)
         maxtournm.SelectedItem = maxtournm.Items(0)
@@ -155,9 +154,6 @@ Public Class fl
         fn.launch()
     End Sub
 
-    Private Sub update_Click(sender As Object, e As EventArgs)
-    End Sub
-
     Private Sub fl_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         fn.DeleteDownloaded()
     End Sub
@@ -176,11 +172,9 @@ Public Class fl
     End Sub
 
     Private Sub extract_Click(sender As Object, e As EventArgs) Handles extract1.Click
-        fn.checkunsupportedcards()
-
+        fn.CheckUnsupportedCards()
         If InStr(metagame.SelectedItem.ToString, "-") = 0 Then
-            ext.ExtractTopMtggoldfish(metagame.SelectedItem.ToString, howmuch.SelectedValue, chktopnumber.Checked,
-                                      Nothing)
+            ext.ExtractTopMtggoldfish(metagame.SelectedItem.ToString, howmuch.SelectedValue, chktopnumber.Checked, Nothing)
             Exit Sub
         End If
     End Sub
@@ -238,14 +232,6 @@ Public Class fl
         End If
     End Sub
 
-    Private Sub PicsFolderToolStripMenuItem_Click(sender As Object, e As EventArgs)
-        Try
-            Process.Start(fn.ReadLogUser("pics_dir", False))
-        Catch
-            fn.PrintError(Err.Description)
-        End Try
-    End Sub
-
     Private Sub ForzeUpdateForgeLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) _
         Handles ForzeUpdateForgeLauncherToolStripMenuItem.Click
         fn.UpdateLog("launcher_version", "")
@@ -262,7 +248,7 @@ Public Class fl
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles extract3.Click
-        fn.checkunsupportedcards()
+        fn.CheckUnsupportedCards()
         If InStr(metag2.SelectedItem.ToString, "-") = 0 Then
             ext.ExtractTopMtggoldfish(metag2.SelectedItem.ToString, howmuch2.SelectedValue, False, Nothing)
         End If
@@ -303,7 +289,6 @@ Public Class fl
             fn.PrintError(Err.Description)
         End Try
     End Sub
-
 
     Private Sub LogFileToolStripMenuItem_Click(sender As Object, e As EventArgs)
         fn.OpenLogFile()
@@ -356,7 +341,7 @@ Public Class fl
     End Sub
 
     Private Sub extract4_Click(sender As Object, e As EventArgs) Handles extract4.Click
-        fn.checkunsupportedcards()
+        fn.CheckUnsupportedCards()
         Select Case fromweb.SelectedItem.ToString
             Case "mtgtop8"
                 ext.ExtractFromMtgtop8(Replace(maxtournamentsdecks.SelectedItem.ToString, "Limit ", ""))
@@ -398,17 +383,12 @@ Public Class fl
         End Select
     End Sub
 
-    Public Sub extracttournamentmtggoldfish(Optional ByVal tournament_url As String = "",
-                                            Optional ByVal maxdecks As Integer = 100)
+    Public Sub extracttournamentmtggoldfish(Optional ByVal tournament_url As String = "", Optional ByVal maxdecks As Integer = 100)
 
-        Dim MyDir As String = fn.GetForgeDecksDir() & "\constructed\" & fn.ReadLogUser("tournamentsdecks_dir", False) &
-                              "\"
-
+        Dim MyDir As String = fn.GetForgeDecksDir() & "\constructed\" & fn.ReadLogUser("tournamentsdecks_dir", False) & "\"
         Dim tx1 As String
         tx1 = fn.ReadWeb(tournament_url)
-
         Dim tourname As String = ""
-
         Dim res As String = tx1
         tourname = fn.FindIt(tx1, "<title>", "</title>")
         tourname = Replace(tourname, " (" & ComboBox2.SelectedItem.ToString & ") Decks", "")
@@ -442,23 +422,16 @@ Public Class fl
             If _
                 lasurls(a).ToString <> "" And
                 lasurls(a).ToString <> "/deck/custom/" & LCase(ComboBox2.SelectedItem.ToString) Then
-
                 If a > mx Then Exit For
-
                 Dim DeckPage = ""
                 Dim UrlDeck = ""
-                'pagina del mazo i
                 DeckPage = fn.ReadWeb(vars.mtggf & lasurls(a))
-                'url del mazo i
-
                 UrlDeck = ext.extmtggoldfish(DeckPage, "/deck/download/")
-
                 Dim Deck = ""
                 Dim DeckTitle = ""
                 Deck = fn.ReadWeb(vars.mtggf & "/" & UrlDeck)
                 Deck = Replace(Deck, "sideboard", "[sideboard]")
                 Deck = Replace(Deck, vbCrLf & vbCrLf, vbCrLf & "[sideboard]" & vbCrLf)
-
                 Deck = Replace(Deck, "[[", "[")
                 Deck = Replace(Deck, "]]", "]")
                 DeckTitle = fn.FindIt(DeckPage, "<title>", "</title>")
@@ -480,13 +453,13 @@ Public Class fl
 
     Private Sub chklaunchforgeafterupdate_CheckedChanged(sender As Object, e As EventArgs) _
         Handles chklaunchforgeafterupdate.CheckedChanged
-        Dim shit As Boolean
+        Dim myCheck As Boolean
         If fn.ReadLogUser("launchforgeafterupdate", False, False) = "yes" Then
-            shit = True
+            myCheck = True
         Else
-            shit = False
+            myCheck = False
         End If
-        If shit <> IIf(chklaunchforgeafterupdate.Checked, True, False) Then
+        If myCheck <> IIf(chklaunchforgeafterupdate.Checked, True, False) Then
             fn.UpdateLog("launchforgeafterupdate", IIf(chklaunchforgeafterupdate.Checked, "yes", "no"))
         End If
     End Sub

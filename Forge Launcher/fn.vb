@@ -124,24 +124,12 @@ Public Class fn
         Try
             Dim files =
                     Directory.GetFiles(Environment.CurrentDirectory, "forge*", SearchOption.AllDirectories).Where(
-                        Function(s) s.EndsWith(".tar.bz") OrElse s.EndsWith(".bz2"))
+                        Function(s) s.EndsWith(".tar.bz") OrElse s.EndsWith(".bz2") OrElse s.EndsWith(".tar"))
             For Each Foundedfile As String In files
                 File.Delete(Foundedfile)
             Next
         Catch ex As Exception
             ex = ex
-        End Try
-
-        Try
-            Dim x As Integer
-            Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge*.tar")
-            If paths.Length > 0 Then
-                For x = 0 To paths.Length - 1
-                    File.Delete(paths(x))
-                Next
-            End If
-        Catch
-
         End Try
     End Sub
 
@@ -152,14 +140,14 @@ Public Class fn
         End If
     End Sub
 
-    Public Shared Function RemoveShit(s As String) As String
+    Public Shared Function RemoveStuffs(s As String) As String
         s = Replace(s, "?", "")
         s = Replace(s, ")", "-")
         s = Replace(s, "(", "-")
-        RemoveShit = s
+        RemoveStuffs = s
     End Function
 
-    Public Shared Sub checkunsupportedcards()
+    Public Shared Sub CheckUnsupportedCards()
         'Dim myLastDate = fn.ReadLogUser("lastupdate")
         'If myLastDate <> DateTime.Now.ToString("dd'/'MM'/'yyyy") Then
         WriteUserLog("Downloading unsupportedcards.txt..." & vbCrLf)
@@ -169,9 +157,7 @@ Public Class fn
 
     Public Shared Sub HitToLauncherUpdates(Optional ByVal forzar As Boolean = False)
         Try
-            'compruebo sí existe
             If File.Exists(vars.UserDir & "\fldata\" & vars.ServerLogName) Then
-                'si, compruebo ultima fecha
                 Dim myLastDate = ReadLogUser("lastupdate")
                 If myLastDate <> DateTime.Now.ToString("dd'/'MM'/'yyyy") Then
                     forzar = True
@@ -184,15 +170,11 @@ Public Class fn
                             File.Delete(vars.UserDir & "\fldata\" & vars.ServerLogName)
                         Catch
                         End Try
-                        'fn.WriteUserLog("Checking for updates..." & vbCrLf)
-                        'descargar y actualizar
                         DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "\fldata\" & vars.ServerLogName)
-                        'UpdateLog("lastupdate", DateTime.Now.ToString("dd'/'MM'/'yyyy"))
                     End If
 
                 End If
             Else
-                'no existe
                 If CheckAddress(vars.BaseUrl & vars.ServerLogName) Then
                     DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "\fldata\" & vars.ServerLogName)
                 End If
@@ -232,7 +214,6 @@ Public Class fn
             instance.DownloadFile(address, fileName)
         Catch
             PrintError(Err.Description)
-            'Application.ExitThread()
         End Try
     End Sub
 
@@ -264,7 +245,6 @@ Public Class fn
         Dim ladire = vars.UserDir & "\" & vars.LogName
         ladire = Replace(ladire, "/", "\")
         ladire = Replace(ladire, "\", "/")
-        'If ladire.Contains() Then
         Dim LogUser = ""
         Try
             LogUser = File.ReadAllText(ladire).ToString
@@ -338,10 +318,6 @@ Public Class fn
             Catch
             End Try
 
-            'Try
-            '    IO.Directory.Delete("backups", True)
-            'Catch
-            'End Try
             Try
                 File.Delete("fldata/updates.txt")
             Catch
@@ -412,8 +388,6 @@ Public Class fn
     End Sub
 
     Public Shared Function ReadLogServer(idlog As String, Optional ShowMsg As Boolean = True)
-        'lo comento que dice Snoops que no le checkea bien
-        'If IO.File.Exists("fldata/" & vars.ServerLogName) = False Then
         Try
             DownloadFile(vars.BaseUrl & vars.ServerLogName, "fldata/" & vars.ServerLogName)
         Catch
@@ -561,7 +535,6 @@ Public Class fn
 
     Public Shared Function GetCheckAutomatic()
 
-        'atencion, debido al problema de KRAZY cambio de función
         Return GetCheckAutomatic2()
 
         Exit Function
@@ -604,7 +577,6 @@ Public Class fn
                 MyTx = Replace(MyLines, """", "'")
                 MyTx = FindIt(MyTx, "<a href='", ".tar.bz2'>")
                 LineLink = "https://downloads.cardforge.org/dailysnapshots/" & MyTx & ".tar.bz2"
-                'Exit For
             End If
         Next
 
@@ -612,9 +584,7 @@ Public Class fn
         lafecha = Split(lafecha, "           ")(0).ToString
         lafecha = Trim(lafecha)
         Dim l As String = FindIt(LineLink, "forge-gui-desktop-", ".tar")
-        Dim devuelve As String = "Forge " & l & " " & lafecha & "#" & LineLink
-
-        Return devuelve
+        Return "Forge " & l & " " & lafecha & "#" & LineLink
     End Function
 
     Public Shared Function CheckForgeVersion(Optional ShowMsg As Boolean = True, Optional ShowText As Boolean = False)
@@ -626,7 +596,6 @@ Public Class fn
             Case "release"
                 vars.LinkLine = CheckRelease()
         End Select
-
 
         If vars.LinkLine = "" Then
             vars.LinkLine = CheckRelease()
@@ -683,7 +652,6 @@ Public Class fn
                     WriteUserLog(
                         "New Forge " & x & "version available! " & Replace(vars.LinkLine, urltoshow, "") & "." & vbCrLf &
                         "You're running " & UserVersion & vbCrLf)
-
                 End If
 
             Else
@@ -733,10 +701,8 @@ Public Class fn
         Dim url_snap = "https://snapshots.cardforge.org/"
         Try
 
-
             Dim client2 = New WebClient()
             Dim reader2 = New StreamReader(client2.OpenRead(vars.url_release))
-
 
             alltext += reader2.ReadToEnd
             Dim alltext2() = Split(alltext, "  ")
@@ -846,126 +812,6 @@ Public Class fn
             CheckRelease = LinkLine
         End If
         CheckRelease = LinkLine
-    End Function
-
-    Public Shared Function CheckRelease2()
-        Dim LinkLine = ""
-        Dim alltext = ""
-        Dim url_snap = "https://snapshots.cardforge.org/"
-        Try
-
-
-            Dim client2 = New WebClient()
-            Dim reader2 =
-                    New StreamReader(client2.OpenRead("https://downloads.cardforge.org/dailysnapshot"))
-
-
-            alltext += reader2.ReadToEnd
-            Dim alltext2() = Split(alltext, "  ")
-            Dim betterdate As DateTime = DateTime.Now.AddYears(-1)
-
-            For i = 0 To alltext2.Length - 1
-
-                If IsDate(alltext2(i)) Then
-                    If CDate(alltext2(i)) > CDate(betterdate) Then
-                        betterdate = alltext2(i)
-                    End If
-                End If
-            Next i
-
-
-            Dim betterdatetxt = betterdate.ToString
-
-
-            Dim ar() As String = Split(betterdatetxt, "/")
-            Dim fdef = ""
-
-            Dim mes = ""
-            Select Case ar(1)
-                Case "01"
-                    mes = "Jan"
-                Case "02"
-                    mes = "Feb"
-                Case "03"
-                    mes = "Mar"
-                Case "04"
-                    mes = "Apr"
-                Case "05"
-                    mes = "May"
-                Case "06"
-                    mes = "Jun"
-                Case "07"
-                    mes = "Jul"
-                Case "08"
-                    mes = "Aug"
-                Case "09"
-                    mes = "Sep"
-                Case "10"
-                    mes = "Oct"
-                Case "11"
-                    mes = "Nov"
-                Case "12"
-                    mes = "Dec"
-            End Select
-
-            If Len(ar(0)) = 1 Then ar(0) = "0" & ar(0)
-
-            ar(2) = Replace(ar(2), DateTime.Now.Year.ToString, "")
-            ar(2) = Trim(ar(2))
-
-            Dim hora() = Split(ar(2), ": ")
-            For i = 0 To hora.Length - 1
-                If Len(hora(i)) = 1 Then hora(i) = "0" & hora(i)
-            Next i
-
-            fdef = ar(0) & "-" & mes & "-" & DateTime.Now.Year.ToString & " " & hora(0) & ":" & hora(1)
-
-            fdef = Replace(fdef, ":00 ", "")
-
-            File.WriteAllText("fltx.txt", alltext)
-
-            Using reader3 As New StreamReader("fltx.txt")
-
-                While Not reader3.EndOfStream
-                    Dim line As String = reader3.ReadLine()
-                    If InStr(line.ToString, fdef) > 0 Then
-                        LinkLine = line
-                        Exit While
-                    End If
-                End While
-            End Using
-            Try
-                File.Delete("fltx.txt")
-
-            Catch ex As Exception
-
-            End Try
-            LinkLine = Replace(LinkLine, """", "'")
-            LinkLine = FindIt(LinkLine, "href='", "'>")
-        Catch
-        End Try
-
-        If InStr(LinkLine, "tar.bz2", CompareMethod.Text) > 0 Then
-            LinkLine = url_snap & LinkLine
-            Return LinkLine
-            Exit Function
-        Else
-
-            Dim abrir As String = ReadWeb(vars.url_release & LinkLine)
-            Dim prelink As String = LinkLine
-
-            Dim abr() As String = Split(abrir, Environment.NewLine)
-            For Each linea As String In abr
-                If InStr(linea, "tar.bz2", CompareMethod.Text) > 0 Then
-                    abrir = Replace(linea, """", "'")
-                    abrir = FindIt(abrir, "<a href='", ".tar.bz2'>")
-                    LinkLine = vars.url_release & prelink & abrir & ".tar.bz2"
-                    Exit For
-                End If
-            Next
-            Return LinkLine
-        End If
-        Return LinkLine
     End Function
 
     Public Shared Sub AlertAboutVersion(Optional ByVal ignorarigual = False)
@@ -1322,13 +1168,9 @@ Public Class fn
         End Try
     End Function
 
-
     Public Shared Sub RewriteLog()
         Try
             CompatibleOldVersions()
-            Dim hoy As String = DateTime.Now.ToString("dd'/'MM'/'yyyy")
-            Dim existpp As String = IIf(File.Exists("forge.profile.properties"), "yes", "no")
-
             Dim readText As String = File.ReadAllText(vars.UserDir & "/" & vars.LogName)
             Dim WriteLog = False
             WriteLog = True
@@ -1695,9 +1537,7 @@ Problem:
 
         Try
             DeleteDownloaded()
-
         Catch
-
         End Try
 
         If fl.rbt_properties.Checked = True Then
@@ -1762,7 +1602,7 @@ Problem:
         Application.Restart()
     End Sub
 
-    Public Shared Sub launch()
+    Public Shared Sub Launch()
 
         If ReadLogUser("launchmode") = "advanced" Then
             WriteUserLog("Launching PlayForge.bat ..." & vbCrLf)
@@ -1789,22 +1629,22 @@ Problem:
         End If
     End Sub
 
-    Public Shared Function CheckFolder(DestinationFolder As String) As String
+    Public Shared Function CheckFolder(TargetFolder As String) As String
 
-        If InStr(DestinationFolder, "Commander") > 0 Then Exit Function
-        If InStr(DestinationFolder, "Tiny") > 0 Then Exit Function
-        If InStr(DestinationFolder, "Brawl") > 0 Then Exit Function
+        If InStr(TargetFolder, "Commander") > 0 Then Exit Function
+        If InStr(TargetFolder, "Tiny") > 0 Then Exit Function
+        If InStr(TargetFolder, "Brawl") > 0 Then Exit Function
 
-        If IsValidFileNameOrPath(DestinationFolder) = False Then
-            DestinationFolder = DestinationFolder
+        If IsValidFileNameOrPath(TargetFolder) = False Then
+            TargetFolder = TargetFolder
         End If
-        DestinationFolder = Replace(DestinationFolder, "|", "-")
-        Dim mydir As New DirectoryInfo(DestinationFolder)
+        TargetFolder = Replace(TargetFolder, "|", "-")
+        Dim mydir As New DirectoryInfo(TargetFolder)
         If mydir.Exists = False Then
             mydir.Create()
         End If
 
-        Return DestinationFolder
+        Return TargetFolder
     End Function
 
     Public Shared Function FormatDeck(tx As String, Optional name As String = "", Optional commander As String = "")
@@ -1813,6 +1653,7 @@ Problem:
             FormatDeck = ""
             Exit Function
         End If
+
         tx = Replace(tx, vbCr, "")
         tx = Replace(tx, "&#39;", "'")
         tx = Replace(tx, "  ", " ")
@@ -1844,7 +1685,6 @@ Problem:
 
             commander = Replace(commander, "1 1 ", "1 ")
 
-
             tx = "[metadata]" & vbCrLf & "Name = " & name & vbCrLf & "[Main]" & vbCrLf & tx
 
             tx = Replace(tx, "[sideboard]", "")
@@ -1852,17 +1692,12 @@ Problem:
             tx = tx & "[commander]" & vbCrLf & commander
 
         Else
-
-
             tx = "[metadata]" & vbCrLf & "Name = " & name & vbCrLf & "[Main]" & vbCrLf & tx
-
         End If
 
         tx = Replace(tx, vbCrLf & vbCrLf, vbCrLf)
         tx = Replace(tx, "1 1 ", "1 ")
         tx = Replace(tx, "Planeswalkers () ", "")
-        tx = Replace(tx, "Planeswalkers () ", "")
-
         FormatDeck = tx
     End Function
 
@@ -1930,14 +1765,10 @@ Problem:
     Public Shared Function validatecards(tx, DeckTitle, delcardordeck) As String
 
         Try
-
-
             Dim readText As String = File.ReadAllText(vars.UserDir & "\fldata\unsupportedcards.txt")
             Dim tx1 As String = readText
             tx1 = Replace(tx1, vbLf, vbCrLf)
             Dim a As Array = Split(tx1, vbCrLf)
-
-
             readText = tx
             Dim t As String = Split(readText, "[Main]" & vbCrLf)(1).ToString
             t = Replace((t), vbCrLf & "[sideboard]", "")
@@ -1952,9 +1783,6 @@ Problem:
                 If CardName.contains("|") Then CardName = Split(CardName, "|")(0)
                 If InStr(CardName, "|") Then CardName = Split(CardName, "|")(0)
 
-
-                CardName = CardName
-
                 Dim MyCounter2 = 0
                 Dim CardLine = ""
                 While MyCounter2 < a.Length
@@ -1962,7 +1790,7 @@ Problem:
                     For x = 0 To 20
                         CardName = Replace(CardName, x + 1 & " ", "")
                     Next x
-                    CardName = CardName
+
                     CardName = Replace(CardName, vbCr, Nothing)
                     CardName = Replace(CardName, vbCrLf, Nothing)
 
