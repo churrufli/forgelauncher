@@ -1653,6 +1653,7 @@ Problem:
             FormatDeck = ""
             Exit Function
         End If
+                tx = Replace(tx, environment.newline & "Sideboard" & environment.newline, environment.newline & "[sideboard]" & environment.newline)
 
         tx = Replace(tx, vbCr, "")
         tx = Replace(tx, "&#39;", "'")

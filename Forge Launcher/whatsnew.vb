@@ -43,6 +43,6 @@
 
     Private Sub LinkLabel4_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) _
         Handles LinkLabel4.LinkClicked
-        Process.Start("http://forgedecks.000webhostapp.com/")
+        Process.Start("https://github.com/churrufli")
     End Sub
 End Class

@@ -15,7 +15,7 @@ Public Class fl
     End Sub
 
     Private Sub Fl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        TabControl1.TabPages.Remove(TabControl1.TabPages(1))
+        'TabControl1.TabPages.Remove(TabControl1.TabPages(1))
     End Sub
 
     Private Sub Fl_Shown(sender As Object, e As EventArgs) Handles Me.Shown
@@ -151,7 +151,7 @@ Public Class fl
     End Sub
 
     Private Sub launchforge_Click(sender As Object, e As EventArgs) Handles launchforge.Click
-        fn.launch()
+        fn.Launch()
     End Sub
 
     Private Sub fl_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
@@ -420,8 +420,7 @@ Public Class fl
         Dim contadorposicion = 0
         For a = 0 To lasurls.Length - 1
             If _
-                lasurls(a).ToString <> "" And
-                lasurls(a).ToString <> "/deck/custom/" & LCase(ComboBox2.SelectedItem.ToString) Then
+                lasurls(a).ToString <> "" And lasurls(a).ToString <> "/deck/custom/" & LCase(ComboBox2.SelectedItem.ToString) Then
                 If a > mx Then Exit For
                 Dim DeckPage = ""
                 Dim UrlDeck = ""
@@ -429,6 +428,9 @@ Public Class fl
                 UrlDeck = ext.extmtggoldfish(DeckPage, "/deck/download/")
                 Dim Deck = ""
                 Dim DeckTitle = ""
+
+                if UrlDeck.Contains(vbCrLf) Then UrlDeck = split(UrlDeck,vbcrlf)(0).ToString()
+
                 Deck = fn.ReadWeb(vars.mtggf & "/" & UrlDeck)
                 Deck = Replace(Deck, "sideboard", "[sideboard]")
                 Deck = Replace(Deck, vbCrLf & vbCrLf, vbCrLf & "[sideboard]" & vbCrLf)
@@ -442,8 +444,11 @@ Public Class fl
                 DeckTitle = "#" & num & " - " & DeckTitle
                 contadorposicion = (contadorposicion + 1).ToString
                 Deck = fn.FormatDeck(Deck, DeckTitle)
-                fn.StringToDeck(MyFolder, Deck, DeckTitle)
-                fn.WriteUserLog("Saving " & DeckTitle & vbCrLf)
+                If Deck <> Nothing Then
+                    fn.StringToDeck(MyFolder, Deck, DeckTitle)
+                    fn.WriteUserLog("Saving " & DeckTitle & vbCrLf)
+                End If
+
             End If
 
         Next a
@@ -553,7 +558,7 @@ Public Class fl
         End Try
         'Try
         Dim mycount As Long = 0
-        vars.UserDir = My.Settings.myuser_directory
+        'vars.UserDir = My.Settings.myuser_directory
         vars.UserDir = Replace(vars.UserDir, "/user", "")
         vars.UserDir = Replace(vars.UserDir, "\user", "")
         Dim userfolder = fn.ReadLogUser("gauntlet_dir", False, False)
