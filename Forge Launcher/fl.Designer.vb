@@ -66,7 +66,6 @@ Partial Class fl
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.by_metagame = New System.Windows.Forms.TabPage()
-        Me.Label2 = New System.Windows.Forms.Label()
         Me.extract1 = New System.Windows.Forms.Button()
         Me.chktopnumber = New System.Windows.Forms.CheckBox()
         Me.howmuch = New System.Windows.Forms.ComboBox()
@@ -90,6 +89,7 @@ Partial Class fl
         Me.lbgauntletyear = New System.Windows.Forms.ListBox()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.BackgroundWorker1 = New System.ComponentModel.BackgroundWorker()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.group_install.SuspendLayout
         Me.GroupForgeOptions.SuspendLayout
         CType(Me.PictureBox3,System.ComponentModel.ISupportInitialize).BeginInit
@@ -109,12 +109,12 @@ Partial Class fl
         'txlog
         '
         Me.txlog.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.txlog.Location = New System.Drawing.Point(16, 309)
+        Me.txlog.Location = New System.Drawing.Point(16, 272)
         Me.txlog.Multiline = true
         Me.txlog.Name = "txlog"
         Me.txlog.ReadOnly = true
         Me.txlog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txlog.Size = New System.Drawing.Size(698, 192)
+        Me.txlog.Size = New System.Drawing.Size(698, 229)
         Me.txlog.TabIndex = 24
         '
         'launchforge
@@ -461,6 +461,7 @@ Partial Class fl
         'TabPage1
         '
         Me.TabPage1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None
+        Me.TabPage1.Controls.Add(Me.Label2)
         Me.TabPage1.Controls.Add(Me.TabControl1)
         Me.TabPage1.Location = New System.Drawing.Point(4, 22)
         Me.TabPage1.Name = "TabPage1"
@@ -478,14 +479,13 @@ Partial Class fl
         Me.TabControl1.Location = New System.Drawing.Point(6, 6)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(679, 110)
+        Me.TabControl1.Size = New System.Drawing.Size(679, 87)
         Me.TabControl1.TabIndex = 42
         Me.TabControl1.Tag = ""
         '
         'by_metagame
         '
         Me.by_metagame.BackColor = System.Drawing.Color.Transparent
-        Me.by_metagame.Controls.Add(Me.Label2)
         Me.by_metagame.Controls.Add(Me.PictureBox1)
         Me.by_metagame.Controls.Add(Me.extract1)
         Me.by_metagame.Controls.Add(Me.chktopnumber)
@@ -494,21 +494,9 @@ Partial Class fl
         Me.by_metagame.Location = New System.Drawing.Point(4, 22)
         Me.by_metagame.Name = "by_metagame"
         Me.by_metagame.Padding = New System.Windows.Forms.Padding(3)
-        Me.by_metagame.Size = New System.Drawing.Size(671, 84)
+        Me.by_metagame.Size = New System.Drawing.Size(671, 61)
         Me.by_metagame.TabIndex = 2
         Me.by_metagame.Text = "Top Formats"
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = true
-        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!)
-        Me.Label2.ForeColor = System.Drawing.SystemColors.ControlDarkDark
-        Me.Label2.Location = New System.Drawing.Point(15, 59)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(634, 13)
-        Me.Label2.TabIndex = 60
-        Me.Label2.Text = "Warning! Downloading Decks containing cards not supported in Forge may cause an e"& _ 
-    "rror when starting Forge. Use it by your own risk."
         '
         'extract1
         '
@@ -567,7 +555,7 @@ Partial Class fl
         Me.By_Tournament.Location = New System.Drawing.Point(4, 22)
         Me.By_Tournament.Name = "By_Tournament"
         Me.By_Tournament.Padding = New System.Windows.Forms.Padding(3)
-        Me.By_Tournament.Size = New System.Drawing.Size(671, 84)
+        Me.By_Tournament.Size = New System.Drawing.Size(671, 61)
         Me.By_Tournament.TabIndex = 1
         Me.By_Tournament.Text = "By Tournament"
         '
@@ -648,7 +636,7 @@ Partial Class fl
         Me.Other_Formats.Location = New System.Drawing.Point(4, 22)
         Me.Other_Formats.Name = "Other_Formats"
         Me.Other_Formats.Padding = New System.Windows.Forms.Padding(3)
-        Me.Other_Formats.Size = New System.Drawing.Size(671, 84)
+        Me.Other_Formats.Size = New System.Drawing.Size(671, 61)
         Me.Other_Formats.TabIndex = 5
         Me.Other_Formats.Text = "Other Formats"
         '
@@ -732,7 +720,7 @@ Partial Class fl
         Me.lbgauntletformat.Items.AddRange(New Object() {"Standard", "Modern", "Legacy", "Vintage"})
         Me.lbgauntletformat.Location = New System.Drawing.Point(574, 16)
         Me.lbgauntletformat.Name = "lbgauntletformat"
-        Me.lbgauntletformat.Size = New System.Drawing.Size(102, 43)
+        Me.lbgauntletformat.Size = New System.Drawing.Size(102, 30)
         Me.lbgauntletformat.TabIndex = 3
         '
         'lbgauntletyear
@@ -741,11 +729,23 @@ Partial Class fl
         Me.lbgauntletyear.Items.AddRange(New Object() {"2020", "2019", "2018", "2017", "2016", "2015", "2014"})
         Me.lbgauntletyear.Location = New System.Drawing.Point(448, 16)
         Me.lbgauntletyear.Name = "lbgauntletyear"
-        Me.lbgauntletyear.Size = New System.Drawing.Size(120, 43)
+        Me.lbgauntletyear.Size = New System.Drawing.Size(120, 30)
         Me.lbgauntletyear.TabIndex = 2
         '
         'Timer1
         '
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = true
+        Me.Label2.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!)
+        Me.Label2.ForeColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.Label2.Location = New System.Drawing.Point(23, 100)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(634, 13)
+        Me.Label2.TabIndex = 61
+        Me.Label2.Text = "Warning! Downloading Decks containing cards not supported in Forge may cause an e"& _ 
+    "rror when starting Forge. Use it by your own risk."
         '
         'fl
         '
@@ -779,6 +779,7 @@ Partial Class fl
         CType(Me.PictureBox1,System.ComponentModel.ISupportInitialize).EndInit
         Me.GroupExtras.ResumeLayout(false)
         Me.TabPage1.ResumeLayout(false)
+        Me.TabPage1.PerformLayout
         Me.TabControl1.ResumeLayout(false)
         Me.by_metagame.ResumeLayout(false)
         Me.by_metagame.PerformLayout
