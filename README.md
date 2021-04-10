@@ -2,7 +2,7 @@
 
 **Forge Launcher** is an .exe file that uses ICSharpCode.SharpZipLib.dll to unzip .tar.bz2 files. Place it in your main Forge folder near Forge.exe and run it. If Forge.exe does not exist, Launcher will do a fresh installation of Forge. If you already had Forge, when you start it for the first time it will not detect your version, as there is no programmatic way to get it for the first time. Select the update line you want (release or snapshot) and update your version of Forge. After that, every time you open Launcher, it will compare between your local version and the server version, and announce if there is a new version of Forge available.
 
-**Tooltips **
+**Tooltips**
 
 Placing the mouse pointer on certain elements (in blue icons with a question mark too), information about element will appear. Read the tooltips in detail to understand how Forge Launcher works.
 
