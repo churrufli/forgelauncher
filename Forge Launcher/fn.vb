@@ -504,33 +504,13 @@ Public Class fn
     End Sub
 
     Public Shared Function ReadWeb(MyUrl As String)
-        MyUrl = Replace(MyUrl, "'", "")
-        MyUrl = Replace(MyUrl, """", "")
-        Dim res As String
-        If MyUrl = "" Then Exit Function
-        Dim request As WebRequest
         Try
-            request = WebRequest.Create(MyUrl)
+            Dim client As WebClient = New WebClient()
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+            Dim reply As String = client.DownloadString(MyUrl)
+            Return reply
         Catch
-            ReadWeb = ""
-            Exit Function
         End Try
-        Dim response As WebResponse
-        Try
-            response = request.GetResponse()
-        Catch
-            ReadWeb = ""
-            Exit Function
-        End Try
-        Dim reader As New StreamReader(response.GetResponseStream())
-        Try
-            res = reader.ReadToEnd()
-        Catch
-            Exit Function
-        End Try
-        reader.Close()
-        response.Close()
-        ReadWeb = res
     End Function
 
     Public Shared Function GetCheckAutomatic()
@@ -665,7 +645,7 @@ Public Class fn
                             "Your Forge " & x & "version is up to date." & vbCrLf &
                             "Do you want to start Forge and close Launcher?", MsgBoxStyle.YesNo, "Forge is up to date") =
                         MsgBoxResult.Yes Then
-                        launch()
+                        Launch()
                         Application.Exit()
                         Try
                             Environment.Exit(1)
@@ -1589,7 +1569,7 @@ Problem:
         End If
 
         If fl.chklaunchforgeafterupdate.Checked = True Then
-            launch()
+            Launch()
             Application.Exit()
             Try
                 Environment.Exit(1)
@@ -1653,7 +1633,7 @@ Problem:
             FormatDeck = ""
             Exit Function
         End If
-                tx = Replace(tx, environment.newline & "Sideboard" & environment.newline, environment.newline & "[sideboard]" & environment.newline)
+        tx = Replace(tx, Environment.NewLine & "Sideboard" & Environment.NewLine, Environment.NewLine & "[sideboard]" & Environment.NewLine)
 
         tx = Replace(tx, vbCr, "")
         tx = Replace(tx, "&#39;", "'")
