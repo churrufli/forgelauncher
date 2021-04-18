@@ -339,89 +339,92 @@ Public Class ext
                             If Len(MyCmd) > 100 Then
                                 MyCmd = fn.FindIt(SearchFor, "Tabletop Arena MTGO Commander", "Planeswalkerss")
                             End If
-
-
-                            If InStr(MyCmd, " Companion ") > 0 Then
-                                MyCmd = Split(MyCmd, " Companion ")(0).ToString
-                            End If
-                            MyCmd = Replace(MyCmd, "$", "")
-
-                            Dim CommanderCount As Long = 1
                             Try
-                                Dim partirlinea() = Split(MyCmd, " 1 ")
-                                If partirlinea(2) <> "" Then
-                                    CommanderCount = 2
-                                End If
-                                If partirlinea(4) <> "" Then
-                                    CommanderCount = 3
-                                End If
-                                If partirlinea(6) <> "" Then
-                                    CommanderCount = 4
-                                End If
-                                If partirlinea(8) <> "" Then
-                                    CommanderCount = 5
-                                End If
+                                If MyCmd.Contains(" Â") Then MyCmd = Replace(MyCmd, " Â", "")
                             Catch
-
                             End Try
 
-                            Dim sb As New StringBuilder
-                            If Not IsNothing(MyCmd) Then
-                                For Each c As Char In MyCmd
-                                    If Not Char.IsNumber(c) Then
-                                        sb.Append(c)
+                            If InStr(MyCmd, " Companion ") > 0 Then
+                                    MyCmd = Split(MyCmd, " Companion ")(0).ToString
+                                End If
+                                MyCmd = Replace(MyCmd, "$", "")
+
+                                Dim CommanderCount As Long = 1
+                                Try
+                                    Dim partirlinea() = Split(MyCmd, " 1 ")
+                                    If partirlinea(2) <> "" Then
+                                        CommanderCount = 2
                                     End If
-                                Next
-                            End If
+                                    If partirlinea(4) <> "" Then
+                                        CommanderCount = 3
+                                    End If
+                                    If partirlinea(6) <> "" Then
+                                        CommanderCount = 4
+                                    End If
+                                    If partirlinea(8) <> "" Then
+                                        CommanderCount = 5
+                                    End If
+                                Catch
 
-                            MyCmd = sb.ToString
-                            MyCmd = Replace(MyCmd, "&#;", "'")
-                            MyCmd = Replace(MyCmd, "$", "")
-                            If InStr(MyCmd, "<title>") > 0 Then
-                                MyCmd = Split(MyCmd, "<title>")(0).ToString
-                            End If
-                            MyCmd = Trim(MyCmd)
-                            Dim spcomm = Split(MyCmd, ".")
-                            Dim concatcomm = ""
+                                End Try
 
-                            For xy = 0 To spcomm.Length - 1
-                                If Len(spcomm(xy).ToString) > 3 Then
-                                    concatcomm += "1 " & spcomm(xy).ToString & vbCrLf
-                                End If
-
-                            Next xy
-
-                            MyCmd = concatcomm
-
-                            MyCmd = fn.RemoveWhitespace(MyCmd)
-                            MyCmd = Trim(MyCmd)
-
-                            Dim substr As String = MyCmd
-                            If MyCmd <> "" Then
-
-                                substr = Trim(Split(substr, " ")(0))
-
-                                If substr = "1" Then
-
-                                    MyCmd = Replace(MyCmd, " 1 ", vbCrLf & "1 ")
-                                    MyCmd = LTrim((RTrim(MyCmd)))
-
-                                    Dim spcmndlines = Split(MyCmd, "1 ")
-                                    Dim lines = ""
-                                    For ab = 0 To spcmndlines.Length - 1
-                                        If spcmndlines(ab) <> "" Then
-                                            Dim uno As String = Trim(fn.RemoveWhitespace(Trim(spcmndlines(ab))))
-                                            If InStr(Deck, uno) > 0 Then
-                                                lines = lines & spcmndlines(ab)
-                                                Deck = Replace(Deck, "1 " & uno & vbCrLf, "")
-                                            End If
+                                Dim sb As New StringBuilder
+                                If Not IsNothing(MyCmd) Then
+                                    For Each c As Char In MyCmd
+                                        If Not Char.IsNumber(c) Then
+                                            sb.Append(c)
                                         End If
-                                    Next ab
+                                    Next
+                                End If
+
+                                MyCmd = sb.ToString
+                                MyCmd = Replace(MyCmd, "&#;", "'")
+                                MyCmd = Replace(MyCmd, "$", "")
+                                If InStr(MyCmd, "<title>") > 0 Then
+                                    MyCmd = Split(MyCmd, "<title>")(0).ToString
+                                End If
+                                MyCmd = Trim(MyCmd)
+                                Dim spcomm = Split(MyCmd, ".")
+                                Dim concatcomm = ""
+
+                                For xy = 0 To spcomm.Length - 1
+                                    If Len(spcomm(xy).ToString) > 3 Then
+                                        concatcomm += "1 " & spcomm(xy).ToString & vbCrLf
+                                    End If
+
+                                Next xy
+
+                                MyCmd = concatcomm
+
+                                MyCmd = fn.RemoveWhitespace(MyCmd)
+                                MyCmd = Trim(MyCmd)
+
+                                Dim substr As String = MyCmd
+                                If MyCmd <> "" Then
+
+                                    substr = Trim(Split(substr, " ")(0))
+
+                                    If substr = "1" Then
+
+                                        MyCmd = Replace(MyCmd, " 1 ", vbCrLf & "1 ")
+                                        MyCmd = LTrim((RTrim(MyCmd)))
+
+                                        Dim spcmndlines = Split(MyCmd, "1 ")
+                                        Dim lines = ""
+                                        For ab = 0 To spcmndlines.Length - 1
+                                            If spcmndlines(ab) <> "" Then
+                                                Dim uno As String = Trim(fn.RemoveWhitespace(Trim(spcmndlines(ab))))
+                                                If InStr(Deck, uno) > 0 Then
+                                                    lines = lines & spcmndlines(ab)
+                                                    Deck = Replace(Deck, "1 " & uno & vbCrLf, "")
+                                                End If
+                                            End If
+                                        Next ab
+                                    End If
                                 End If
                             End If
-                        End If
 
-                        If Deck <> "" And InStr(Deck, "fb-root") = 0 Then
+                            If Deck <> "" And InStr(Deck, "fb-root") = 0 Then
                             DeckTitle = "[" & metag & "] " & DeckTitle
                             DeckTitle = Replace(DeckTitle, "&#39;", "'")
                             If InStr(DeckTitle, "</title>") > 0 Then
@@ -452,6 +455,8 @@ Public Class ext
                             Deck = Replace(Deck, "Babygodzilla, Ruin Reborn", "Pollywog Symbiote")
                             Deck = Replace(Deck, "Mothra's Giant Cocoon", "Mysterious Egg")
                             Deck = Replace(Deck, "Spacegodzilla, Void Invader", "Void Beckoner")
+
+
 
                             Deck = fn.FormatDeck(Deck, DeckTitle, MyCmd)
                             If InStr(Deck, "1 Companion") > 0 Then

@@ -1652,6 +1652,8 @@ Problem:
 
 
         If commander <> "" Then
+            If commander.Contains(" Â") Then commander = Replace(commander, " Â", "")
+
             If InStr(commander, "<title>") > 0 Then
                 commander = Split(commander, "<title>")(0).ToString
             End If
