@@ -46,13 +46,13 @@ Public Class fn
         If idlog = "profileproperties" Then CompareWithServer = False
 
         If CompareWithServer Then
-            If File.Exists("\fldata\" & vars.ServerLogName) = False Then
-                Try
-                    DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "/fldata/" & vars.ServerLogName)
-                Catch
-                    PrintError(Err.Description)
-                End Try
-            End If
+            'If File.Exists("\fldata\" & vars.ServerLogName) = False Then
+            '    Try
+            '        DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "/fldata/" & vars.ServerLogName)
+            '    Catch
+            '        PrintError(Err.Description)
+            '    End Try
+            'End If
         End If
 
         Dim LogServer = ""
@@ -207,35 +207,35 @@ Public Class fn
         End Try
     End Sub
 
-    Public Shared Function ReadLogServer(idlog As String, Optional ShowMsg As Boolean = True, Optional newbaseurl As Boolean = False)
-        Try
-            If newbaseurl = False Then
-                DownloadFile(vars.BaseUrl & vars.ServerLogName, "fldata/" & vars.ServerLogName)
-            Else
-                DownloadFile(vars.NewBaseUrl & vars.ServerLogName, "fldata/" & vars.ServerLogName)
-            End If
-        Catch
-            PrintError(Err.Description)
-            Exit Function
-        End Try
+    'Public Shared Function ReadLogServer(idlog As String, Optional ShowMsg As Boolean = True, Optional newbaseurl As Boolean = False)
+    '    Try
+    '        If newbaseurl = False Then
+    '            DownloadFile(vars.BaseUrl & vars.ServerLogName, "fldata/" & vars.ServerLogName)
+    '        Else
+    '            DownloadFile(vars.NewBaseUrl & vars.ServerLogName, "fldata/" & vars.ServerLogName)
+    '        End If
+    '    Catch
+    '        PrintError(Err.Description)
+    '        Exit Function
+    '    End Try
 
-        Dim LogServer_data = ""
+    '    Dim LogServer_data = ""
 
-        Try
-            LogServer_data = File.ReadAllText("fldata\" & vars.ServerLogName).ToString
-        Catch
-            PrintError(Err.Description)
-            Exit Function
-        End Try
+    '    Try
+    '        LogServer_data = File.ReadAllText("fldata\" & vars.ServerLogName).ToString
+    '    Catch
+    '        PrintError(Err.Description)
+    '        Exit Function
+    '    End Try
 
-        Try
-            LogServer_data = FindIt(LogServer_data, "<" & idlog & ">", "</" & idlog & ">")
-        Catch
-            PrintError(Err.Description)
-            Exit Function
-        End Try
-        ReadLogServer = LogServer_data
-    End Function
+    '    Try
+    '        LogServer_data = FindIt(LogServer_data, "<" & idlog & ">", "</" & idlog & ">")
+    '    Catch
+    '        PrintError(Err.Description)
+    '        Exit Function
+    '    End Try
+    '    ReadLogServer = LogServer_data
+    'End Function
 
     Public Shared Sub CheckIfICSharpCodeExist()
         If File.Exists(vars.MyDll) = False Then

@@ -3,8 +3,6 @@
 Public Class vars
     Public Shared MyDll As String = "ICSharpCode.SharpZipLib.dll"
     Public Shared ServerLogName As String = "updates.txt"
-    Public Shared BaseUrl As String = "http://forgedecks.000webhostapp.com/"
-    Public Shared NewBaseUrl As String = "http://forgedecks.000webhostapp.com/"
     Public Shared MyLogServer As String = ""
     Public Shared LogName As String = "fldata/version.txt"
     Public Shared UserDir As String = Directory.GetCurrentDirectory()
