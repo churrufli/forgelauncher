@@ -47,7 +47,7 @@ Partial Class lm
         Me.GroupBox1.Controls.Add(Me.tb_launchline)
         Me.GroupBox1.Location = New System.Drawing.Point(8, 51)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(445, 170)
+        Me.GroupBox1.Size = New System.Drawing.Size(485, 219)
         Me.GroupBox1.TabIndex = 0
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Launch Mode"
@@ -55,7 +55,7 @@ Partial Class lm
         'lblram
         '
         Me.lblram.AutoSize = True
-        Me.lblram.Location = New System.Drawing.Point(107, 140)
+        Me.lblram.Location = New System.Drawing.Point(256, 192)
         Me.lblram.Name = "lblram"
         Me.lblram.Size = New System.Drawing.Size(88, 17)
         Me.lblram.TabIndex = 4
@@ -64,7 +64,7 @@ Partial Class lm
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(6, 140)
+        Me.Label1.Location = New System.Drawing.Point(155, 192)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(102, 17)
         Me.Label1.TabIndex = 3
@@ -72,10 +72,10 @@ Partial Class lm
         '
         'tb_launchline
         '
-        Me.tb_launchline.Location = New System.Drawing.Point(4, 33)
+        Me.tb_launchline.Location = New System.Drawing.Point(17, 33)
         Me.tb_launchline.Multiline = True
         Me.tb_launchline.Name = "tb_launchline"
-        Me.tb_launchline.Size = New System.Drawing.Size(431, 101)
+        Me.tb_launchline.Size = New System.Drawing.Size(452, 151)
         Me.tb_launchline.TabIndex = 0
         '
         'rbt_normalmode
@@ -128,7 +128,7 @@ Partial Class lm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(8.0!, 16.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(465, 229)
+        Me.ClientSize = New System.Drawing.Size(505, 282)
         Me.Controls.Add(Me.PictureBox2)
         Me.Controls.Add(Me.PictureBox1)
         Me.Controls.Add(Me.rbt_advancedmode)

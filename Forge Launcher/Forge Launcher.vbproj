@@ -83,8 +83,9 @@
     <ApplicationIcon>ic_launcher.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\..\Forge Content Updater\Forge Content Updater\bin\ICSharpCode.SharpZipLib.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Hernan\Forge Versiones\forge\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -109,7 +110,6 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ext.vb" />
     <Compile Include="fl.Designer.vb">
       <DependentUpon>fl.vb</DependentUpon>
     </Compile>
@@ -146,12 +146,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="vars.vb" />
-    <Compile Include="whatsnew.Designer.vb">
-      <DependentUpon>whatsnew.vb</DependentUpon>
-    </Compile>
-    <Compile Include="whatsnew.vb">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="fl.resx">
@@ -168,9 +162,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="preferences.resx">
       <DependentUpon>preferences.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="whatsnew.resx">
-      <DependentUpon>whatsnew.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

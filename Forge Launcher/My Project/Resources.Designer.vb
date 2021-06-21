@@ -47,7 +47,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Reemplaza la propiedad CurrentUICulture del subproceso actual para todas las
+        '''  Reemplaza la propiedad CurrentUICulture del subproceso actual para allcards las
         '''  búsquedas de recursos mediante esta clase de recurso fuertemente tipado.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
