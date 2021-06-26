@@ -48,8 +48,7 @@ Public Class fl
 
         fn.CheckIfPreviousProfileProperties()
         DisableStuffs()
-        fn.CheckForgeVersion(False, True)
-        fn.AlertAboutVersion(True)
+        fn.AlertAboutVersion(False)
     End Sub
 
     Sub SetComboboxes()
@@ -202,7 +201,7 @@ Public Class fl
     End Sub
 
     Private Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
-        fn.AlertAboutVersion(False)
+        fn.AlertAboutVersion(True)
     End Sub
 
     Private Sub fl_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
@@ -227,4 +226,7 @@ Public Class fl
         forceupdates()
     End Sub
 
+    Private Sub AboutLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutLauncherToolStripMenuItem.Click
+        Process.Start("https://github.com/churrufli/forgelauncher")
+    End Sub
 End Class

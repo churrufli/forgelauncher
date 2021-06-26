@@ -54,6 +54,7 @@ Partial Class fl
         Me.Button2 = New System.Windows.Forms.Button()
         Me.rbt_normal = New System.Windows.Forms.RadioButton()
         Me.rbt_properties = New System.Windows.Forms.RadioButton()
+        Me.AboutLauncherToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuGeneral.SuspendLayout()
         Me.GroupForgeOptions.SuspendLayout()
@@ -153,7 +154,7 @@ Partial Class fl
         Me.MenuGeneral.BackColor = System.Drawing.Color.Silver
         Me.MenuGeneral.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.0!)
         Me.MenuGeneral.ImageScalingSize = New System.Drawing.Size(20, 20)
-        Me.MenuGeneral.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SettingsToolStripMenuItem1, Me.ToolStripMenuItem1, Me.ToolsToolStripMenuItem, Me.AboutForgeToolStripMenuItem1})
+        Me.MenuGeneral.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SettingsToolStripMenuItem1, Me.ToolStripMenuItem1, Me.ToolsToolStripMenuItem, Me.AboutForgeToolStripMenuItem1, Me.AboutLauncherToolStripMenuItem})
         Me.MenuGeneral.Location = New System.Drawing.Point(0, 0)
         Me.MenuGeneral.Name = "MenuGeneral"
         Me.MenuGeneral.Size = New System.Drawing.Size(606, 28)
@@ -309,6 +310,12 @@ Partial Class fl
         Me.rbt_properties.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.rbt_properties.UseVisualStyleBackColor = True
         '
+        'AboutLauncherToolStripMenuItem
+        '
+        Me.AboutLauncherToolStripMenuItem.Name = "AboutLauncherToolStripMenuItem"
+        Me.AboutLauncherToolStripMenuItem.Size = New System.Drawing.Size(121, 24)
+        Me.AboutLauncherToolStripMenuItem.Text = "About Launcher"
+        '
         'fl
         '
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
@@ -368,4 +375,5 @@ Partial Class fl
     Friend WithEvents rbt_normal As RadioButton
     Friend WithEvents rbt_properties As RadioButton
     Friend WithEvents GroupForgeOptions As GroupBox
+    Friend WithEvents AboutLauncherToolStripMenuItem As ToolStripMenuItem
 End Class

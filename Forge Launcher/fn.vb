@@ -410,15 +410,10 @@ Public Class fn
 
     Public Shared Function CheckRelease()
         Dim LinkLine = ""
-        Dim alltext = ""
-        Dim url_snap = "https://snapshots.cardforge.org/"
-        Try
+        Dim alltext = fn.ReadWeb(vars.url_release)
+        Dim url_snap = ""
 
-            Dim client2 = New WebClient()
-            Dim reader2 = New StreamReader(client2.OpenRead(vars.url_release))
-
-            alltext += reader2.ReadToEnd
-            Dim alltext2() = Split(alltext, "  ")
+        Dim alltext2() = Split(alltext, "  ")
             Dim betterdate As DateTime = DateTime.Now.AddYears(-1)
 
             For i = 0 To alltext2.Length - 1
@@ -480,30 +475,23 @@ Public Class fn
 
             fdef = ar(0) & "-" & mes & "-" & MyYear & " " & hora(0) & ":" & hora(1)
 
-            fdef = Replace(fdef, ":00 ", "")
+        fdef = Replace(fdef, ":00 ", "")
 
-            'File.WriteAllText("fltx.txt", alltext)
+        Using reader3 As StreamReader = New StreamReader(StringToStream(alltext, Encoding.UTF8))
 
-            Using reader3 As New StreamReader(alltext)
+            While Not reader3.EndOfStream
+                Dim line As String = reader3.ReadLine()
+                If InStr(line.ToString, fdef) > 0 Then
+                    LinkLine = line
+                    Exit While
+                End If
+            End While
+        End Using
 
-                While Not reader3.EndOfStream
-                    Dim line As String = reader3.ReadLine()
-                    If InStr(line.ToString, fdef) > 0 Then
-                        LinkLine = line
-                        Exit While
-                    End If
-                End While
-            End Using
-            'Try
-            '    File.Delete("fltx.txt")
-
-            'Catch ex As Exception
-
-            'End Try
-            LinkLine = Replace(LinkLine, """", "'")
+        LinkLine = Replace(LinkLine, """", "'")
             LinkLine = FindIt(LinkLine, "href='", "'>")
-        Catch
-        End Try
+        'Catch ex As exception
+        'End Try
 
         If InStr(LinkLine, "tar.bz2", CompareMethod.Text) > 0 Then
             LinkLine = url_snap & LinkLine
@@ -526,8 +514,15 @@ Public Class fn
         End If
         CheckRelease = LinkLine
     End Function
-
-    Public Shared Sub AlertAboutVersion(Optional ByVal ignorarigual = False)
+    Public Shared Function StringToStream(input As String, enc As Encoding) As Stream
+        Dim memoryStream = New MemoryStream()
+        Dim streamWriter = New StreamWriter(memoryStream, enc)
+        streamWriter.Write(input)
+        streamWriter.Flush()
+        memoryStream.Position = 0
+        Return memoryStream
+    End Function
+    Public Shared Sub AlertAboutVersion(Optional ByVal AskforReinstall = False)
         Dim leer As String
         Dim urltoshow As String
         Dim result = fl.typeofupdate.Text.ToString
@@ -538,48 +533,78 @@ Public Class fn
             leer = "release_version"
             urltoshow = vars.url_release
         End If
-        Try
-            Dim vs, vu As String
-            vs = CheckForgeVersion(False, False)
-            If vs = "" Then
-                PrintError("Can't get last version.")
+
+
+        Dim typeofupdate As String = ReadLogUser("typeofupdate")
+        Select Case typeofupdate
+            Case "snapshot"
+                vars.LinkLine = GetCheckAutomatic()
+            Case "release"
+                vars.LinkLine = CheckRelease()
+        End Select
+
+        Dim vs, vu As String
+        vu = ReadLogUser(leer, False).ToString
+        vs = vars.LinkLine
+
+        If vs.Contains("#") Then
+            vs = Split(vs, "#")(0).ToString
+        End If
+
+        If vu.Contains("#") Then
+            vu = Split(vu, "#")(0).ToString
+        End If
+
+        If vs = vu Then
+            'IF BOTON PEDIR REINSTALAR, SINO,
+            WriteUserLog("Your Forge " & typeofupdate & " version is up to date (" & vu & ")." & vbCrLf)
+
+            If AskforReinstall = True Then
+
+                If _
+                        MsgBox(
+                            "It's appears your Forge " & typeofupdate & " version is up to date (" & vu & "). Do you want to download again and reinstall it?",
+                            MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
+                    Dim link = Split(GetCheckAutomatic(), "#")(1)
+                    UpdateForge(link)
+                End If
+                'salgo porque le dío al botón para nueva versión y encontró la misma
+                Exit Sub
+
+            Else
+                '`pide instalar version
+
+
+
+
+
+            End If
+
+
+            If MsgBox("Your Forge " & typeofupdate & " version is up to date." & vbCrLf &
+             "Do you want to start Forge and close Launcher?", MsgBoxStyle.YesNo, "Forge is up to date") =
+            MsgBoxResult.Yes Then
+                Launch()
+                Application.Exit()
+                Try
+                    Environment.Exit(1)
+                Catch
+                End Try
                 Exit Sub
             End If
-            Try
-                vu = ReadLogUser(leer, False).ToString
-            Catch
-                vu = ""
-            End Try
 
-            If vu.Contains("#") Then
-                    vu = Split(vu, "#")(0).ToString
-                End If
+        Else
+            WriteUserLog("New Forge " & typeofupdate & " version is available (" & vs & ")." & vbCrLf)
+            If _
+  MsgBox("Do you want to install " & vs & " in " & vars.UserDir & "?",
+         MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
+                Dim link = Split(GetCheckAutomatic(), "#")(1)
 
-                If Trim(vs) = Trim(vu) Then
-                    If ignorarigual = False Then
+                UpdateForge(link)
 
-                        If _
-                        MsgBox(
-                            "It's appears your version is up to date, Do you want to download again and reinstall it?",
-                            MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
-                            Dim link = Split(GetCheckAutomatic(), "#")(1)
-                            UpdateForge(link)
-                        End If
-                    End If
+            End If
+        End If
 
-                Else
-                    If _
-                    MsgBox("Do you want to install " & Replace(vs, urltoshow, "") & " in " & vars.UserDir & "?",
-                           MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
-                        Dim link = Split(GetCheckAutomatic(), "#")(1)
-
-                        UpdateForge(link)
-
-                    End If
-                End If
-            Catch
-                PrintError(Err.Description)
-        End Try
     End Sub
 
     Public Shared Sub UpdateForge(vtoupdate)
