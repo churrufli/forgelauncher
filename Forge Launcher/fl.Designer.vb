@@ -45,6 +45,7 @@ Partial Class fl
         Me.ForgeForumToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ForgeDiscordChannelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ForgeWikiToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AboutLauncherToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.Label1 = New System.Windows.Forms.Label()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
@@ -54,7 +55,6 @@ Partial Class fl
         Me.Button2 = New System.Windows.Forms.Button()
         Me.rbt_normal = New System.Windows.Forms.RadioButton()
         Me.rbt_properties = New System.Windows.Forms.RadioButton()
-        Me.AboutLauncherToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuGeneral.SuspendLayout()
         Me.GroupForgeOptions.SuspendLayout()
@@ -157,21 +157,21 @@ Partial Class fl
         Me.MenuGeneral.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SettingsToolStripMenuItem1, Me.ToolStripMenuItem1, Me.ToolsToolStripMenuItem, Me.AboutForgeToolStripMenuItem1, Me.AboutLauncherToolStripMenuItem})
         Me.MenuGeneral.Location = New System.Drawing.Point(0, 0)
         Me.MenuGeneral.Name = "MenuGeneral"
-        Me.MenuGeneral.Size = New System.Drawing.Size(606, 28)
+        Me.MenuGeneral.Size = New System.Drawing.Size(606, 25)
         Me.MenuGeneral.TabIndex = 1
         Me.MenuGeneral.Text = "MenuStrip1"
         '
         'SettingsToolStripMenuItem1
         '
         Me.SettingsToolStripMenuItem1.Name = "SettingsToolStripMenuItem1"
-        Me.SettingsToolStripMenuItem1.Size = New System.Drawing.Size(71, 24)
+        Me.SettingsToolStripMenuItem1.Size = New System.Drawing.Size(71, 21)
         Me.SettingsToolStripMenuItem1.Text = "Settings"
         '
         'ToolStripMenuItem1
         '
         Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ReadForgeLogFileToolStripMenuItem, Me.RestoreForgePreferencesToolStripMenuItem})
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(96, 24)
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(96, 21)
         Me.ToolStripMenuItem1.Text = "Forge Tools"
         '
         'ReadForgeLogFileToolStripMenuItem
@@ -190,7 +190,7 @@ Partial Class fl
         '
         Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartForgeLauncherToolStripMenuItem})
         Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
-        Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(119, 24)
+        Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(119, 21)
         Me.ToolsToolStripMenuItem.Text = "Launcher Tools"
         '
         'RestartForgeLauncherToolStripMenuItem
@@ -203,7 +203,7 @@ Partial Class fl
         '
         Me.AboutForgeToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ForgeForumToolStripMenuItem, Me.ForgeDiscordChannelToolStripMenuItem, Me.ForgeWikiToolStripMenuItem})
         Me.AboutForgeToolStripMenuItem1.Name = "AboutForgeToolStripMenuItem1"
-        Me.AboutForgeToolStripMenuItem1.Size = New System.Drawing.Size(98, 24)
+        Me.AboutForgeToolStripMenuItem1.Size = New System.Drawing.Size(98, 21)
         Me.AboutForgeToolStripMenuItem1.Text = "About Forge"
         '
         'ForgeForumToolStripMenuItem
@@ -223,6 +223,12 @@ Partial Class fl
         Me.ForgeWikiToolStripMenuItem.Name = "ForgeWikiToolStripMenuItem"
         Me.ForgeWikiToolStripMenuItem.Size = New System.Drawing.Size(227, 26)
         Me.ForgeWikiToolStripMenuItem.Text = "Forge Wiki"
+        '
+        'AboutLauncherToolStripMenuItem
+        '
+        Me.AboutLauncherToolStripMenuItem.Name = "AboutLauncherToolStripMenuItem"
+        Me.AboutLauncherToolStripMenuItem.Size = New System.Drawing.Size(121, 21)
+        Me.AboutLauncherToolStripMenuItem.Text = "About Launcher"
         '
         'ToolTip1
         '
@@ -309,12 +315,6 @@ Partial Class fl
         Me.rbt_properties.Text = "Install All In The Same Folder Creating Forge.Profiles.Properties File"
         Me.rbt_properties.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.rbt_properties.UseVisualStyleBackColor = True
-        '
-        'AboutLauncherToolStripMenuItem
-        '
-        Me.AboutLauncherToolStripMenuItem.Name = "AboutLauncherToolStripMenuItem"
-        Me.AboutLauncherToolStripMenuItem.Size = New System.Drawing.Size(121, 24)
-        Me.AboutLauncherToolStripMenuItem.Text = "About Launcher"
         '
         'fl
         '

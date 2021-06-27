@@ -48,7 +48,7 @@ Public Class fl
 
         fn.CheckIfPreviousProfileProperties()
         DisableStuffs()
-        fn.AlertAboutVersion(False)
+        fn.CheckforForgeUpdates(False)
     End Sub
 
     Sub SetComboboxes()
@@ -83,7 +83,7 @@ Public Class fl
             MsgBox("Please select normal or portable install.")
             Exit Sub
         End If
-        fn.AlertAboutVersion()
+        fn.CheckforForgeUpdates()
     End Sub
 
     Public Shared Sub downloader_DownloadProgressChanged(sender As Object, e As DownloadProgressChangedEventArgs) _
@@ -201,7 +201,7 @@ Public Class fl
     End Sub
 
     Private Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
-        fn.AlertAboutVersion(True)
+        fn.CheckforForgeUpdates(True)
     End Sub
 
     Private Sub fl_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing

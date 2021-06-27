@@ -522,15 +522,22 @@ Public Class fn
         memoryStream.Position = 0
         Return memoryStream
     End Function
-    Public Shared Sub AlertAboutVersion(Optional ByVal AskforReinstall = False)
-        Dim leer As String
+    Public Shared Sub CheckforForgeUpdates(Optional ByVal AskforReinstall = False, Optional ByVal NewInstall = False)
+        If NewInstall Then
+            If fl.rbt_normal.Checked = False And fl.rbt_properties.Checked = False Then
+                MsgBox("Please select normal or portable install.")
+                Exit Sub
+            End If
+
+        End If
+        Dim readversion As String
         Dim urltoshow As String
         Dim result = fl.typeofupdate.Text.ToString
         If result = "snapshot" Then
-            leer = "forge_version"
+            readversion = "forge_version"
             urltoshow = vars.SnapshotUrl
         Else
-            leer = "release_version"
+            readversion = "release_version"
             urltoshow = vars.url_release
         End If
 
@@ -544,7 +551,12 @@ Public Class fn
         End Select
 
         Dim vs, vu As String
-        vu = ReadLogUser(leer, False).ToString
+        Try
+            vu = ReadLogUser(readversion, False).ToString
+        Catch
+            vu = ""
+        End Try
+
         vs = vars.LinkLine
 
         If vs.Contains("#") Then
@@ -554,6 +566,16 @@ Public Class fn
         If vu.Contains("#") Then
             vu = Split(vu, "#")(0).ToString
         End If
+
+        If vu = "" Then
+            If CheckIfForgeExists() = False Then
+                If fl.rbt_normal.Checked = False And fl.rbt_properties.Checked = False Then
+                    MsgBox("Please select normal or portable install.")
+                    Exit Sub
+                End If
+            End If
+        End If
+
 
         If vs = vu Then
             'IF BOTON PEDIR REINSTALAR, SINO,
