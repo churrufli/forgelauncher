@@ -37,7 +37,7 @@ Public Class fl
         fn.CheckIfICSharpCodeExist()
         fn.CheckLog()
         SetComboboxes()
-        Me.Text = "Forge Launcher (v." & fn.ReadLogUser("launcher_version") & ")"
+        Me.Text = "Forge Launcher v2.1.7"
 
         fn.SearchFolders(False)
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
@@ -111,15 +111,6 @@ Public Class fl
         Application.Restart()
     End Sub
 
-    Private Sub forceupdates()
-
-        fn.UpdateLog("launcher_version", "")
-        fn.UpdateLog("lastupdate", "")
-        MsgBox("Forge Launcher will restart, after that, select the option Launcher Tools > Check for Forge Launcher Updates")
-        Application.Restart()
-    End Sub
-
-
     Private Sub LogFileToolStripMenuItem_Click(sender As Object, e As EventArgs)
         fn.OpenLogFile()
     End Sub
@@ -157,17 +148,14 @@ Public Class fl
         End If
     End Sub
 
-
     Private Sub btnlaunchmode_Click(sender As Object, e As EventArgs) Handles btnlaunchmode.Click
         Dim opened = False
-
         For Each frm As Form In Application.OpenForms
             If frm.Name.Equals("lm") Then
                 frm.Show()
                 opened = True
             End If
         Next
-
         If opened = False Then
             Dim box = New lm()
             box.Show()
@@ -186,14 +174,12 @@ Public Class fl
     Private Sub SettingsToolStripMenuItem1_Click(sender As Object, e As EventArgs) _
         Handles SettingsToolStripMenuItem1.Click
         Dim opened = False
-
         For Each frm As Form In Application.OpenForms
             If frm.Name.Equals("preferences") Then
                 frm.Show()
                 opened = True
             End If
         Next
-
         If opened = False Then
             Dim box = New preferences()
             box.Show()
@@ -220,10 +206,6 @@ Public Class fl
             Dim box = New lm()
             box.Show()
         End If
-    End Sub
-
-    Private Sub ForceToForgeLauncherUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs)
-        forceupdates()
     End Sub
 
     Private Sub AboutLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutLauncherToolStripMenuItem.Click
