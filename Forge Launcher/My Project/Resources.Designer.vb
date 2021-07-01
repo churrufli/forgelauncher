@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  Clase de recurso fuertemente tipado, para buscar cadenas traducidas, etc.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
      Global.Microsoft.VisualBasic.HideModuleNameAttribute()>  _
@@ -47,7 +47,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Reemplaza la propiedad CurrentUICulture del subproceso actual para allcards las
+        '''  Reemplaza la propiedad CurrentUICulture del subproceso actual para todas las
         '''  búsquedas de recursos mediante esta clase de recurso fuertemente tipado.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
