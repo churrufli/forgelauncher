@@ -1,7 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Net
 Imports System.Text
-Imports System.Text.RegularExpressions
 Imports ICSharpCode.SharpZipLib.BZip2
 Imports ICSharpCode.SharpZipLib.Tar
 Imports ICSharpCode.SharpZipLib.Zip
@@ -99,24 +98,25 @@ Public Class fn
         ReadLogUser = log_user
     End Function
 
-    Public Shared Function OpenLogFile()
+    Public shared sub OpenLogFile()
         Dim logfile As String = Directory.GetCurrentDirectory & "\user\forge.log"
         Dim logfile2 As String = Directory.GetCurrentDirectory & "\UserDir\forge.log"
 
         If File.Exists(logfile) = True Then
             Shell("c:\windows\notepad.exe " & logfile)
-            Exit Function
+            Exit sub
         End If
 
         If File.Exists(logfile2) = True Then
             Shell("c:\windows\notepad.exe " & logfile2)
-            Exit Function
+            Exit sub
         End If
 
         MsgBox("I can't find forge.log file!.")
-    End Function
 
-    Public Shared Function UninstallForgeLauncher()
+    End sub
+
+    Public Shared sub UninstallForgeLauncher()
         Dim m As String
         m = "Are you sure to uninstall Forge Launcher and generated files? (Forge files will not be deleted)"
         If MsgBox(m, MsgBoxStyle.YesNoCancel, "Warning!") = MsgBoxResult.Yes Then
@@ -138,7 +138,7 @@ Public Class fn
                 WriteUserLog(ex.Message.ToString)
             End Try
         End If
-    End Function
+    End sub
 
     Public Shared Sub Uninstall()
         Process.Start("cmd.exe", "/C choice /C Y /N /D Y /T 3 & Del " + Application.ExecutablePath)
@@ -215,6 +215,7 @@ Public Class fn
             Dim reply As String = client.DownloadString(MyUrl)
             Return reply
         Catch
+              Return Nothing
         End Try
     End Function
 
@@ -345,6 +346,7 @@ Public Class fn
                 End If
             End If
         End If
+
         Return vars.LinkLine
     End Function
 
