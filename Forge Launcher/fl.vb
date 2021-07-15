@@ -37,7 +37,7 @@ Public Class fl
         fn.CheckIfICSharpCodeExist()
         fn.CheckLog()
         SetComboboxes()
-        Me.Text = "Forge Launcher (v." & fn.ReadLogUser("launcher_version") & ")"
+        Me.Text = "Forge Launcher v2.1.7"
 
         fn.SearchFolders(False)
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
@@ -48,8 +48,7 @@ Public Class fl
 
         fn.CheckIfPreviousProfileProperties()
         DisableStuffs()
-        fn.CheckForgeVersion(False, True)
-        fn.AlertAboutVersion(True)
+        fn.CheckforForgeUpdates(False)
     End Sub
 
     Sub SetComboboxes()
@@ -84,7 +83,7 @@ Public Class fl
             MsgBox("Please select normal or portable install.")
             Exit Sub
         End If
-        fn.AlertAboutVersion()
+        fn.CheckforForgeUpdates()
     End Sub
 
     Public Shared Sub downloader_DownloadProgressChanged(sender As Object, e As DownloadProgressChangedEventArgs) _
@@ -111,15 +110,6 @@ Public Class fl
         Handles RestartForgeLauncherToolStripMenuItem.Click
         Application.Restart()
     End Sub
-
-    Private Sub forceupdates()
-
-        fn.UpdateLog("launcher_version", "")
-        fn.UpdateLog("lastupdate", "")
-        MsgBox("Forge Launcher will restart, after that, select the option Launcher Tools > Check for Forge Launcher Updates")
-        Application.Restart()
-    End Sub
-
 
     Private Sub LogFileToolStripMenuItem_Click(sender As Object, e As EventArgs)
         fn.OpenLogFile()
@@ -158,17 +148,14 @@ Public Class fl
         End If
     End Sub
 
-
     Private Sub btnlaunchmode_Click(sender As Object, e As EventArgs) Handles btnlaunchmode.Click
         Dim opened = False
-
         For Each frm As Form In Application.OpenForms
             If frm.Name.Equals("lm") Then
                 frm.Show()
                 opened = True
             End If
         Next
-
         If opened = False Then
             Dim box = New lm()
             box.Show()
@@ -187,14 +174,12 @@ Public Class fl
     Private Sub SettingsToolStripMenuItem1_Click(sender As Object, e As EventArgs) _
         Handles SettingsToolStripMenuItem1.Click
         Dim opened = False
-
         For Each frm As Form In Application.OpenForms
             If frm.Name.Equals("preferences") Then
                 frm.Show()
                 opened = True
             End If
         Next
-
         If opened = False Then
             Dim box = New preferences()
             box.Show()
@@ -202,7 +187,7 @@ Public Class fl
     End Sub
 
     Private Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
-        fn.AlertAboutVersion(False)
+        fn.CheckforForgeUpdates(True)
     End Sub
 
     Private Sub fl_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
@@ -223,8 +208,7 @@ Public Class fl
         End If
     End Sub
 
-    Private Sub ForceToForgeLauncherUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs)
-        forceupdates()
+    Private Sub AboutLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutLauncherToolStripMenuItem.Click
+        Process.Start("https://github.com/churrufli/forgelauncher")
     End Sub
-
 End Class
