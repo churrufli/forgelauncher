@@ -9,6 +9,141 @@ Imports ICSharpCode.SharpZipLib.Zip
 Public Class fn
     Shared WithEvents downloader As WebClient
 
+    Public Shared Function CheckAddress(URL As String) As Boolean
+        Try
+            Dim request As WebRequest = WebRequest.Create(URL)
+            Dim response As WebResponse = request.GetResponse()
+        Catch ex As Exception
+            Return False
+        End Try
+        Return True
+    End Function
+
+    Public Shared Sub HitToLauncherUpdates(Optional ByVal forzar As Boolean = False)
+        Try
+            'compruebo sí existe
+            If File.Exists(vars.UserDir & "\fldata\" & vars.ServerLogName) Then
+                'si, compruebo ultima fecha
+                Dim myLastDate = ReadLogUser("lastupdate")
+                If myLastDate <> DateTime.Now.ToString("dd'/'MM'/'yyyy") Then
+                    forzar = True
+                End If
+                forzar = True
+
+                If forzar Then
+                    If CheckAddress(vars.BaseUrl & vars.ServerLogName) Then
+                        Try
+                            File.Delete(vars.UserDir & "\fldata\" & vars.ServerLogName)
+                        Catch
+                        End Try
+                        'fn.WriteUserLog("Checking for updates..." & vbCrLf)
+                        'descargar y actualizar
+                        DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "\fldata\" & vars.ServerLogName)
+                        'UpdateLog("lastupdate", DateTime.Now.ToString("dd'/'MM'/'yyyy"))
+                    End If
+
+                End If
+            Else
+                'no existe
+                If CheckAddress(vars.BaseUrl & vars.ServerLogName) Then
+                    DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "\fldata\" & vars.ServerLogName)
+                End If
+            End If
+
+            Try
+                vars.MyLogServer = File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName).ToString & ""
+            Catch ex As Exception
+            End Try
+
+            If vars.MyLogServer = "" Then
+                Try
+                    vars.MyLogServer = File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName)
+                Catch ex As Exception
+
+                End Try
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Public Shared Sub CheckLauncherUpdates()
+        Try
+            WriteUserLog("Checking for Launcher updates..." & vbCrLf)
+
+            Dim logu, logse As String
+            logu = ReadLogUser("launcher_version", False, True)
+            logse = ReadLogServer("launcher_version", False)
+            If logse = "" Then Exit Sub
+
+            If logu <> logse Then
+                If _
+                    MsgBox("Forge Launcher New version Available. Update now?", MsgBoxStyle.YesNoCancel, logse) =
+                    MsgBoxResult.Yes Then
+                    Try
+                        WriteUserLog("Downloading " & logse & vbCrLf)
+                        DownloadFile(vars.BaseUrl & "Forge Launcher.zip", "Forge Launcher.zip")
+                        WriteUserLog("Unpacking " & logse & " In " & Directory.GetCurrentDirectory() & "..." & vbCrLf)
+                        UnzipFile(Directory.GetCurrentDirectory() & "/" & "Forge Launcher.zip",
+                                  Directory.GetCurrentDirectory() & "/fltmp")
+                        'UpdateLog("showwhatsnew", "yes")
+                        File.Delete("Forge Launcher.zip")
+                        File.Move("Forge Launcher.exe", "fltmp/Forge Launcher.bak")
+                        File.Copy("fltmp/Forge Launcher.exe", "Forge Launcher.exe")
+                        Try
+                            File.Copy("fltmp/ICSharpCode.SharpZipLib.dll", "ICSharpCode.SharpZipLib.dll")
+                        Catch
+
+                        End Try
+                    Catch
+                    End Try
+
+                    Try
+                        File.Delete("fldata/fl_whatsnew.txt")
+                    Catch
+                    End Try
+                    Try
+                        UpdateLog("launcher_version", logse)
+                    Catch
+                    End Try
+
+                    Application.Restart()
+                End If
+            Else
+                WriteUserLog("Your Launcher is up to date:" & logu & vbCrLf)
+            End If
+        Catch
+
+        End Try
+    End Sub
+
+
+    Public Shared Function ReadLogServer(idlog As String, Optional ShowMsg As Boolean = True)
+        Try
+            DownloadFile(vars.BaseUrl & vars.ServerLogName, "fldata/" & vars.ServerLogName)
+        Catch
+            PrintError(Err.Description)
+            Exit Function
+        End Try
+        'End If
+
+        Dim LogServer_data = ""
+
+        Try
+            LogServer_data = File.ReadAllText("fldata\" & vars.ServerLogName).ToString
+        Catch
+            PrintError(Err.Description)
+            Exit Function
+        End Try
+
+        Try
+            LogServer_data = FindIt(LogServer_data, "<" & idlog & ">", "</" & idlog & ">")
+        Catch
+            PrintError(Err.Description)
+            Exit Function
+        End Try
+        ReadLogServer = LogServer_data
+    End Function
+
     Public Shared Sub DeleteDownloaded()
         Try
             File.Delete("fldata/updates.txt")
@@ -733,7 +868,7 @@ Public Class fn
             t = "<forge_previous_version></forge_previous_version>" & vbCrLf
             t = t & "<profileproperties>" & existpp & "</profileproperties>" & vbCrLf
             t = t & "<lastupdate>" & hoy & "</lastupdate>" & vbCrLf
-            t = t & "<removepreviousjarfiles>no</removepreviousjarfiles>" & vbCrLf
+            t = t & "<removepreviousjarfiles>yes</removepreviousjarfiles>" & vbCrLf
             t = t & "<typeofupdate>snapshot</typeofupdate>" & vbCrLf
             t = t & "<launchmode>normal</launchmode>" & vbCrLf
             t = t & "<launchline></launchline>" & vbCrLf
@@ -806,7 +941,7 @@ Public Class fn
             End If
 
             If InStr(readText, "<removepreviousjarfiles>", CompareMethod.Text) = 0 Then
-                readText = readText & "<removepreviousjarfiles>no</removepreviousjarfiles>" & Environment.NewLine
+                readText = readText & "<removepreviousjarfiles>yes</removepreviousjarfiles>" & Environment.NewLine
                 WriteLog = True
             End If
 
@@ -916,9 +1051,9 @@ Problem:
 
         WriteUserLog("Done!" & vbCrLf)
 
-        If ReadLogUser("removepreviousjarfiles", False) = "yes" Then
+        'If ReadLogUser("removepreviousjarfiles", False) = "yes" Then
 
-            Try
+        Try
                 Dim x As Integer
                 Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge-gui-desktop-*-jar-with-dependencies.jar")
                 If paths.Length > 0 Then
@@ -929,7 +1064,7 @@ Problem:
             Catch
 
             End Try
-        End If
+        'End If
 
         Dim urlcomplete = vtoupdate
         WriteUserLog("Unpacking in " & Directory.GetCurrentDirectory() & "... please wait!" & vbCrLf)

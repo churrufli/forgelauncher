@@ -14,4 +14,5 @@ Public Class vars
     Public Shared InitAll As Boolean = True
     Public Shared ForgeDecksDir, ForgePicsDir As String
     Public Shared continueLooping As Boolean = True
+    Public Shared BaseUrl As String = "http://forgedecks.000webhostapp.com/"
 End Class

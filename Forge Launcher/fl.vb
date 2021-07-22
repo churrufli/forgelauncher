@@ -50,6 +50,7 @@ Public Class fl
         DisableStuffs()
         fn.CheckForgeVersion(False, True)
         fn.AlertAboutVersion(True)
+
     End Sub
 
     Sub SetComboboxes()
@@ -227,4 +228,9 @@ Public Class fl
         forceupdates()
     End Sub
 
+    Private Sub SearchForUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SearchForUpdatesToolStripMenuItem.Click
+
+        fn.HitToLauncherUpdates()
+        fn.CheckLauncherUpdates()
+    End Sub
 End Class
