@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B9A6E91C-1D18-4AA7-AA63-2B44B93D2D49}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>Forge_Launcher.My.MyApplication</StartupObject>
+    <StartupObject>Forge_Launcher.fl</StartupObject>
     <RootNamespace>Forge_Launcher</RootNamespace>
     <AssemblyName>Forge Launcher</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>WindowsForms</MyType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -86,7 +86,7 @@
     <ManifestKeyFile>Forge Launcher_ClaveTemporal.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
+    <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
