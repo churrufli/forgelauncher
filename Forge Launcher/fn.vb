@@ -545,7 +545,7 @@ Public Class fn
             End If
 
         Else
-            WriteUserLog("New Forge " & typeofupdate & " version is available (" & vs & ")." & vbCrLf)
+            WriteUserLog("New Forge " & typeofupdate & " version is available (" & vs & ")." & vbCrLf & "You're running: " & vu & vbCrLf)
             If _
   MsgBox("Do you want to install " & vs & " in " & vars.UserDir & "?",
          MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
@@ -961,9 +961,12 @@ Problem:
     End Sub
 
     Public Shared Sub WriteUserLog(msg)
-        fl.txlog.SelectedText = msg
-        fl.txlog.SelectionStart = fl.txlog.Text.Length
-        fl.txlog.ScrollToCaret()
+        If fl.txlog.Text.Contains(msg) = False Then
+            fl.txlog.SelectedText = msg
+            fl.txlog.SelectionStart = fl.txlog.Text.Length
+            fl.txlog.ScrollToCaret()
+        End If
+
     End Sub
 
 End Class

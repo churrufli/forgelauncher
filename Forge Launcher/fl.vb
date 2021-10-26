@@ -37,7 +37,7 @@ Public Class fl
         fn.CheckIfICSharpCodeExist()
         fn.CheckLog()
         SetComboboxes()
-        Me.Text = "Forge Launcher v2.1.7"
+        Me.Text = "Forge Launcher v2.1.8"
 
         fn.SearchFolders(False)
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
