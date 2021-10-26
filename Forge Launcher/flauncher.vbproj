@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B9A6E91C-1D18-4AA7-AA63-2B44B93D2D49}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>Forge_Launcher.fl</StartupObject>
-    <RootNamespace>Forge_Launcher</RootNamespace>
-    <AssemblyName>Forge Launcher</AssemblyName>
+    <StartupObject>flauncher.fl</StartupObject>
+    <RootNamespace>flauncher</RootNamespace>
+    <AssemblyName>flauncher</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -42,7 +42,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</NoWarn>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
     <WarningsAsErrors>
     </WarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
