@@ -101,7 +101,7 @@ Public Class lm
                 "Do you want to load an example? Please be sure about your RAM min and max value. (Example Values:2GBmin 4GBmax)",
                 MsgBoxStyle.YesNo, "") = MsgBoxResult.Yes Then
             Dim t As String = "@ECHO OFF" & vbCrLf
-            t = t & "FOR /F %%I in ('DIR *-with-dependencies.jar /B /O:D') DO SET J=%%I" & vbCrLf
+            t = t & "FOR /F %%I in ('DIR forge-gui-desktop-*-with-dependencies.jar /B /O:D') DO SET J=%%I" & vbCrLf
             t = t & "java ^" & vbCrLf
             t = t & "-Xms2048m ^" & vbCrLf
             t = t & "-Xmx4096m ^" & vbCrLf
