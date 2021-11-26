@@ -98,25 +98,25 @@ Public Class fn
         ReadLogUser = log_user
     End Function
 
-    Public shared sub OpenLogFile()
+    Public Shared Sub OpenLogFile()
         Dim logfile As String = Directory.GetCurrentDirectory & "\user\forge.log"
         Dim logfile2 As String = Directory.GetCurrentDirectory & "\UserDir\forge.log"
 
         If File.Exists(logfile) = True Then
             Shell("c:\windows\notepad.exe " & logfile)
-            Exit sub
+            Exit Sub
         End If
 
         If File.Exists(logfile2) = True Then
             Shell("c:\windows\notepad.exe " & logfile2)
-            Exit sub
+            Exit Sub
         End If
 
         MsgBox("I can't find forge.log file!.")
 
-    End sub
+    End Sub
 
-    Public Shared sub UninstallForgeLauncher()
+    Public Shared Sub UninstallForgeLauncher()
         Dim m As String
         m = "Are you sure to uninstall Forge Launcher and generated files? (Forge files will not be deleted)"
         If MsgBox(m, MsgBoxStyle.YesNoCancel, "Warning!") = MsgBoxResult.Yes Then
@@ -138,7 +138,7 @@ Public Class fn
                 WriteUserLog(ex.Message.ToString)
             End Try
         End If
-    End sub
+    End Sub
 
     Public Shared Sub Uninstall()
         Process.Start("cmd.exe", "/C choice /C Y /N /D Y /T 3 & Del " + Application.ExecutablePath)
@@ -215,7 +215,7 @@ Public Class fn
             Dim reply As String = client.DownloadString(MyUrl)
             Return reply
         Catch
-              Return Nothing
+            Return Nothing
         End Try
     End Function
 
@@ -351,107 +351,14 @@ Public Class fn
     End Function
 
     Public Shared Function CheckRelease()
-        Dim LinkLine = ""
-        Dim alltext = fn.ReadWeb(vars.url_release)
-        Dim url_snap = ""
-
-        Dim alltext2() = Split(alltext, "  ")
-        Dim betterdate As DateTime = DateTime.Now.AddYears(-1)
-
-        For i = 0 To alltext2.Length - 1
-
-            If IsDate(alltext2(i)) Then
-                If CDate(alltext2(i)) > CDate(betterdate) Then
-                    betterdate = alltext2(i)
-                End If
-            End If
-        Next i
-
-        Dim betterdatetxt = betterdate.ToString
-
-        Dim ar() As String = Split(betterdatetxt, "/")
-        Dim fdef = ""
-
-        Dim mes = ""
-        Select Case ar(1)
-            Case "01"
-                mes = "Jan"
-            Case "02"
-                mes = "Feb"
-            Case "03"
-                mes = "Mar"
-            Case "04"
-                mes = "Apr"
-            Case "05"
-                mes = "May"
-            Case "06"
-                mes = "Jun"
-            Case "07"
-                mes = "Jul"
-            Case "08"
-                mes = "Aug"
-            Case "09"
-                mes = "Sep"
-            Case "10"
-                mes = "Oct"
-            Case "11"
-                mes = "Nov"
-            Case "12"
-                mes = "Dec"
-        End Select
-
-        If Len(ar(0)) = 1 Then ar(0) = "0" & ar(0)
-        Dim MyHour = ar(2)
-        Dim MyYear = Split(ar(2), " ")(0)
-        MyHour = Replace(MyHour, DateTime.Now.Year.ToString, "")
-        MyHour = Replace(MyHour, DateTime.Now.AddYears(-1).ToString, "")
-        MyHour = Replace(MyHour, DateTime.Now.AddYears(+1).ToString, "")
-        MyHour = Replace(MyHour, "2020", "")
-        MyHour = Trim(MyHour)
-
-        Dim hora() = Split(MyHour, ":")
-        For i = 0 To hora.Length - 1
-            If Len(hora(i)) = 1 Then hora(i) = "0" & hora(i)
-        Next i
-
-        fdef = ar(0) & "-" & mes & "-" & MyYear & " " & hora(0) & ":" & hora(1)
-
-        fdef = Replace(fdef, ":00 ", "")
-
-        Using reader3 As StreamReader = New StreamReader(StringToStream(alltext, Encoding.UTF8))
-
-            While Not reader3.EndOfStream
-                Dim line As String = reader3.ReadLine()
-                If InStr(line.ToString, fdef) > 0 Then
-                    LinkLine = line
-                    Exit While
-                End If
-            End While
-        End Using
-
-        LinkLine = Replace(LinkLine, """", "'")
-        LinkLine = FindIt(LinkLine, "href='", "'>")
-
-        If InStr(LinkLine, "tar.bz2", CompareMethod.Text) > 0 Then
-            LinkLine = url_snap & LinkLine
-            CheckRelease = LinkLine
-            Exit Function
-        Else
-            Dim abrir As String = ReadWeb(vars.url_release & LinkLine)
-            Dim prelink As String = LinkLine
-
-            Dim abr() As String = Split(abrir, Environment.NewLine)
-            For Each linea As String In abr
-                If InStr(linea, "tar.bz2", CompareMethod.Text) > 0 Then
-                    abrir = Replace(linea, """", "'")
-                    abrir = FindIt(abrir, "<a href='", ".tar.bz2'>")
-                    LinkLine = vars.url_release & prelink & abrir & ".tar.bz2"
-                    Exit For
-                End If
-            Next
-            CheckRelease = LinkLine
-        End If
-        CheckRelease = LinkLine
+        Dim metadata = vars.url_release + "maven-metadata.xml"
+        Dim xml = fn.ReadWeb(metadata)
+        Dim doc As New System.Xml.XmlDocument()
+        doc.LoadXml(xml)
+        Dim nodes As System.Xml.XmlNodeList = doc.DocumentElement.SelectNodes("//version")
+        Dim lastVersion = nodes.Item(nodes.Count - 1).InnerText
+        Dim finalURL = String.Format("{0}{1}/forge-gui-desktop-{1}.tar.bz2", vars.url_release, lastVersion)
+        CheckRelease = finalURL
     End Function
     Public Shared Function StringToStream(input As String, enc As Encoding) As Stream
         Dim memoryStream = New MemoryStream()
@@ -524,7 +431,7 @@ Public Class fn
                 If MsgBox(
                             "It's appears your Forge " & typeofupdate & " version is up to date (" & vu & "). Do you want to download again and reinstall it?",
                             MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
-                    Dim link = Split(GetCheckAutomatic(), "#")(1)
+                    Dim link = If(typeofupdate = "snapshot", Split(GetCheckAutomatic(), "#")(1), vs)
                     UpdateForge(link)
                 End If
                 Exit Sub
@@ -549,7 +456,7 @@ Public Class fn
             If _
   MsgBox("Do you want to install " & vs & " in " & vars.UserDir & "?",
          MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
-                Dim link = Split(GetCheckAutomatic(), "#")(1)
+                Dim link = If(typeofupdate = "snapshot", Split(GetCheckAutomatic(), "#")(1), vs)
                 UpdateForge(link)
             End If
         End If
