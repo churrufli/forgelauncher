@@ -74,6 +74,7 @@ Partial Class fl
         '
         'launchforge
         '
+        Me.launchforge.BackColor = System.Drawing.Color.Gainsboro
         Me.launchforge.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.0!, System.Drawing.FontStyle.Bold)
         Me.launchforge.ForeColor = System.Drawing.Color.Black
         Me.launchforge.Location = New System.Drawing.Point(167, 20)
@@ -94,13 +95,14 @@ Partial Class fl
         '
         'btnupdate
         '
+        Me.btnupdate.BackColor = System.Drawing.Color.Gainsboro
         Me.btnupdate.Image = CType(resources.GetObject("btnupdate.Image"), System.Drawing.Image)
         Me.btnupdate.Location = New System.Drawing.Point(128, 20)
         Me.btnupdate.Name = "btnupdate"
         Me.btnupdate.Size = New System.Drawing.Size(33, 33)
         Me.btnupdate.TabIndex = 3
         Me.ToolTip1.SetToolTip(Me.btnupdate, "Check for Forge Updates")
-        Me.btnupdate.UseVisualStyleBackColor = True
+        Me.btnupdate.UseVisualStyleBackColor = False
         '
         'btnlaunchmode
         '
