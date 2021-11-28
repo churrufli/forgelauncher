@@ -789,8 +789,8 @@ Problem:
             End If
             Dim t As String
             Using fs As FileStream = File.Create(Path)
-                t = "userDir=" & Directory.GetCurrentDirectory() & "/user" + Environment.NewLine
-                t = t + "cacheDir=" & Directory.GetCurrentDirectory() & "/cache" + Environment.NewLine
+                t = "userDir=./user" + Environment.NewLine
+                t = t + "cacheDir=./cache" + Environment.NewLine
                 t = t + "cardPicsDir="
                 t = Replace(t, "\", "/")
                 Dim info As Byte() = New UTF8Encoding(True).GetBytes(t)
