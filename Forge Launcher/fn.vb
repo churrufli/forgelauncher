@@ -530,7 +530,7 @@ Public Class fn
                 Dim text As String = IO.File.ReadAllText(vars.UserDir & "\forge.profile.properties")
                 lines = IO.File.ReadAllLines(vars.UserDir & "\forge.profile.properties")
                 For Each line As String In lines
-                    If InStr(LCase(line.ToString), "UserDir") > 0 Then
+                    If InStr(LCase(line.ToString), "userdir") > 0 Then
                         Try
                             Dim PossibleDir = Split(line, "=")(1).ToString
                             If PossibleDir <> "" And Directory.Exists(PossibleDir) Then
@@ -720,18 +720,18 @@ Public Class fn
                 'Extract the tar's contents
                 tArch.ExtractContents(sDestPath)
 
-                'Get a list of the files that were extracted within the tar folder
-                Dim sExtractedFiles() As String =
-                        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+                ''Get a list of the files that were extracted within the tar folder
+                'Dim sExtractedFiles() As String =
+                '        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
-                'Move all the files to the requested destination directory
-                Dim sFile As String
-                For Each sFile In sExtractedFiles
-                    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
-                Next
+                ''Move all the files to the requested destination directory
+                'Dim sFile As String
+                'For Each sFile In sExtractedFiles
+                '    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
+                'Next
 
-                'Delete the tar folder
-                Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+                ''Delete the tar folder
+                'Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
                 'Close the open file streams
                 tArch.Close()
@@ -748,9 +748,7 @@ Problem:
 
     Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)
 
-        Dim myfile = fl.vtoupdate.Text
-        myfile = Replace(myfile, "https://snapshots.cardforge.org/", "")
-        myfile = Replace(myfile, "https://downloads.cardforge.org/dailysnapshots/", "")
+        Dim myfile = Path.GetFileName(vtoupdate)
 
         WriteUserLog("Done!" & vbCrLf)
 
@@ -758,7 +756,7 @@ Problem:
 
             Try
                 Dim x As Integer
-                Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge-gui-desktop-*-jar-with-dependencies.jar")
+                Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge-*-jar-with-dependencies.jar")
                 If paths.Length > 0 Then
                     For x = 0 To paths.Length - 1
                         File.Delete(paths(x))
@@ -791,8 +789,8 @@ Problem:
             End If
             Dim t As String
             Using fs As FileStream = File.Create(Path)
-                t = "userDir=" & Directory.GetCurrentDirectory() & "/user" + Environment.NewLine
-                t = t + "cacheDir=" & Directory.GetCurrentDirectory() & "/cache" + Environment.NewLine
+                t = "userDir=./user" + Environment.NewLine
+                t = t + "cacheDir=./cache" + Environment.NewLine
                 t = t + "cardPicsDir="
                 t = Replace(t, "\", "/")
                 Dim info As Byte() = New UTF8Encoding(True).GetBytes(t)
@@ -823,7 +821,7 @@ Problem:
                 UpdateLog("release_version", "Not found")
                 UpdateLog("other_version", "Not found")
             Case "release_version"
-                UpdateLog(actual, myfile)
+                UpdateLog(actual, vtoupdate)
                 UpdateLog("forge_version", "Not found")
                 UpdateLog("other_version", "Not found")
         End Select
