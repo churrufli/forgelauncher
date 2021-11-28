@@ -720,18 +720,18 @@ Public Class fn
                 'Extract the tar's contents
                 tArch.ExtractContents(sDestPath)
 
-                'Get a list of the files that were extracted within the tar folder
-                Dim sExtractedFiles() As String =
-                        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+                ''Get a list of the files that were extracted within the tar folder
+                'Dim sExtractedFiles() As String =
+                '        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
-                'Move all the files to the requested destination directory
-                Dim sFile As String
-                For Each sFile In sExtractedFiles
-                    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
-                Next
+                ''Move all the files to the requested destination directory
+                'Dim sFile As String
+                'For Each sFile In sExtractedFiles
+                '    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
+                'Next
 
-                'Delete the tar folder
-                Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+                ''Delete the tar folder
+                'Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
                 'Close the open file streams
                 tArch.Close()
