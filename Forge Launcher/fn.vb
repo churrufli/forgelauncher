@@ -748,9 +748,7 @@ Problem:
 
     Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)
 
-        Dim myfile = fl.vtoupdate.Text
-        myfile = Replace(myfile, "https://snapshots.cardforge.org/", "")
-        myfile = Replace(myfile, "https://downloads.cardforge.org/dailysnapshots/", "")
+        Dim myfile = Path.GetFileName(vtoupdate)
 
         WriteUserLog("Done!" & vbCrLf)
 
@@ -823,7 +821,7 @@ Problem:
                 UpdateLog("release_version", "Not found")
                 UpdateLog("other_version", "Not found")
             Case "release_version"
-                UpdateLog(actual, myfile)
+                UpdateLog(actual, vtoupdate)
                 UpdateLog("forge_version", "Not found")
                 UpdateLog("other_version", "Not found")
         End Select
