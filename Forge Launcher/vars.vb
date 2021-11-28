@@ -6,6 +6,7 @@ Public Class vars
     Public Shared MyLogServer As String = ""
     Public Shared LogName As String = "fldata/version.txt"
     Public Shared UserDir As String = Directory.GetCurrentDirectory()
+    Public Shared ForgeData As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Forge")
     Public Shared SnapshotUrl As String = "https://downloads.cardforge.org/dailysnapshots/"
     Public Shared url_release As String = "https://releases.cardforge.org/forge/forge-gui-desktop/"
     Public Shared LinkLine As String = ""
