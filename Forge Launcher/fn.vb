@@ -530,7 +530,7 @@ Public Class fn
                 Dim text As String = IO.File.ReadAllText(vars.UserDir & "\forge.profile.properties")
                 lines = IO.File.ReadAllLines(vars.UserDir & "\forge.profile.properties")
                 For Each line As String In lines
-                    If InStr(LCase(line.ToString), "userdir") > 0 Then
+                    If Not line.StartsWith("#") AndAlso InStr(LCase(line.ToString), "userdir") > 0 Then
                         Try
                             Dim PossibleDir = Split(line, "=")(1).ToString
                             If PossibleDir <> "" And Directory.Exists(PossibleDir) Then
