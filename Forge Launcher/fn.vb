@@ -99,7 +99,7 @@ Public Class fn
     End Function
 
     Public Shared Sub OpenLogFile()
-        Dim logfile As String = Directory.GetCurrentDirectory & "\user\forge.log"
+        Dim logfile As String = vars.ForgeData & "\forge.log"
         Dim logfile2 As String = Directory.GetCurrentDirectory & "\UserDir\forge.log"
 
         If File.Exists(logfile) = True Then
@@ -163,8 +163,8 @@ Public Class fn
             vbCrLf & " Are you sure?"
         If MsgBox(m, MsgBoxStyle.YesNoCancel, "Warning!") = MsgBoxResult.Yes Then
             Try
-                Dim dir As String = Replace(ReadLogUser("decks_dir"), "decks", "preferences")
-                File.Delete(dir & "/forge.preferences")
+                Dim dir As String = Path.Combine(vars.ForgeData, "preferences")
+                File.Delete(dir & "\forge.preferences")
                 MsgBox("Done!")
             Catch ex As Exception
                 WriteUserLog(ex.Message.ToString)
@@ -534,20 +534,19 @@ Public Class fn
                         Try
                             Dim PossibleDir = Split(line, "=")(1).ToString
                             If PossibleDir <> "" And Directory.Exists(PossibleDir) Then
-                                If PossibleDir <> "" Then
-                                    PossibleDir = PossibleDir & "\decks"
-                                    If CheckIfForgeExists() Then
-                                        If ShowMsg Then
-                                            WriteUserLog(
-                                                "Detected " & PossibleDir &
-                                                " As Custom User Directory (You can change the directories In Settings)." &
-                                                vbCrLf)
-                                        End If
+                                vars.ForgeData = PossibleDir
+                                PossibleDir = PossibleDir & "\decks"
+                                If CheckIfForgeExists() Then
+                                    If ShowMsg Then
+                                        WriteUserLog(
+                                        "Detected " & PossibleDir &
+                                        " As Custom User Directory (You can change the directories In Settings)." &
+                                        vbCrLf)
                                     End If
-                                    MyFolder = PossibleDir
-                                    SearchFolders = PossibleDir
-                                    Exit Function
                                 End If
+                                MyFolder = PossibleDir
+                                SearchFolders = PossibleDir
+                                Exit Function
                             End If
                         Catch
                         End Try
@@ -566,7 +565,6 @@ Public Class fn
             Dim aa As String = ReadLogUser("profileproperties", False).ToString
             If aa.ToString <> (IIf(File.Exists("forge.profile.properties"), "yes", "no")).ToString Then
                 UpdateLog("profileproperties", IIf(File.Exists("forge.profile.properties"), "yes", "no"))
-                UpdateLog("decks_dir", Directory.GetCurrentDirectory() & "\user\decks")
             End If
         Catch
         End Try
@@ -796,6 +794,7 @@ Problem:
                 Dim info As Byte() = New UTF8Encoding(True).GetBytes(t)
                 fs.Write(info, 0, info.Length)
             End Using
+            vars.ForgeData = "./user"
         End If
 
         Dim v As String = fl.vtoupdate.Text
