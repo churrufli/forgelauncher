@@ -756,7 +756,7 @@ Problem:
 
             Try
                 Dim x As Integer
-                Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge-gui-desktop-*-jar-with-dependencies.jar")
+                Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge-*-jar-with-dependencies.jar")
                 If paths.Length > 0 Then
                     For x = 0 To paths.Length - 1
                         File.Delete(paths(x))
