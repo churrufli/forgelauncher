@@ -103,12 +103,12 @@ Public Class fn
         Dim logfile2 As String = Directory.GetCurrentDirectory & "\UserDir\forge.log"
 
         If File.Exists(logfile) = True Then
-            Shell("c:\windows\notepad.exe " & logfile)
+            Process.Start("notepad.exe", logfile)
             Exit Sub
         End If
 
         If File.Exists(logfile2) = True Then
-            Shell("c:\windows\notepad.exe " & logfile2)
+            Process.Start("notepad.exe", logfile2)
             Exit Sub
         End If
 

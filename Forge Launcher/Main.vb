@@ -4,6 +4,7 @@ Imports System.Net
 Imports System.Timers
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports System.Reflection
 
 Public Class Main
     Private Sub fl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -37,7 +38,7 @@ Public Class Main
         fn.CheckIfICSharpCodeExist()
         fn.CheckLog()
         SetComboboxes()
-        Me.Text = "Forge Launcher v2.1.9"
+        Me.Text = GetTitle()
 
         fn.SearchFolders(False)
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
@@ -50,6 +51,18 @@ Public Class Main
         DisableStuffs()
         fn.CheckforForgeUpdates(False)
     End Sub
+    Public Shared Function GetTitle() As String
+        Dim ass As Assembly = Assembly.GetExecutingAssembly()
+        Dim name = ass.GetName()
+        Dim Version As String = "v" & ass.GetName().Version.Major & "." & ass.GetName().Version.Minor
+
+        If ass.GetName().Version.Build > 0 Then
+            Version += "." & ass.GetName().Version.Build
+        End If
+
+        Dim Title As String = (CType(ass.GetCustomAttributes(GetType(AssemblyTitleAttribute), False)(0), AssemblyTitleAttribute)).Title
+        Return Title & " " + Version
+    End Function
 
     Sub SetComboboxes()
         Try
