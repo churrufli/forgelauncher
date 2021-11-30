@@ -7,8 +7,6 @@ Imports System.Text.RegularExpressions
 Imports System.Reflection
 
 Public Class Main
-    Private Sub fl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-    End Sub
 
     Public WithEvents downloader As WebClient
     Dim second As Integer
@@ -99,11 +97,6 @@ Public Class Main
         fn.CheckforForgeUpdates()
     End Sub
 
-    Public Shared Sub downloader_DownloadProgressChanged(sender As Object, e As DownloadProgressChangedEventArgs) _
-        Handles downloader.DownloadProgressChanged
-        Main.ProgressBar1.Value = e.ProgressPercentage
-    End Sub
-
     Private Sub ForgeDiscordChannelToolStripMenuItem_Click(sender As Object, e As EventArgs) _
         Handles ForgeDiscordChannelToolStripMenuItem.Click
         Process.Start("https://discord.gg/3v9JCVr")
@@ -156,7 +149,7 @@ Public Class Main
             End If
         Next
         If opened = False Then
-            Dim box = New preferences()
+            Dim box = New settings()
             box.Show()
         End If
     End Sub
@@ -194,7 +187,7 @@ Public Class Main
             End If
         Next
         If opened = False Then
-            Dim box = New preferences()
+            Dim box = New settings()
             box.Show()
         End If
     End Sub

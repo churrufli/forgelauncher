@@ -126,17 +126,17 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Main.Designer.vb">
-      <DependentUpon>Main.vb</DependentUpon>
+    <Compile Include="main.Designer.vb">
+      <DependentUpon>main.vb</DependentUpon>
     </Compile>
-    <Compile Include="Main.vb">
+    <Compile Include="main.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="fn.vb" />
-    <Compile Include="LaunchMode.Designer.vb">
-      <DependentUpon>LaunchMode.vb</DependentUpon>
+    <Compile Include="launchmode.Designer.vb">
+      <DependentUpon>launchmode.vb</DependentUpon>
     </Compile>
-    <Compile Include="LaunchMode.vb">
+    <Compile Include="launchmode.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -155,20 +155,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Preferences.Designer.vb">
-      <DependentUpon>Preferences.vb</DependentUpon>
+    <Compile Include="settings.Designer.vb">
+      <DependentUpon>settings.vb</DependentUpon>
     </Compile>
-    <Compile Include="Preferences.vb">
+    <Compile Include="settings.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="vars.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Main.resx">
-      <DependentUpon>Main.vb</DependentUpon>
+    <EmbeddedResource Include="main.resx">
+      <DependentUpon>main.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LaunchMode.resx">
-      <DependentUpon>LaunchMode.vb</DependentUpon>
+    <EmbeddedResource Include="launchmode.resx">
+      <DependentUpon>launchmode.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -176,8 +176,8 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Preferences.resx">
-      <DependentUpon>Preferences.vb</DependentUpon>
+    <EmbeddedResource Include="settings.resx">
+      <DependentUpon>settings.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
