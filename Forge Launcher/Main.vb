@@ -52,10 +52,10 @@ Public Class Main
     Public Shared Function GetTitle() As String
         Dim ass As Assembly = Assembly.GetExecutingAssembly()
         Dim name = ass.GetName()
-        Dim Version As String = "v" & ass.GetName().Version.Major & "." & ass.GetName().Version.Minor
+        Dim Version As String = "v" & name.Version.Major & "." & name.Version.Minor
 
-        If ass.GetName().Version.Build > 0 Then
-            Version += "." & ass.GetName().Version.Build
+        If name.Version.Build > 0 Then
+            Version += "." & name.Version.Build
         End If
 
         Dim Title As String = (CType(ass.GetCustomAttributes(GetType(AssemblyTitleAttribute), False)(0), AssemblyTitleAttribute)).Title
