@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "flauncher", "Forge Launcher\flauncher.vbproj", "{B9A6E91C-1D18-4AA7-AA63-2B44B93D2D49}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Forge Launcher", "Forge Launcher\Forge Launcher.vbproj", "{B9A6E91C-1D18-4AA7-AA63-2B44B93D2D49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

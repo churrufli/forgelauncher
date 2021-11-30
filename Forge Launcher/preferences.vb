@@ -12,7 +12,7 @@
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         fn.UpdateLog("removepreviousjarfiles", IIf(removepreviousjarfiles.Checked, "yes", "no"))
-        fl.txlog.Text = ""
+        Main.txlog.Text = ""
         Application.Restart()
     End Sub
 

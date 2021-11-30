@@ -1,7 +1,7 @@
 ﻿Imports System.Text
 Imports Microsoft.VisualBasic.Devices
 
-Public Class lm
+Public Class LaunchMode
     Dim haschanges As Boolean = False
 
     Private Sub lm_Load(sender As Object, e As EventArgs) Handles MyBase.Load

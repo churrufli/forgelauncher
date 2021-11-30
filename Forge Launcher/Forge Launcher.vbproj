@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B9A6E91C-1D18-4AA7-AA63-2B44B93D2D49}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>flauncher.fl</StartupObject>
+    <StartupObject>flauncher.Main</StartupObject>
     <RootNamespace>flauncher</RootNamespace>
     <AssemblyName>flauncher</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -92,7 +92,8 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>ic_launcher.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -101,10 +102,6 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\packages\ICSharpCode.SharpZipLib.dll.0.85.4.369\lib\net20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
@@ -129,17 +126,17 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="fl.Designer.vb">
-      <DependentUpon>fl.vb</DependentUpon>
+    <Compile Include="Main.Designer.vb">
+      <DependentUpon>Main.vb</DependentUpon>
     </Compile>
-    <Compile Include="fl.vb">
+    <Compile Include="Main.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="fn.vb" />
-    <Compile Include="lm.Designer.vb">
-      <DependentUpon>lm.vb</DependentUpon>
+    <Compile Include="LaunchMode.Designer.vb">
+      <DependentUpon>LaunchMode.vb</DependentUpon>
     </Compile>
-    <Compile Include="lm.vb">
+    <Compile Include="LaunchMode.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -158,20 +155,20 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="preferences.Designer.vb">
-      <DependentUpon>preferences.vb</DependentUpon>
+    <Compile Include="Preferences.Designer.vb">
+      <DependentUpon>Preferences.vb</DependentUpon>
     </Compile>
-    <Compile Include="preferences.vb">
+    <Compile Include="Preferences.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="vars.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="fl.resx">
-      <DependentUpon>fl.vb</DependentUpon>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="lm.resx">
-      <DependentUpon>lm.vb</DependentUpon>
+    <EmbeddedResource Include="LaunchMode.resx">
+      <DependentUpon>LaunchMode.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -179,8 +176,8 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="preferences.resx">
-      <DependentUpon>preferences.vb</DependentUpon>
+    <EmbeddedResource Include="Preferences.resx">
+      <DependentUpon>Preferences.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -197,7 +194,6 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -210,9 +206,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ic_launcher.ico" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ICSharpCode.SharpZipLib.dll">

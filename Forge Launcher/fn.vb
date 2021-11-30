@@ -370,7 +370,7 @@ Public Class fn
     End Function
     Public Shared Sub CheckforForgeUpdates(Optional ByVal AskforReinstall = False, Optional ByVal NewInstall = False)
         If NewInstall Then
-            If fl.rbt_normal.Checked = False And fl.rbt_properties.Checked = False Then
+            If Main.rbt_normal.Checked = False And Main.rbt_properties.Checked = False Then
                 MsgBox("Please select normal or portable install.")
                 Exit Sub
             End If
@@ -378,7 +378,7 @@ Public Class fn
         End If
         Dim readversion As String
         Dim urltoshow As String
-        Dim result = fl.typeofupdate.Text.ToString
+        Dim result = Main.typeofupdate.Text.ToString
         If result = "snapshot" Then
             readversion = "forge_version"
             urltoshow = vars.SnapshotUrl
@@ -415,7 +415,7 @@ Public Class fn
 
         If vu = "" Then
             If CheckIfForgeExists() = False Then
-                If fl.rbt_normal.Checked = False And fl.rbt_properties.Checked = False Then
+                If Main.rbt_normal.Checked = False And Main.rbt_properties.Checked = False Then
                     MsgBox("Please select normal or portable install.")
                     Exit Sub
                 End If
@@ -464,9 +464,9 @@ Public Class fn
     End Sub
 
     Public Shared Sub UpdateForge(vtoupdate)
-        fl.vtoupdate.Text = vtoupdate
-        fl.MenuGeneral.Enabled = False
-        fl.GroupForgeOptions.Enabled = False
+        Main.vtoupdate.Text = vtoupdate
+        Main.MenuGeneral.Enabled = False
+        Main.GroupForgeOptions.Enabled = False
         If vtoupdate = "" Then vtoupdate = CheckForgeVersion(False)
         Dim urlcomplete = vtoupdate
         Dim myfile = Path.GetFileName(urlcomplete)
@@ -478,19 +478,19 @@ Public Class fn
     End Sub
 
     Public Shared Sub DownloadStart(dwl, fn)
-        fl.ProgressBar1.Visible = True
+        Main.ProgressBar1.Visible = True
         downloader = New WebClient
         downloader.DownloadFileAsync(New Uri(dwl), fn)
     End Sub
 
     Public Shared Sub downloader_DownloadProgressChanged(sender As Object, e As DownloadProgressChangedEventArgs) _
         Handles downloader.DownloadProgressChanged
-        fl.ProgressBar1.Value = e.ProgressPercentage
+        Main.ProgressBar1.Value = e.ProgressPercentage
     End Sub
 
     Public Shared Sub downloader_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) _
         Handles downloader.DownloadFileCompleted
-        ContinueInstallingForge(fl.vtoupdate.Text)
+        ContinueInstallingForge(Main.vtoupdate.Text)
     End Sub
 
     Public Shared Function FindIt(total As String, first As String, last As String) As String
@@ -780,7 +780,7 @@ Problem:
         Catch
         End Try
 
-        If fl.rbt_properties.Checked = True Then
+        If Main.rbt_properties.Checked = True Then
             Dim Path = Directory.GetCurrentDirectory() & "\forge.profile.properties"
             If File.Exists(Path) Then
                 File.Delete(Path)
@@ -797,14 +797,14 @@ Problem:
             vars.ForgeData = "./user"
         End If
 
-        Dim v As String = fl.vtoupdate.Text
+        Dim v As String = Main.vtoupdate.Text
         Dim upv As String = ReadLogUser("forge_previous_version")
 
         If upv = "" Then
             UpdateLog("forge_previous_version", v)
         End If
 
-        Dim actual As String = fl.typeofupdate.SelectedItem.ToString
+        Dim actual As String = Main.typeofupdate.SelectedItem.ToString
 
         Select Case actual
             Case "snapshot"
@@ -865,10 +865,10 @@ Problem:
     End Sub
 
     Public Shared Sub WriteUserLog(msg)
-        If fl.txlog.Text.Contains(msg) = False Then
-            fl.txlog.SelectedText = msg
-            fl.txlog.SelectionStart = fl.txlog.Text.Length
-            fl.txlog.ScrollToCaret()
+        If Main.txlog.Text.Contains(msg) = False Then
+            Main.txlog.SelectedText = msg
+            Main.txlog.SelectionStart = Main.txlog.Text.Length
+            Main.txlog.ScrollToCaret()
         End If
 
     End Sub

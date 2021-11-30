@@ -5,7 +5,7 @@ Imports System.Timers
 Imports System.Text
 Imports System.Text.RegularExpressions
 
-Public Class fl
+Public Class Main
     Private Sub fl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
     End Sub
 
@@ -88,7 +88,7 @@ Public Class fl
 
     Public Shared Sub downloader_DownloadProgressChanged(sender As Object, e As DownloadProgressChangedEventArgs) _
         Handles downloader.DownloadProgressChanged
-        fl.ProgressBar1.Value = e.ProgressPercentage
+        Main.ProgressBar1.Value = e.ProgressPercentage
     End Sub
 
     Private Sub ForgeDiscordChannelToolStripMenuItem_Click(sender As Object, e As EventArgs) _
@@ -157,7 +157,7 @@ Public Class fl
             End If
         Next
         If opened = False Then
-            Dim box = New lm()
+            Dim box = New LaunchMode()
             box.Show()
         End If
     End Sub
@@ -203,7 +203,7 @@ Public Class fl
             End If
         Next
         If opened = False Then
-            Dim box = New lm()
+            Dim box = New LaunchMode()
             box.Show()
         End If
     End Sub
