@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B9A6E91C-1D18-4AA7-AA63-2B44B93D2D49}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>flauncher.Main</StartupObject>
-    <RootNamespace>flauncher</RootNamespace>
-    <AssemblyName>flauncher</AssemblyName>
+    <StartupObject>forgelauncher.Main</StartupObject>
+    <RootNamespace>forgelauncher</RootNamespace>
+    <AssemblyName>Forge Launcher</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -198,7 +198,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 y x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
