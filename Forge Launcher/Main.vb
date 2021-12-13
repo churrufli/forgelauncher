@@ -15,6 +15,10 @@ Public Class Main
         Dim time As DateTime = e.SignalTime
     End Sub
 
+    Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
+
     Private Sub Fl_Shown(sender As Object, e As EventArgs) Handles Me.Shown
         fn.WriteUserLog("Loading data..." & vbCrLf)
         Timer1.Interval = 10
@@ -47,7 +51,10 @@ Public Class Main
 
         fn.CheckIfPreviousProfileProperties()
         DisableStuffs()
+        fn.LoadListofExes()
         fn.CheckforForgeUpdates(False)
+
+
     End Sub
     Public Shared Function GetTitle() As String
         Dim ass As Assembly = Assembly.GetExecutingAssembly()
@@ -217,4 +224,12 @@ Public Class Main
     Private Sub AboutLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutLauncherToolStripMenuItem.Click
         Process.Start("https://github.com/churrufli/forgelauncher")
     End Sub
+
+    Private Sub listofexes_SelectedIndexChanged(sender As Object, e As EventArgs) Handles listofexes.SelectedIndexChanged
+        Dim result = fn.ReadLogUser("exeselected").ToString
+        If listofexes.Text <> result And listofexes.Text <> "" Then
+            fn.UpdateLog("exeselected", listofexes.Text.ToString)
+        End If
+    End Sub
+
 End Class

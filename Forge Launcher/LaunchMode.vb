@@ -26,7 +26,7 @@ Public Class LaunchMode
     Public Sub getAvailableRAM()
         Dim CI = New ComputerInfo()
         Dim mem As ULong = ULong.Parse(CI.TotalPhysicalMemory.ToString())
-        Dim a = Math.Floor(mem/(1024*1024)) & " MB"
+        Dim a = Math.Floor(mem / (1024 * 1024)) & " MB"
         lblram.Text = a
     End Sub
 

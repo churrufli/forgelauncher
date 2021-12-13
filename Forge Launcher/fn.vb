@@ -601,6 +601,7 @@ Public Class fn
             t = t & "<typeofupdate>snapshot</typeofupdate>" & vbCrLf
             t = t & "<launchmode>normal</launchmode>" & vbCrLf
             t = t & "<launchline></launchline>" & vbCrLf
+            t = t & "<exeselected></exeselected>" & vbCrLf
             If File.Exists(vars.LogName) = False Then
                 If Directory.Exists(Directory.GetCurrentDirectory() & "\fldata") = False Then
                     Directory.CreateDirectory(Directory.GetCurrentDirectory() & "\fldata")
@@ -662,6 +663,11 @@ Public Class fn
 
             If InStr(readText, "<launchline>", CompareMethod.Text) = 0 Then
                 readText = readText & "<launchline></launchline>" & Environment.NewLine
+                WriteLog = True
+            End If
+
+            If InStr(readText, "<exeselected>", CompareMethod.Text) = 0 Then
+                readText = readText & "<exeselected></exeselected>" & Environment.NewLine
                 WriteLog = True
             End If
 
@@ -839,6 +845,10 @@ Problem:
     End Sub
 
     Public Shared Sub Launch()
+        Dim myexe As String = "Forge.exe"
+        If Main.listofexes.Visible = True And Main.listofexes.SelectedItem <> Nothing Then
+            myexe = Main.listofexes.SelectedItem.ToString
+        End If
 
         If ReadLogUser("launchmode") = "advanced" Then
             WriteUserLog("Launching PlayForge.bat ..." & vbCrLf)
@@ -855,12 +865,12 @@ Problem:
             End Try
 
         Else
-            WriteUserLog("Launching Forge.exe ..." & vbCrLf)
-            If File.Exists("Forge.exe") Then
-                Process.Start("Forge.exe")
+            WriteUserLog("Launching " & myexe & " ..." & vbCrLf)
+            If File.Exists(myexe) Then
+                Process.Start(myexe)
                 Exit Sub
             End If
-            WriteUserLog("Can't find Forge.exe!." & vbCrLf)
+            WriteUserLog("Can't find " & myexe & "!." & vbCrLf)
         End If
     End Sub
 
@@ -873,4 +883,33 @@ Problem:
 
     End Sub
 
+    Public Shared Sub LoadListofExes()
+        If fn.ReadLogUser("launchmode").ToString <> "advanced" Then
+            Main.listofexes.Visible = True
+        Else
+            Main.listofexes.Visible = False
+            Exit Sub
+        End If
+
+        Main.listofexes.Items.Clear()
+        Dim exes As String() = Directory.GetFiles(Directory.GetCurrentDirectory, "*.exe")
+
+        For Each exe As String In exes
+            Main.listofexes.Items.Add(My.Computer.FileSystem.GetFileInfo(exe).Name)
+        Next
+
+        'reading preferences and set if exists
+        Dim pref As String = fn.ReadLogUser("exeselected").ToString
+        If pref <> "" Then
+            Try
+                Main.listofexes.SelectedIndex = Main.listofexes.FindStringExact(pref)
+            Catch
+            End Try
+            Exit Sub
+        End If
+        Try
+            Main.listofexes.SelectedIndex = Main.listofexes.FindStringExact("Forge.exe")
+        Catch
+        End Try
+    End Sub
 End Class

@@ -8,7 +8,7 @@ Imports System.Runtime.InteropServices
 ' Revisar los valores de los atributos del ensamblado
 
 <Assembly: AssemblyTitle("Forge Launcher")>
-<Assembly: AssemblyDescription("")>
+<Assembly: AssemblyDescription("a launcher for Forge")>
 <Assembly: AssemblyCompany("")>
 <Assembly: AssemblyProduct("Forge Launcher")>
 <Assembly: AssemblyCopyright("Copyright ©  2017")>
@@ -30,5 +30,5 @@ Imports System.Runtime.InteropServices
 ' mediante el carácter '*', como se muestra a continuación:
 ' <Assembly: Assemblyversion("1.0.*")> 
 
-<Assembly: AssemblyVersion("2.1.10.0")>
-<Assembly: AssemblyFileVersion("2.1.10.0")>
+<Assembly: AssemblyVersion("2.1.11.0")>
+<Assembly: AssemblyFileVersion("2.1.11.0")>
