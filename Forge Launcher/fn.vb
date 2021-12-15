@@ -286,7 +286,9 @@ Public Class fn
         End Select
 
         If ShowMsg Or ShowText Then
+#Disable Warning BC42104 ' La variable 'myread' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
             Dim UserVersion = ReadLogUser(myread, False)
+#Enable Warning BC42104 ' La variable 'myread' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
             If UserVersion = Nothing Then UserVersion = ""
             Dim LocalVersion = mycompare
             Try
@@ -299,9 +301,11 @@ Public Class fn
             End If
             If UserVersion <> vars.LinkLine Then
                 If Trim(x) = "release" Then
+#Disable Warning BC42104 ' La variable 'urltoshow' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
                     WriteUserLog(
                         "Founded Forge release " & Replace(vars.LinkLine, urltoshow, "") & "." & vbCrLf &
                         "You're running " & UserVersion & vbCrLf)
+#Enable Warning BC42104 ' La variable 'urltoshow' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
                 Else
                     WriteUserLog(
                         "New Forge " & x & "version available! " & Replace(vars.LinkLine, urltoshow, "") & "." & vbCrLf &
@@ -348,7 +352,9 @@ Public Class fn
         End If
 
         Return vars.LinkLine
+#Disable Warning BC42105 ' La función 'CheckForgeVersion' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
     End Function
+#Enable Warning BC42105 ' La función 'CheckForgeVersion' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
 
     Public Shared Function CheckRelease()
         Dim metadata = vars.url_release + "maven-metadata.xml"
@@ -506,7 +512,9 @@ Public Class fn
                     .Replace(last, "")
         Catch
         End Try
+#Disable Warning BC42105 ' La función 'FindIt' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
     End Function
+#Enable Warning BC42105 ' La función 'FindIt' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
 
 
     Public Shared Function SearchFolders(Optional ShowMsg As Boolean = True, Optional idlog As String = "decks_dir")
@@ -554,7 +562,9 @@ Public Class fn
                 Next
             End If
         Next
+#Disable Warning BC42105 ' La función 'SearchFolders' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
     End Function
+#Enable Warning BC42105 ' La función 'SearchFolders' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
 
     Public Shared Function CheckIfForgeExists()
         Return IIf(File.Exists("forge.exe"), True, False)
@@ -846,9 +856,13 @@ Problem:
 
     Public Shared Sub Launch()
         Dim myexe As String = "Forge.exe"
-        If Main.listofexes.Visible = True And Main.listofexes.SelectedItem <> Nothing Then
-            myexe = Main.listofexes.SelectedItem.ToString
-        End If
+        Try
+            If Main.listofexes.Visible = True And Main.listofexes.SelectedItem <> Nothing Then
+                myexe = Main.listofexes.SelectedItem.ToString
+            End If
+        Catch
+        End Try
+
 
         If ReadLogUser("launchmode") = "advanced" Then
             WriteUserLog("Launching PlayForge.bat ..." & vbCrLf)
