@@ -222,7 +222,6 @@ Public Class Main
     End Sub
 
     Private Sub AboutLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutLauncherToolStripMenuItem.Click
-        Process.Start("https://github.com/churrufli/forgelauncher")
     End Sub
 
     Private Sub listofexes_SelectedIndexChanged(sender As Object, e As EventArgs) Handles listofexes.SelectedIndexChanged
@@ -232,4 +231,12 @@ Public Class Main
         End If
     End Sub
 
+    Private Sub GithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GithubToolStripMenuItem.Click
+                Process.Start("https://github.com/churrufli/forgelauncher")
+
+    End Sub
+
+    Private Sub CheckForUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CheckForUpdatesToolStripMenuItem.Click
+        fn.CheckLauncherUpdates()
+    End Sub
 End Class

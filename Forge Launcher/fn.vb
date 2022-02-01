@@ -912,6 +912,12 @@ Problem:
             Main.listofexes.Items.Add(My.Computer.FileSystem.GetFileInfo(exe).Name)
         Next
 
+        Dim cmds As String() = Directory.GetFiles(Directory.GetCurrentDirectory, "*.cmd")
+
+        For Each cmd As String In cmds
+            Main.listofexes.Items.Add(My.Computer.FileSystem.GetFileInfo(cmd).Name)
+        Next
+
         'reading preferences and set if exists
         Dim pref As String = fn.ReadLogUser("exeselected").ToString
         If pref <> "" Then
@@ -926,4 +932,138 @@ Problem:
         Catch
         End Try
     End Sub
+
+    Public Shared Sub HitToLauncherUpdates(Optional ByVal forzar As Boolean = False)
+        Try
+            'compruebo sí existe
+            If File.Exists(vars.UserDir & "\fldata\" & vars.ServerLogName) Then
+                'si, compruebo ultima fecha
+                Dim myLastDate = ReadLogUser("lastupdate")
+                If myLastDate <> DateTime.Now.ToString("dd'/'MM'/'yyyy") Then
+                    forzar = True
+                End If
+                forzar = True
+
+                If forzar Then
+                    If CheckAddress(vars.BaseUrl & vars.ServerLogName) Then
+                        Try
+                            File.Delete(vars.UserDir & "\fldata\" & vars.ServerLogName)
+                        Catch
+                        End Try
+                        'fn.WriteUserLog("Checking for updates..." & vbCrLf)
+                        'descargar y actualizar
+                        DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "\fldata\" & vars.ServerLogName)
+                        'UpdateLog("lastupdate", DateTime.Now.ToString("dd'/'MM'/'yyyy"))
+                    End If
+
+                End If
+            Else
+                'no existe
+                If CheckAddress(vars.BaseUrl & vars.ServerLogName) Then
+                    DownloadFile(vars.BaseUrl & vars.ServerLogName, vars.UserDir & "\fldata\" & vars.ServerLogName)
+                End If
+            End If
+
+            Try
+                vars.MyLogServer = File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName).ToString & ""
+            Catch ex As Exception
+            End Try
+
+            If vars.MyLogServer = "" Then
+                Try
+                    vars.MyLogServer = File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName)
+                Catch ex As Exception
+
+                End Try
+            End If
+        Catch
+        End Try
+    End Sub
+
+    Public Shared Function CheckAddress(URL As String) As Boolean
+        Try
+            Dim request As WebRequest = WebRequest.Create(URL)
+            Dim response As WebResponse = request.GetResponse()
+        Catch ex As Exception
+            Return False
+        End Try
+        Return True
+    End Function
+
+    Public Shared Sub CheckLauncherUpdates()
+        Try
+            WriteUserLog("Checking for Launcher updates..." & vbCrLf)
+
+            Dim x As String = fn.ReadWeb("https://github.com/churrufli/forgelauncher/releases/")
+            Dim t As String = Main.GetTitle
+            Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "</a>", 1)
+
+            If t <> v Then
+                If _
+                     MsgBox("Forge Launcher New version Available. Update now?", MsgBoxStyle.YesNo, v) =
+                    MsgBoxResult.Yes Then
+                    Try
+                        WriteUserLog("Downloading new version from GitHub..." & vbCrLf)
+                        Dim myUrl = "https://github.com/churrufli/forgelauncher/releases/download/v" & GetDelimitedText(x, "Forge Launcher v", "</a>", 1) & "/Forge.Launcher.zip"
+                        DownloadFile(myUrl, "Forge Launcher New Version.zip")
+                        WriteUserLog("Unpacking new version in " & Directory.GetCurrentDirectory() & "..." & vbCrLf)
+                        UnzipFile(Directory.GetCurrentDirectory() & "/" & "Forge Launcher New Version.zip",
+                                  Directory.GetCurrentDirectory() & "/fltmp")
+                        File.Delete("Forge Launcher New Version.zip")
+                        File.Move("Forge Launcher.exe", "fltmp/Forge Launcher.bak")
+                        File.Copy("fltmp/Forge Launcher.exe", "Forge Launcher.exe")
+                        UpdateLog("showwhatsnew", "yes")
+                    Catch
+                    End Try
+
+                    Try
+                        File.Delete("fldata/fl_whatsnew.txt")
+                    Catch
+                    End Try
+                    Try
+                        UpdateLog("launcher_version", v)
+                    Catch
+                    End Try
+                    Try
+                        Directory.Delete("fltmp", True)
+                    Catch
+                    End Try
+                   Application.Restart()
+                End If
+            Else
+                WriteUserLog("Your Launcher is up to date: " & v & vbCrLf)
+            End If
+        Catch
+
+        End Try
+    End Sub
+
+    Public Shared Function GetDelimitedText(Text As String, OpenDelimiter As String,
+  CloseDelimiter As String, index As Long) As String
+        Dim i As Long, j As Long
+
+        If index = 0 Then index = 1
+
+        ' search the opening mark
+        i = InStr(index, Text, OpenDelimiter, vbTextCompare)
+        If i = 0 Then
+            index = 0
+            Exit Function
+        End If
+        i = i + Len(OpenDelimiter)
+
+        ' search the closing mark
+        j = InStr(i + 1, Text, CloseDelimiter, vbTextCompare)
+        If j = 0 Then
+            index = 0
+            Exit Function
+        End If
+
+        ' get the text between the two Delimiters
+        GetDelimitedText = Mid$(Text, i, j - i)
+
+        ' advanced the index after the closing Delimiter
+        index = j + Len(CloseDelimiter)
+
+    End Function
 End Class
