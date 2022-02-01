@@ -996,7 +996,7 @@ Problem:
 
             Dim x As String = fn.ReadWeb("https://github.com/churrufli/forgelauncher/releases/")
             Dim t As String = Main.GetTitle
-            Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "</a>", 1)
+            Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "</p>", 1)
 
             If t <> v Then
                 If _
@@ -1004,7 +1004,7 @@ Problem:
                     MsgBoxResult.Yes Then
                     Try
                         WriteUserLog("Downloading new version from GitHub..." & vbCrLf)
-                        Dim myUrl = "https://github.com/churrufli/forgelauncher/releases/download/v" & GetDelimitedText(x, "Forge Launcher v", "</a>", 1) & "/Forge.Launcher.zip"
+                        Dim myUrl = "https://github.com/churrufli/forgelauncher/releases/download/v" & GetDelimitedText(x, "Forge Launcher v", "</p>", 1) & "/Forge.Launcher.zip"
                         DownloadFile(myUrl, "Forge Launcher New Version.zip")
                         WriteUserLog("Unpacking new version in " & Directory.GetCurrentDirectory() & "..." & vbCrLf)
                         UnzipFile(Directory.GetCurrentDirectory() & "/" & "Forge Launcher New Version.zip",
