@@ -1015,7 +1015,6 @@ Problem:
                         UpdateLog("showwhatsnew", "yes")
                     Catch
                     End Try
-
                     Try
                         File.Delete("fldata/fl_whatsnew.txt")
                     Catch

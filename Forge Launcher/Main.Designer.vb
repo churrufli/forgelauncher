@@ -205,7 +205,7 @@ Partial Class Main
         '
         'AboutForgeToolStripMenuItem1
         '
-        Me.AboutForgeToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ForgeForumToolStripMenuItem, Me.ForgeDiscordChannelToolStripMenuItem, Me.ForgeWikiToolStripMenuItem})
+        Me.AboutForgeToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ForgeForumToolStripMenuItem, Me.ForgeWikiToolStripMenuItem, Me.ForgeDiscordChannelToolStripMenuItem})
         Me.AboutForgeToolStripMenuItem1.Name = "AboutForgeToolStripMenuItem1"
         Me.AboutForgeToolStripMenuItem1.Size = New System.Drawing.Size(77, 20)
         Me.AboutForgeToolStripMenuItem1.Text = "About Forge"
@@ -238,14 +238,14 @@ Partial Class Main
         'CheckForUpdatesToolStripMenuItem
         '
         Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
-        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(163, 22)
-        Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Updates"
+        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(211, 22)
+        Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Launcher Updates"
         '
         'GithubToolStripMenuItem
         '
         Me.GithubToolStripMenuItem.Name = "GithubToolStripMenuItem"
-        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(163, 22)
-        Me.GithubToolStripMenuItem.Text = "Github"
+        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(211, 22)
+        Me.GithubToolStripMenuItem.Text = "Visit Project on GitHub"
         '
         'ToolTip1
         '
