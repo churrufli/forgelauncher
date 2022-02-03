@@ -220,11 +220,9 @@ Public Class fn
     End Function
 
     Public Shared Function GetCheckAutomatic()
-        Dim LineLink = ""
-        Dim alltext = ""
+        Dim LineLink As String = ""
         Dim MyTx As String = ReadWeb("https://downloads.cardforge.org/dailysnapshots/")
         Dim mytxfind As String = MyTx
-        Dim prelink As String = LineLink
         Dim abr() As String = Split(MyTx, Environment.NewLine)
         For Each MyLines As String In abr
             If InStr(MyLines, "tar.bz2", CompareMethod.Text) > 0 Then
@@ -238,123 +236,15 @@ Public Class fn
         mydate = Split(mydate, "           ")(0).ToString
         mydate = Trim(mydate)
         Dim l As String = FindIt(LineLink, "forge-gui-desktop-", ".tar")
-        Return "Forge " & l & " " & mydate & "#" & LineLink
-    End Function
 
-    Public Shared Function CheckForgeVersion(Optional ShowMsg As Boolean = True, Optional ShowText As Boolean = False)
-        Dim typeofupdate As String = ReadLogUser("typeofupdate")
-        Select Case typeofupdate
-            Case "snapshot"
-                vars.LinkLine = GetCheckAutomatic()
-            Case "release"
-                vars.LinkLine = CheckRelease()
-        End Select
-
-        If vars.LinkLine = "" Then
-            vars.LinkLine = CheckRelease()
-        End If
-
-        Dim mycompare = ""
-
-        If vars.LinkLine <> "" Then
-
-            If InStr(vars.LinkLine, "#") > 0 Then
-                vars.LinkLine = Split(vars.LinkLine, "#")(0).ToString
-            End If
-
-            Select Case typeofupdate
-                Case "release"
-                    mycompare = ReadLogUser("forge_version", False)
-                Case "snapshot"
-                    mycompare = ReadLogUser("release_version", False)
-                Case "spanish snapshot"
-                    mycompare = ReadLogUser("other_version", False)
-            End Select
-
-        End If
-
-        Dim myread, urltoshow As String
-
-        Select Case typeofupdate
-            Case "snapshot"
-                myread = "forge_version"
-                urltoshow = vars.SnapshotUrl
-                urltoshow = "https://downloads.cardforge.org/dailysnapshots"
-            Case "release"
-                myread = "release_version"
-                urltoshow = vars.url_release
-        End Select
-
-        If ShowMsg Or ShowText Then
-#Disable Warning BC42104 ' La variable 'myread' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
-            Dim UserVersion = ReadLogUser(myread, False)
-#Enable Warning BC42104 ' La variable 'myread' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
-            If UserVersion = Nothing Then UserVersion = ""
-            Dim LocalVersion = mycompare
-            Try
-                If LocalVersion.Contains("#") Then LocalVersion = Split(LocalVersion, "#")(0)
-            Catch
-            End Try
-            Dim x = typeofupdate & " "
-            If Not IsNothing(UserVersion) Then
-                If UserVersion.Contains("#") Then UserVersion = Split(UserVersion, "#")(0)
-            End If
-            If UserVersion <> vars.LinkLine Then
-                If Trim(x) = "release" Then
-#Disable Warning BC42104 ' La variable 'urltoshow' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
-                    WriteUserLog(
-                        "Founded Forge release " & Replace(vars.LinkLine, urltoshow, "") & "." & vbCrLf &
-                        "You're running " & UserVersion & vbCrLf)
-#Enable Warning BC42104 ' La variable 'urltoshow' se usa antes de que se le haya asignado un valor. Podría darse una excepción de referencia NULL en tiempo de ejecución.
-                Else
-                    WriteUserLog(
-                        "New Forge " & x & "version available! " & Replace(vars.LinkLine, urltoshow, "") & "." & vbCrLf &
-                        "You're running " & UserVersion & vbCrLf)
-                End If
-
-            Else
-                If UserVersion.Contains("#") Then UserVersion = Split(UserVersion, "#")(0)
-                If UserVersion <> Nothing And vars.LinkLine <> Nothing Then
-                    WriteUserLog(
-                        "Your Forge " & x & "version is up to date: " & Replace(vars.LinkLine, urltoshow, "") & "." &
-                        vbCrLf)
-                    If _
-                        MsgBox(
-                            "Your Forge " & x & "version is up to date." & vbCrLf &
-                            "Do you want to start Forge and close Launcher?", MsgBoxStyle.YesNo, "Forge is up to date") =
-                        MsgBoxResult.Yes Then
-                        Launch()
-                        Application.Exit()
-                        Try
-                            Environment.Exit(1)
-                        Catch
-                        End Try
-                        Exit Function
-                    End If
-                End If
-            End If
+        If l <> Nothing And mydate <> Nothing And LineLink <> "" Then
+            Return "Forge " & l & " " & mydate & "#" & LineLink
         Else
-            If vars.LinkLine = "" Or vars.LinkLine = "not found" Then
-                Return ""
-                Exit Function
-            End If
-
-            Dim UserVersion = ReadLogUser("forge_version", False)
-            If ShowMsg Or ShowText Then
-                If UserVersion <> vars.LinkLine Then
-                    WriteUserLog("Can't connect to downloads.cardforge.org/dailysnapshots!" & vbCrLf)
-                Else
-                    WriteUserLog(
-                        "Your Forge version is up to date: " & Replace(vars.LinkLine, vars.SnapshotUrl, "") & "." &
-                        vbCrLf)
-                End If
-            End If
+            MsgBox("error: trying to get new version from https://downloads.cardforge.org/dailysnapshots/")
+            Return Nothing
         End If
 
-        Return vars.LinkLine
-#Disable Warning BC42105 ' La función 'CheckForgeVersion' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
     End Function
-#Enable Warning BC42105 ' La función 'CheckForgeVersion' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
 
     Public Shared Function CheckRelease()
         Dim metadata = vars.url_release + "maven-metadata.xml"
@@ -470,10 +360,21 @@ Public Class fn
     End Sub
 
     Public Shared Sub UpdateForge(vtoupdate)
+
         Main.vtoupdate.Text = vtoupdate
         Main.MenuGeneral.Enabled = False
         Main.GroupForgeOptions.Enabled = False
-        If vtoupdate = "" Then vtoupdate = CheckForgeVersion(False)
+        If vtoupdate = "" Then
+  
+            Dim typeofupdate As String = ReadLogUser("typeofupdate")
+            Select Case typeofupdate
+                Case "snapshot"
+                    vars.LinkLine = GetCheckAutomatic()
+                Case Else
+                    vars.LinkLine = CheckRelease()
+            End Select                
+        End If
+
         Dim urlcomplete = vtoupdate
         Dim myfile = Path.GetFileName(urlcomplete)
         If File.Exists(myfile) = True Then File.Delete(myfile)
@@ -481,6 +382,7 @@ Public Class fn
         If InStr(urlcomplete, "http") > 0 Then
         End If
         DownloadStart(urlcomplete, Path.GetFileName(urlcomplete))
+
     End Sub
 
     Public Shared Sub DownloadStart(dwl, fn)
@@ -511,11 +413,9 @@ Public Class fn
                 ((total.Substring(total.IndexOf(first), (total.IndexOf(last) - total.IndexOf(first)))).Replace(first, "")) _
                     .Replace(last, "")
         Catch
+            FindIt = Nothing
         End Try
-#Disable Warning BC42105 ' La función 'FindIt' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
     End Function
-#Enable Warning BC42105 ' La función 'FindIt' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
-
 
     Public Shared Function SearchFolders(Optional ShowMsg As Boolean = True, Optional idlog As String = "decks_dir")
 
@@ -562,9 +462,7 @@ Public Class fn
                 Next
             End If
         Next
-#Disable Warning BC42105 ' La función 'SearchFolders' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
     End Function
-#Enable Warning BC42105 ' La función 'SearchFolders' no devuelve un valor en todas las rutas de acceso de código. Puede producirse una excepción de referencia NULL en tiempo de ejecución cuando se use el resultado.
 
     Public Shared Function CheckIfForgeExists()
         Return IIf(File.Exists("forge.exe"), True, False)
@@ -1027,7 +925,7 @@ Problem:
                         Directory.Delete("fltmp", True)
                     Catch
                     End Try
-                   Application.Restart()
+                    Application.Restart()
                 End If
             Else
                 WriteUserLog("Your Launcher is up to date: " & v & vbCrLf)

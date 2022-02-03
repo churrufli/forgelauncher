@@ -43,7 +43,6 @@ Public Class Main
         Me.Text = GetTitle()
 
         fn.SearchFolders(False)
-        fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
         Try
             If fn.ReadLogUser("launchmode").ToString = "advanced" Then launchforge.Text = "Launch Forge (Advanced Mode)" Else launchforge.Text = "Launch Forge (Normal Mode)"
         Catch
@@ -52,6 +51,7 @@ Public Class Main
         fn.CheckIfPreviousProfileProperties()
         DisableStuffs()
         fn.LoadListofExes()
+        fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
         fn.CheckforForgeUpdates(False)
 
 
