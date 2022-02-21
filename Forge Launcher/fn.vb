@@ -813,7 +813,9 @@ Problem:
         Dim cmds As String() = Directory.GetFiles(Directory.GetCurrentDirectory, "*.cmd")
 
         For Each cmd As String In cmds
+            if My.Computer.FileSystem.GetFileInfo(cmd).Name <> "Forge Launcher.exe" then
             Main.listofexes.Items.Add(My.Computer.FileSystem.GetFileInfo(cmd).Name)
+                End if
         Next
 
         'reading preferences and set if exists

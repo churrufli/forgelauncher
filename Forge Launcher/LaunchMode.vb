@@ -106,6 +106,15 @@ Public Class LaunchMode
             t = t & "-Xms2048m ^" & vbCrLf
             t = t & "-Xmx4096m ^" & vbCrLf
             t = t & "-Dfile.encoding=UTF-8 ^" & vbCrLf
+            t = t & "--add-opens java.base/java.util=ALL-UNNAMED ^" & vbCrLf
+            t = t & "--add-opens java.base/java.lang=ALL-UNNAMED ^" & vbCrLf
+            t = t & "--add-opens java.base/java.lang.reflect=ALL-UNNAMED ^" & vbCrLf
+            t = t & "--add-opens java.base/java.text=ALL-UNNAMED ^" & vbCrLf
+            t = t & "--add-opens java.desktop/java.awt.font=ALL-UNNAMED ^" & vbCrLf
+            t = t & "--add-opens java.base/jdk.internal.misc=ALL-UNNAMED ^" & vbCrLf
+            t = t & "--add-opens java.base/sun.nio.ch=ALL-UNNAMED ^" & vbCrLf
+            t = t & "--add-opens java.base/java.nio=ALL-UNNAMED ^" & vbCrLf
+            t = t & "-Dio.netty.tryReflectionSetAccessible=true ^" & vbCrLf
             t = t & "-jar %J%"
             tb_launchline.Text = t
         End If
