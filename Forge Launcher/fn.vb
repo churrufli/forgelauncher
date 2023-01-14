@@ -231,10 +231,24 @@ Public Class fn
                 LineLink = "https://downloads.cardforge.org/dailysnapshots/" & MyTx & ".tar.bz2"
             End If
         Next
+        
 
-        Dim mydate As String = FindIt(mytxfind, ".tar.bz2</a>", "</pre><hr></body>")
-        mydate = Split(mydate, "           ")(0).ToString
+
+        Dim mydate As String 
+
+        try
+        mydate= FindIt(mytxfind, "<a href=""forge-gui-desktop-", "<a href=""version.txt"">")
+        mydate = split(mydate,"</a>")(1).ToString
+        mydate = split(mydate,"  ")(0).ToString
         mydate = Trim(mydate)
+        Catch
+        End Try
+
+        If mydate = Nothing Then
+            mydate = FindIt(mytxfind, "SNAPSHOT-", ".tar.bz2")
+            mydate = Replace(mydate,".","-")
+        End If
+
         Dim l As String = FindIt(LineLink, "forge-gui-desktop-", ".tar")
 
         If l <> Nothing And mydate <> Nothing And LineLink <> "" Then
@@ -265,97 +279,101 @@ Public Class fn
         Return memoryStream
     End Function
     Public Shared Sub CheckforForgeUpdates(Optional ByVal AskforReinstall = False, Optional ByVal NewInstall = False)
-        If NewInstall Then
-            If Main.rbt_normal.Checked = False And Main.rbt_properties.Checked = False Then
-                MsgBox("Please select normal or portable install.")
-                Exit Sub
-            End If
-
-        End If
-        Dim readversion As String
-        Dim urltoshow As String
-        Dim result = Main.typeofupdate.Text.ToString
-        If result = "snapshot" Then
-            readversion = "forge_version"
-            urltoshow = vars.SnapshotUrl
-        Else
-            readversion = "release_version"
-            urltoshow = vars.url_release
-        End If
-
-
-        Dim typeofupdate As String = ReadLogUser("typeofupdate")
-        Select Case typeofupdate
-            Case "snapshot"
-                vars.LinkLine = GetCheckAutomatic()
-            Case "release"
-                vars.LinkLine = CheckRelease()
-        End Select
-
-        Dim vs, vu As String
         Try
-            vu = ReadLogUser(readversion, False).ToString
-        Catch
-            vu = ""
-        End Try
-
-        vs = vars.LinkLine
-
-        If vs.Contains("#") Then
-            vs = Split(vs, "#")(0).ToString
-        End If
-
-        If vu.Contains("#") Then
-            vu = Split(vu, "#")(0).ToString
-        End If
-
-        If vu = "" Then
-            If CheckIfForgeExists() = False Then
+            If NewInstall Then
                 If Main.rbt_normal.Checked = False And Main.rbt_properties.Checked = False Then
                     MsgBox("Please select normal or portable install.")
                     Exit Sub
                 End If
+
             End If
-        End If
+            Dim readversion As String
+            Dim urltoshow As String
+            Dim result = Main.typeofupdate.Text.ToString
+            If result = "snapshot" Then
+                readversion = "forge_version"
+                urltoshow = vars.SnapshotUrl
+            Else
+                readversion = "release_version"
+                urltoshow = vars.url_release
+            End If
 
 
-        If vs = vu Then
-            WriteUserLog("Your Forge " & typeofupdate & " version is up to date (" & vu & ")." & vbCrLf)
+            Dim typeofupdate As String = ReadLogUser("typeofupdate")
+            Select Case typeofupdate
+                Case "snapshot"
+                    vars.LinkLine = GetCheckAutomatic()
+                Case "release"
+                    vars.LinkLine = CheckRelease()
+            End Select
 
-            If AskforReinstall = True Then
+            Dim vs, vu As String
+            Try
+                vu = ReadLogUser(readversion, False).ToString
+            Catch
+                vu = ""
+            End Try
 
-                If MsgBox(
-                            "It's appears your Forge " & typeofupdate & " version is up to date (" & vu & "). Do you want to download again and reinstall it?",
-                            MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
+            vs = vars.LinkLine
+
+            If vs.Contains("#") Then
+                vs = Split(vs, "#")(0).ToString
+            End If
+
+            If vu.Contains("#") Then
+                vu = Split(vu, "#")(0).ToString
+            End If
+
+            If vu = "" Then
+                If CheckIfForgeExists() = False Then
+                    If Main.rbt_normal.Checked = False And Main.rbt_properties.Checked = False Then
+                        MsgBox("Please select normal or portable install.")
+                        Exit Sub
+                    End If
+                End If
+            End If
+
+            If vs = vu Then
+                WriteUserLog("Your Forge " & typeofupdate & " version is up to date (" & vu & ")." & vbCrLf)
+
+                If AskforReinstall = True Then
+
+                    If MsgBox(
+                                "It's appears your Forge " & typeofupdate & " version is up to date (" & vu & "). Do you want to download again and reinstall it?",
+                                MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
+                        Dim link = If(typeofupdate = "snapshot", Split(GetCheckAutomatic(), "#")(1), vs)
+                        UpdateForge(link)
+                    End If
+                    Exit Sub
+                Else
+
+                End If
+
+                If MsgBox("Your Forge " & typeofupdate & " version is up to date." & vbCrLf &
+                 "Do you want to start Forge and close Launcher?", MsgBoxStyle.YesNo, "Forge is up to date") =
+                MsgBoxResult.Yes Then
+                    Launch()
+                    Application.Exit()
+                    Try
+                        Environment.Exit(1)
+                    Catch
+                    End Try
+                    Exit Sub
+                End If
+
+            Else
+                WriteUserLog("New Forge " & typeofupdate & " version is available (" & vs & ")." & vbCrLf & "You're running: " & vu & vbCrLf)
+                If _
+      MsgBox("Do you want to install " & vs & " in " & vars.UserDir & "?",
+             MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
                     Dim link = If(typeofupdate = "snapshot", Split(GetCheckAutomatic(), "#")(1), vs)
                     UpdateForge(link)
                 End If
-                Exit Sub
-            Else
-
             End If
 
-            If MsgBox("Your Forge " & typeofupdate & " version is up to date." & vbCrLf &
-             "Do you want to start Forge and close Launcher?", MsgBoxStyle.YesNo, "Forge is up to date") =
-            MsgBoxResult.Yes Then
-                Launch()
-                Application.Exit()
-                Try
-                    Environment.Exit(1)
-                Catch
-                End Try
-                Exit Sub
-            End If
+        Catch
 
-        Else
-            WriteUserLog("New Forge " & typeofupdate & " version is available (" & vs & ")." & vbCrLf & "You're running: " & vu & vbCrLf)
-            If _
-  MsgBox("Do you want to install " & vs & " in " & vars.UserDir & "?",
-         MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
-                Dim link = If(typeofupdate = "snapshot", Split(GetCheckAutomatic(), "#")(1), vs)
-                UpdateForge(link)
-            End If
-        End If
+        End Try
 
     End Sub
 
@@ -365,14 +383,14 @@ Public Class fn
         Main.MenuGeneral.Enabled = False
         Main.GroupForgeOptions.Enabled = False
         If vtoupdate = "" Then
-  
+
             Dim typeofupdate As String = ReadLogUser("typeofupdate")
             Select Case typeofupdate
                 Case "snapshot"
                     vars.LinkLine = GetCheckAutomatic()
                 Case Else
                     vars.LinkLine = CheckRelease()
-            End Select                
+            End Select
         End If
 
         Dim urlcomplete = vtoupdate
@@ -807,15 +825,15 @@ Problem:
         Dim exes As String() = Directory.GetFiles(Directory.GetCurrentDirectory, "*.exe")
 
         For Each exe As String In exes
-            Main.listofexes.Items.Add(My.Computer.FileSystem.GetFileInfo(exe).Name)
+            If My.Computer.FileSystem.GetFileInfo(exe).Name <> "Forge Launcher.exe" Then
+                Main.listofexes.Items.Add(My.Computer.FileSystem.GetFileInfo(exe).Name)
+            End If
         Next
 
         Dim cmds As String() = Directory.GetFiles(Directory.GetCurrentDirectory, "*.cmd")
 
         For Each cmd As String In cmds
-            if My.Computer.FileSystem.GetFileInfo(cmd).Name <> "Forge Launcher.exe" then
             Main.listofexes.Items.Add(My.Computer.FileSystem.GetFileInfo(cmd).Name)
-                End if
         Next
 
         'reading preferences and set if exists
@@ -896,9 +914,13 @@ Problem:
 
             Dim x As String = fn.ReadWeb("https://github.com/churrufli/forgelauncher/releases/")
             Dim t As String = Main.GetTitle
+            Dim getvalue As String = GetDelimitedText(x, "Forge Launcher v", "</p>", 1)
             Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "</p>", 1)
-
-            If t <> v Then
+          If getvalue = Nothing Then
+                MsgBox("Can't get new version from https://github.com/churrufli/forgelauncher/releases/")
+                Exit sub
+          End If
+            If t <> v And getvalue <> Nothing Then
                 If _
                      MsgBox("Forge Launcher New version Available. Update now?", MsgBoxStyle.YesNo, v) =
                     MsgBoxResult.Yes Then

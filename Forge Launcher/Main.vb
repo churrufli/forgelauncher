@@ -15,10 +15,6 @@ Public Class Main
         Dim time As DateTime = e.SignalTime
     End Sub
 
-    Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
-    End Sub
-
     Private Sub Fl_Shown(sender As Object, e As EventArgs) Handles Me.Shown
         fn.WriteUserLog("Loading data..." & vbCrLf)
         Timer1.Interval = 10
@@ -52,9 +48,7 @@ Public Class Main
         DisableStuffs()
         fn.LoadListofExes()
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
-        fn.CheckforForgeUpdates(False)
-
-
+       fn.CheckforForgeUpdates(False)
     End Sub
     Public Shared Function GetTitle() As String
         Dim ass As Assembly = Assembly.GetExecutingAssembly()
@@ -239,4 +233,5 @@ Public Class Main
     Private Sub CheckForUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CheckForUpdatesToolStripMenuItem.Click
         fn.CheckLauncherUpdates()
     End Sub
+
 End Class
