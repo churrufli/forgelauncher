@@ -232,8 +232,6 @@ Public Class fn
             End If
         Next
         
-
-
         Dim mydate As String 
 
         try
