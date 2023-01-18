@@ -48,7 +48,11 @@ Public Class Main
         DisableStuffs()
         fn.LoadListofExes()
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
+        try
        fn.CheckforForgeUpdates(False)
+            Catch
+            End Try
+
     End Sub
     Public Shared Function GetTitle() As String
         Dim ass As Assembly = Assembly.GetExecutingAssembly()
@@ -110,7 +114,7 @@ Public Class Main
 
     Private Sub ForgeWikiToolStripMenuItem_Click(sender As Object, e As EventArgs) _
         Handles ForgeWikiToolStripMenuItem.Click
-        Process.Start("https://git.cardforge.org/core-developers/forge/-/wikis/home")
+        Process.Start("https://github.com/Card-Forge/forge/wiki")
     End Sub
 
     Private Sub RestartForgeLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) _
@@ -192,7 +196,6 @@ Public Class Main
             box.Show()
         End If
     End Sub
-
     Private Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
         fn.CheckforForgeUpdates(True)
     End Sub
@@ -234,4 +237,7 @@ Public Class Main
         fn.CheckLauncherUpdates()
     End Sub
 
+    Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+    End Sub
 End Class

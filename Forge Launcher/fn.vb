@@ -912,8 +912,8 @@ Problem:
 
             Dim x As String = fn.ReadWeb("https://github.com/churrufli/forgelauncher/releases/")
             Dim t As String = Main.GetTitle
-            Dim getvalue As String = GetDelimitedText(x, "Forge Launcher v", "</p>", 1)
-            Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "</p>", 1)
+            Dim getvalue As String = GetDelimitedText(x, "Forge Launcher v", "<", 1)
+            Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "<", 1)
           If getvalue = Nothing Then
                 MsgBox("Can't get new version from https://github.com/churrufli/forgelauncher/releases/")
                 Exit sub
