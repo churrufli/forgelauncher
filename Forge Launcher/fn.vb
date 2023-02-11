@@ -231,20 +231,20 @@ Public Class fn
                 LineLink = "https://downloads.cardforge.org/dailysnapshots/" & MyTx & ".tar.bz2"
             End If
         Next
-        
-        Dim mydate As String 
 
-        try
-        mydate= FindIt(mytxfind, "<a href=""forge-gui-desktop-", "<a href=""version.txt"">")
-        mydate = split(mydate,"</a>")(1).ToString
-        mydate = split(mydate,"  ")(0).ToString
-        mydate = Trim(mydate)
+        Dim mydate As String
+
+        Try
+            mydate = FindIt(mytxfind, "<a href=""forge-gui-desktop-", "<a href=""version.txt"">")
+            mydate = Split(mydate, "</a>")(1).ToString
+            mydate = Split(mydate, "  ")(0).ToString
+            mydate = Trim(mydate)
         Catch
         End Try
 
         If mydate = Nothing Then
             mydate = FindIt(mytxfind, "SNAPSHOT-", ".tar.bz2")
-            mydate = Replace(mydate,".","-")
+            mydate = Replace(mydate, ".", "-")
         End If
 
         Dim l As String = FindIt(LineLink, "forge-gui-desktop-", ".tar")
@@ -252,7 +252,9 @@ Public Class fn
         If l <> Nothing And mydate <> Nothing And LineLink <> "" Then
             Return "Forge " & l & " " & mydate & "#" & LineLink
         Else
-            MsgBox("error: trying to get new version from https://downloads.cardforge.org/dailysnapshots/")
+            If MsgBox("Error trying to get new version from https://downloads.cardforge.org/dailysnapshots/" & vbCrLf & "Do you want to open the site in a browser?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
+                Process.Start("https://downloads.cardforge.org/dailysnapshots/")
+            End If
             Return Nothing
         End If
 
@@ -530,7 +532,14 @@ Public Class fn
                 If Directory.Exists(Directory.GetCurrentDirectory() & "\fldata") = False Then
                     Directory.CreateDirectory(Directory.GetCurrentDirectory() & "\fldata")
                 End If
-                File.Create(vars.LogName).Dispose()
+                Dim f = Replace(Directory.GetCurrentDirectory() & "\" & vars.LogName, "/", "\")
+
+                Dim objWriter As New System.IO.StreamWriter(f)
+
+                objWriter.Write(t)
+                objWriter.Close()
+
+                File.Create(f).Dispose()
             End If
             File.WriteAllText(vars.LogName, t)
         Else
@@ -914,10 +923,10 @@ Problem:
             Dim t As String = Main.GetTitle
             Dim getvalue As String = GetDelimitedText(x, "Forge Launcher v", "<", 1)
             Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "<", 1)
-          If getvalue = Nothing Then
+            If getvalue = Nothing Then
                 MsgBox("Can't get new version from https://github.com/churrufli/forgelauncher/releases/")
-                Exit sub
-          End If
+                Exit Sub
+            End If
             If t <> v And getvalue <> Nothing Then
                 If _
                      MsgBox("Forge Launcher New version Available. Update now?", MsgBoxStyle.YesNo, v) =

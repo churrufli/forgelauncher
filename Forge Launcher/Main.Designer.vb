@@ -58,6 +58,7 @@ Partial Class Main
         Me.Button2 = New System.Windows.Forms.Button()
         Me.rbt_normal = New System.Windows.Forms.RadioButton()
         Me.rbt_properties = New System.Windows.Forms.RadioButton()
+        Me.ForgeGithubToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.PictureBox3,System.ComponentModel.ISupportInitialize).BeginInit
         Me.MenuGeneral.SuspendLayout
         Me.GroupForgeOptions.SuspendLayout
@@ -128,8 +129,8 @@ Partial Class Main
         Me.PictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PictureBox3.TabIndex = 49
         Me.PictureBox3.TabStop = false
-        Me.ToolTip1.SetToolTip(Me.PictureBox3, "snapshot: You get new cards and features earlier, but you also have a higher chan"& _ 
-        "ce to encounter some bugs"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"release: Last stable version.")
+        Me.ToolTip1.SetToolTip(Me.PictureBox3, "Snapshot: You get new cards and features earlier, but you also have a higher chan"& _ 
+        "ce to encounter some bugs"&Global.Microsoft.VisualBasic.ChrW(13)&Global.Microsoft.VisualBasic.ChrW(10)&"Release: Last stable version.")
         '
         'typeofupdate
         '
@@ -205,7 +206,7 @@ Partial Class Main
         '
         'AboutForgeToolStripMenuItem1
         '
-        Me.AboutForgeToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ForgeForumToolStripMenuItem, Me.ForgeWikiToolStripMenuItem, Me.ForgeDiscordChannelToolStripMenuItem})
+        Me.AboutForgeToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ForgeDiscordChannelToolStripMenuItem, Me.ForgeGithubToolStripMenuItem, Me.ForgeWikiToolStripMenuItem, Me.ForgeForumToolStripMenuItem})
         Me.AboutForgeToolStripMenuItem1.Name = "AboutForgeToolStripMenuItem1"
         Me.AboutForgeToolStripMenuItem1.Size = New System.Drawing.Size(77, 20)
         Me.AboutForgeToolStripMenuItem1.Text = "About Forge"
@@ -259,7 +260,7 @@ Partial Class Main
         Me.listofexes.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
         Me.listofexes.FormattingEnabled = true
         Me.listofexes.Items.AddRange(New Object() {"release", "snapshot"})
-        Me.listofexes.Location = New System.Drawing.Point(453, 22)
+        Me.listofexes.Location = New System.Drawing.Point(447, 24)
         Me.listofexes.Name = "listofexes"
         Me.listofexes.Size = New System.Drawing.Size(128, 21)
         Me.listofexes.TabIndex = 51
@@ -348,6 +349,12 @@ Partial Class Main
         Me.rbt_properties.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.rbt_properties.UseVisualStyleBackColor = true
         '
+        'ForgeGithubToolStripMenuItem
+        '
+        Me.ForgeGithubToolStripMenuItem.Name = "ForgeGithubToolStripMenuItem"
+        Me.ForgeGithubToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
+        Me.ForgeGithubToolStripMenuItem.Text = "Forge Github"
+        '
         'Main
         '
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
@@ -410,4 +417,5 @@ End Sub
     Friend WithEvents listofexes As ComboBox
     Friend WithEvents GithubToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CheckForUpdatesToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ForgeGithubToolStripMenuItem As ToolStripMenuItem
 End Class
