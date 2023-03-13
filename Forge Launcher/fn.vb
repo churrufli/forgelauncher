@@ -247,6 +247,16 @@ Public Class fn
             mydate = Replace(mydate, ".", "-")
         End If
 
+
+        mydate = GetDelimitedText(mytxfind,"tar.bz2</a>",":",0)
+        Dim myplusdate As String
+        myplusdate = GetDelimitedText(mytxfind,"tar.bz2</a>","<a href=""version.txt"">",0)
+        myplusdate = trim(myplusdate)
+
+        myplusdate = Replace(myplusdate,"   ", vbCrLf)
+        myplusdate = Split(myplusdate,vbCrLf & vbCrLf)(0).ToString
+
+        mydate = Trim(myplusdate)
         Dim l As String = FindIt(LineLink, "forge-gui-desktop-", ".tar")
 
         If l <> Nothing And mydate <> Nothing And LineLink <> "" Then
@@ -434,6 +444,8 @@ Public Class fn
             FindIt = Nothing
         End Try
     End Function
+
+
 
     Public Shared Function SearchFolders(Optional ShowMsg As Boolean = True, Optional idlog As String = "decks_dir")
 
