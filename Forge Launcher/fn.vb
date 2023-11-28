@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Net
 Imports System.Text
+Imports System.Text.RegularExpressions
 Imports ICSharpCode.SharpZipLib.BZip2
 Imports ICSharpCode.SharpZipLib.Tar
 Imports ICSharpCode.SharpZipLib.Zip
@@ -219,56 +220,51 @@ Public Class fn
         End Try
     End Function
 
-    Public Shared Function GetCheckAutomatic()
-        Dim LineLink As String = ""
-        Dim MyTx As String = ReadWeb("https://downloads.cardforge.org/dailysnapshots/")
-        Dim mytxfind As String = MyTx
-        Dim abr() As String = Split(MyTx, Environment.NewLine)
-        For Each MyLines As String In abr
-            If InStr(MyLines, "tar.bz2", CompareMethod.Text) > 0 Then
-                MyTx = Replace(MyLines, """", "'")
-                MyTx = FindIt(MyTx, "<a href='", ".tar.bz2'>")
-                LineLink = "https://downloads.cardforge.org/dailysnapshots/" & MyTx & ".tar.bz2"
+    Public Shared Function GetCheckAutomatic() As String
+        Dim lineLink As String = ""
+        Dim myTx As String = ReadWeb("https://downloads.cardforge.org/dailysnapshots/")
+        Dim myDate As String = ""
+
+        Try
+            Dim pattern As String = "\b\d{1,2}-[a-zA-Z]{3}-\d{4} \d{1,2}:\d{2}\b"
+            Dim match As Match = Regex.Match(myTx, pattern)
+
+            If match.Success Then
+                myDate = match.Value
+            End If
+        Catch ex As Exception
+            ' Manejar la excepción si es necesario
+        End Try
+
+        If String.IsNullOrEmpty(myDate) Then
+            myDate = FindIt(myTx, "SNAPSHOT-", ".tar.bz2")
+            myDate = Replace(myDate, ".", "-")
+        End If
+
+        Dim lineLinkPattern As String = "<a href='"
+        Dim lineLinkSuffix As String = ".tar.bz2'>"
+
+        For Each line As String In myTx.Split(Environment.NewLine)
+            If line.Contains("tar.bz2") Then
+                line = Replace(line, """", "'")
+                Dim linkPart As String = FindIt(line, lineLinkPattern, lineLinkSuffix)
+                lineLink = "https://downloads.cardforge.org/dailysnapshots/" & linkPart & ".tar.bz2"
+                Exit For
             End If
         Next
 
-        Dim mydate As String
+        Dim version As String = FindIt(lineLink, "forge-gui-desktop-", ".tar")
 
-        Try
-            mydate = FindIt(mytxfind, "<a href=""forge-gui-desktop-", "<a href=""version.txt"">")
-            mydate = Split(mydate, "</a>")(1).ToString
-            mydate = Split(mydate, "  ")(0).ToString
-            mydate = Trim(mydate)
-        Catch
-        End Try
-
-        If mydate = Nothing Then
-            mydate = FindIt(mytxfind, "SNAPSHOT-", ".tar.bz2")
-            mydate = Replace(mydate, ".", "-")
-        End If
-
-
-        mydate = GetDelimitedText(mytxfind,"tar.bz2</a>",":",0)
-        Dim myplusdate As String
-        myplusdate = GetDelimitedText(mytxfind,"tar.bz2</a>","<a href=""version.txt"">",0)
-        myplusdate = trim(myplusdate)
-
-        myplusdate = Replace(myplusdate,"   ", vbCrLf)
-        myplusdate = Split(myplusdate,vbCrLf & vbCrLf)(0).ToString
-
-        mydate = Trim(myplusdate)
-        Dim l As String = FindIt(LineLink, "forge-gui-desktop-", ".tar")
-
-        If l <> Nothing And mydate <> Nothing And LineLink <> "" Then
-            Return "Forge " & l & " " & mydate & "#" & LineLink
+        If Not String.IsNullOrEmpty(version) AndAlso Not String.IsNullOrEmpty(myDate) AndAlso Not String.IsNullOrEmpty(lineLink) Then
+            Return $"Forge {version} {myDate}#{lineLink}"
         Else
             If MsgBox("Error trying to get new version from https://downloads.cardforge.org/dailysnapshots/" & vbCrLf & "Do you want to open the site in a browser?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
                 Process.Start("https://downloads.cardforge.org/dailysnapshots/")
             End If
             Return Nothing
         End If
-
     End Function
+
 
     Public Shared Function CheckRelease()
         Dim metadata = vars.url_release + "maven-metadata.xml"
@@ -410,7 +406,6 @@ Public Class fn
         If InStr(urlcomplete, "http") > 0 Then
         End If
         DownloadStart(urlcomplete, Path.GetFileName(urlcomplete))
-
     End Sub
 
     Public Shared Sub DownloadStart(dwl, fn)
@@ -431,17 +426,15 @@ Public Class fn
 
     Public Shared Function FindIt(total As String, first As String, last As String) As String
         If last.Length < 1 Then
-            FindIt = total.Substring(total.IndexOf(first))
+            Return total.Substring(total.IndexOf(first))
         End If
         If first.Length < 1 Then
-            FindIt = total.Substring(0, (total.IndexOf(last)))
+            Return total.Substring(0, total.IndexOf(last))
         End If
         Try
-            FindIt =
-                ((total.Substring(total.IndexOf(first), (total.IndexOf(last) - total.IndexOf(first)))).Replace(first, "")) _
-                    .Replace(last, "")
+            Return total.Substring(total.IndexOf(first), total.IndexOf(last) - total.IndexOf(first)).Replace(first, "").Replace(last, "")
         Catch
-            FindIt = Nothing
+            Return Nothing
         End Try
     End Function
 
@@ -526,199 +519,186 @@ Public Class fn
 
     Public Shared Sub CheckLog()
         Dim hoy As String = DateTime.Now.ToString("dd'/'MM'/'yyyy")
-        Dim existpp As String = IIf(File.Exists("forge.profile.properties"), "yes", "no")
-        If File.Exists(vars.LogName) = False Then
-            Dim t As String
-            t = "<forge_version>Not found</forge_version>" & vbCrLf
-            t = "<release_version>Not found</release_version>" & vbCrLf
-            t = "<other_version>Not found</other_version>" & vbCrLf
-            t = "<forge_previous_version></forge_previous_version>" & vbCrLf
-            t = t & "<profileproperties>" & existpp & "</profileproperties>" & vbCrLf
-            t = t & "<lastupdate>" & hoy & "</lastupdate>" & vbCrLf
-            t = t & "<removepreviousjarfiles>no</removepreviousjarfiles>" & vbCrLf
-            t = t & "<typeofupdate>snapshot</typeofupdate>" & vbCrLf
-            t = t & "<launchmode>normal</launchmode>" & vbCrLf
-            t = t & "<launchline></launchline>" & vbCrLf
-            t = t & "<exeselected></exeselected>" & vbCrLf
-            If File.Exists(vars.LogName) = False Then
-                If Directory.Exists(Directory.GetCurrentDirectory() & "\fldata") = False Then
-                    Directory.CreateDirectory(Directory.GetCurrentDirectory() & "\fldata")
-                End If
-                Dim f = Replace(Directory.GetCurrentDirectory() & "\" & vars.LogName, "/", "\")
+        Dim existpp As String = If(File.Exists("forge.profile.properties"), "yes", "no")
+        Dim logFilePath As String = Path.Combine(vars.UserDir, vars.LogName)
 
-                Dim objWriter As New System.IO.StreamWriter(f)
+        If Not File.Exists(logFilePath) Then
+            Dim t As String = "<forge_version>Not found</forge_version>" & vbCrLf &
+                          "<release_version>Not found</release_version>" & vbCrLf &
+                          "<other_version>Not found</other_version>" & vbCrLf &
+                          "<forge_previous_version></forge_previous_version>" & vbCrLf &
+                          "<profileproperties>" & existpp & "</profileproperties>" & vbCrLf &
+                          "<lastupdate>" & hoy & "</lastupdate>" & vbCrLf &
+                          "<removepreviousjarfiles>no</removepreviousjarfiles>" & vbCrLf &
+                          "<typeofupdate>snapshot</typeofupdate>" & vbCrLf &
+                          "<launchmode>normal</launchmode>" & vbCrLf &
+                          "<launchline></launchline>" & vbCrLf &
+                          "<exeselected></exeselected>" & vbCrLf
 
-                objWriter.Write(t)
-                objWriter.Close()
-
-                File.Create(f).Dispose()
+            If Not Directory.Exists(Path.GetDirectoryName(logFilePath)) Then
+                Directory.CreateDirectory(Path.GetDirectoryName(logFilePath))
             End If
-            File.WriteAllText(vars.LogName, t)
+
+            File.WriteAllText(logFilePath, t)
         Else
-            Dim readText As String = File.ReadAllText(vars.UserDir & "\" & vars.LogName)
-            Dim WriteLog = False
+            Dim readText As String = File.ReadAllText(logFilePath)
+            Dim WriteLog As Boolean = False
 
-
-            If InStr(readText, "<forge_version>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<forge_version>") Then
                 readText = readText & "<forge_version>Not found</forge_version>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<release_version>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<release_version>") Then
                 readText = readText & "<release_version>Not found</release_version>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<other_version>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<other_version>") Then
                 readText = readText & "<other_version>Not found</other_version>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<forge_previous_version>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<forge_previous_version>") Then
                 readText = readText & "<forge_previous_version></forge_previous_version>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<launcher_version>", CompareMethod.Text) = 0 Then
-                readText = readText & "<launcher_version>Forge Launcher V.1.1</launcher_version>" &
-                           Environment.NewLine
+            If Not readText.Contains("<launcher_version>") Then
+                readText = readText & "<launcher_version>Forge Launcher V.1.1</launcher_version>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<profileproperties>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<profileproperties>") Then
                 readText = readText & "<profileproperties>" & existpp & "</profileproperties>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<removepreviousjarfiles>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<removepreviousjarfiles>") Then
                 readText = readText & "<removepreviousjarfiles>no</removepreviousjarfiles>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<typeofupdate>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<typeofupdate>") Then
                 readText = readText & "<typeofupdate>snapshot</typeofupdate>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<launchmode>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<launchmode>") Then
                 readText = readText & "<launchmode>normal</launchmode>" & Environment.NewLine
                 WriteLog = True
             End If
 
-
-            If InStr(readText, "<launchline>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<launchline>") Then
                 readText = readText & "<launchline></launchline>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, "<exeselected>", CompareMethod.Text) = 0 Then
+            If Not readText.Contains("<exeselected>") Then
                 readText = readText & "<exeselected></exeselected>" & Environment.NewLine
                 WriteLog = True
             End If
 
-            If InStr(readText, Environment.NewLine & Environment.NewLine, CompareMethod.Text) > 0 Then
-                readText = Replace(readText, Environment.NewLine & Environment.NewLine, Environment.NewLine)
+            If readText.Contains(Environment.NewLine & Environment.NewLine) Then
+                readText = readText.Replace(Environment.NewLine & Environment.NewLine, Environment.NewLine)
                 WriteLog = True
             End If
 
             If WriteLog Then
                 Try
-                    File.Delete(vars.LogName)
+                    File.Delete(logFilePath)
                 Catch
                 End Try
-                File.WriteAllText(vars.LogName, readText)
+                File.WriteAllText(logFilePath, readText)
             End If
         End If
     End Sub
 
 
+
     Public Shared Function UnzipFile(sZipFile As String, sDestPath As String) As Boolean
-        Dim bResult = False
-        On Error GoTo Problem
-        'Determine the archive type
-        Select Case Path.GetExtension(sZipFile)
-            Case ".zip"
-                'If it's a zip, then simply extract the contents
-                Dim fZ = New FastZip()
-                fZ.ExtractZip(sZipFile, sDestPath, "") '//use "" for File Filter if you want all files
-            Case ".bz2"
-                'If it's a tarball, then first decompress the tar, then extract the tar's contents
+'        Dim bResult = False
+'        On Error GoTo Problem
+'        'Determine the archive type
+'        Select Case Path.GetExtension(sZipFile)
+'            Case ".zip"
+'                'If it's a zip, then simply extract the contents
+'                Dim fZ = New FastZip()
+'                fZ.ExtractZip(sZipFile, sDestPath, "") '//use "" for File Filter if you want all files
+'            Case ".bz2"
+'                'If it's a tarball, then first decompress the tar, then extract the tar's contents
 
-                'Get the filename of the resulting tar file
-                Dim sTarFileName As String = Path.GetDirectoryName(sZipFile) & "\" &
-                                             Path.GetFileNameWithoutExtension(sZipFile)
-                'Create a new file stream for the tar ball
-                Dim fsIn As FileStream = File.OpenRead(sZipFile)
+'                'Get the filename of the resulting tar file
+'                Dim sTarFileName As String = Path.GetDirectoryName(sZipFile) & "\" &
+'                                             Path.GetFileNameWithoutExtension(sZipFile)
+'                'Create a new file stream for the tar ball
+'                Dim fsIn As FileStream = File.OpenRead(sZipFile)
 
-                'If the resulting tar file exists alreay, delete it before creating it
-                If File.Exists(sTarFileName) Then
-                    File.Delete(sTarFileName)
-                End If
+'                'If the resulting tar file exists alreay, delete it before creating it
+'                If File.Exists(sTarFileName) Then
+'                    File.Delete(sTarFileName)
+'                End If
 
-                'Create a file stream to receive the decompressed tar file
-                Dim fsOut As FileStream = File.Create(sTarFileName)
+'                'Create a file stream to receive the decompressed tar file
+'                Dim fsOut As FileStream = File.Create(sTarFileName)
 
-                'Perform the decompression of the tar file
-                BZip2.Decompress(fsIn, fsOut)
+'                'Perform the decompression of the tar file
+'                BZip2.Decompress(fsIn, fsOut)
 
-                'Open a new file stream for the tar file
-                Dim fsTar As FileStream = File.OpenRead(sTarFileName)
-                'Create a TarArchive object for the tar file
-                Dim tArch As TarArchive = TarArchive.CreateInputTarArchive(fsTar)
+'                'Open a new file stream for the tar file
+'                Dim fsTar As FileStream = File.OpenRead(sTarFileName)
+'                'Create a TarArchive object for the tar file
+'                Dim tArch As TarArchive = TarArchive.CreateInputTarArchive(fsTar)
 
-                'Extract the tar's contents
-                tArch.ExtractContents(sDestPath)
+'                'Extract the tar's contents
+'                tArch.ExtractContents(sDestPath)
 
-                ''Get a list of the files that were extracted within the tar folder
-                'Dim sExtractedFiles() As String =
-                '        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+'                ''Get a list of the files that were extracted within the tar folder
+'                'Dim sExtractedFiles() As String =
+'                '        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
-                ''Move all the files to the requested destination directory
-                'Dim sFile As String
-                'For Each sFile In sExtractedFiles
-                '    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
-                'Next
+'                ''Move all the files to the requested destination directory
+'                'Dim sFile As String
+'                'For Each sFile In sExtractedFiles
+'                '    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
+'                'Next
 
-                ''Delete the tar folder
-                'Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+'                ''Delete the tar folder
+'                'Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
-                'Close the open file streams
-                tArch.Close()
-                fsIn.Close()
+'                'Close the open file streams
+'                tArch.Close()
+'                fsIn.Close()
 
-                'Delete the decompressed tar file
-                File.Delete(sTarFileName)
-        End Select
-        bResult = True
+'                'Delete the decompressed tar file
+'                File.Delete(sTarFileName)
+'        End Select
+'        bResult = True
 
-Problem:
-        Return bResult
+'Problem:
+'        Return bResult
     End Function
 
     Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)
-
         Dim myfile = Path.GetFileName(vtoupdate)
 
         WriteUserLog("Done!" & vbCrLf)
 
         If ReadLogUser("removepreviousjarfiles", False) = "yes" Then
-
             Try
-                Dim x As Integer
                 Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge-*-jar-with-dependencies.jar")
                 If paths.Length > 0 Then
-                    For x = 0 To paths.Length - 1
-                        File.Delete(paths(x))
+                    For Each path As String In paths
+                        File.Delete(path)
                     Next
                 End If
             Catch
-
             End Try
         End If
 
         Dim urlcomplete = vtoupdate
         WriteUserLog("Unpacking in " & Directory.GetCurrentDirectory() & "... please wait!" & vbCrLf)
-        UnzipFile(Directory.GetCurrentDirectory() & "/" & myfile, Directory.GetCurrentDirectory())
+        UnzipFile(Path.Combine(Directory.GetCurrentDirectory(), myfile), Directory.GetCurrentDirectory())
         WriteUserLog("Done!." & vbCrLf)
 
         Try
@@ -732,19 +712,21 @@ Problem:
         End Try
 
         If Main.rbt_properties.Checked = True Then
-            Dim Path = Directory.GetCurrentDirectory() & "\forge.profile.properties"
-            If File.Exists(Path) Then
-                File.Delete(Path)
+            Dim propPath = Path.Combine(Directory.GetCurrentDirectory(), "forge.profile.properties")
+            If File.Exists(propPath) Then
+                File.Delete(propPath)
             End If
-            Dim t As String
-            Using fs As FileStream = File.Create(Path)
-                t = "userDir=./user" + Environment.NewLine
-                t = t + "cacheDir=./cache" + Environment.NewLine
-                t = t + "cardPicsDir="
-                t = Replace(t, "\", "/")
+
+            Dim t As String = "userDir=./user" + Environment.NewLine
+            t = t + "cacheDir=./cache" + Environment.NewLine
+            t = t + "cardPicsDir="
+            t = t.Replace("\", "/")
+
+            Using fs As FileStream = File.Create(propPath)
                 Dim info As Byte() = New UTF8Encoding(True).GetBytes(t)
                 fs.Write(info, 0, info.Length)
             End Using
+
             vars.ForgeData = "./user"
         End If
 
@@ -788,6 +770,7 @@ Problem:
 
         Exit Sub
     End Sub
+
 
     Public Shared Sub Launch()
         Dim myexe As String = "Forge.exe"

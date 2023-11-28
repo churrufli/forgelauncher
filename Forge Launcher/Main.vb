@@ -240,4 +240,5 @@ Public Class Main
      Private Sub ForgeGithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ForgeGithubToolStripMenuItem.Click
                   Process.Start("https://github.com/Card-Forge/forge")
     End Sub
+
 End Class
