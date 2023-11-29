@@ -4,10 +4,6 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 Imports ICSharpCode.SharpZipLib.BZip2
 Imports ICSharpCode.SharpZipLib.Tar
-Imports ICSharpCode.SharpZipLib.Zip
-
-
-
 Public Class fn
     Shared WithEvents downloader As WebClient
 
@@ -22,9 +18,8 @@ Public Class fn
         End Try
         Try
             Dim files =
-    Directory.GetFiles(Environment.CurrentDirectory, "forge-gui-desktop-*", SearchOption.TopDirectoryOnly).Where(
-        Function(s) Regex.IsMatch(s, "forge-gui-desktop-\d+(\.\d+)*(-\S+)?(\.tar(\.bz2)?)?$"))
-
+                    Directory.GetFiles(Environment.CurrentDirectory, "forge*", SearchOption.AllDirectories).Where(
+                        Function(s) s.EndsWith(".tar.bz") OrElse s.EndsWith(".bz2") OrElse s.EndsWith(".tar"))
             For Each Foundedfile As String In files
                 File.Delete(Foundedfile)
             Next
@@ -631,128 +626,64 @@ Public Class fn
         End If
     End Sub
 
-
-
     Public Shared Sub DescomprimirTarBz2(archivoBz2 As String, directorioDestino As String)
-        ' Crear un stream para leer el archivo bz2
-        Using bz2Stream As New FileStream(archivoBz2, FileMode.Open, FileAccess.Read)
-            ' Crear un stream para descomprimir el archivo bz2
-            Using decompressionStream As New BZip2InputStream(bz2Stream)
+        ' Crear el directorio de destino si no existe
+        If Not Directory.Exists(directorioDestino) Then
+            Directory.CreateDirectory(directorioDestino)
+        End If
 
-                ' Crear un stream para leer el archivo tar
-                Using tarStream As New TarInputStream(decompressionStream)
-                    ' Extraer cada entrada del archivo tar
-                    Dim entrada As TarEntry = tarStream.GetNextEntry()
+        ' Crear un flujo de entrada para el archivo tar.bz2
+        Using archivoStream As New FileStream(archivoBz2, FileMode.Open, FileAccess.Read)
+            ' Crear un flujo de descompresión BZip2
+            Using bz2Stream As New BZip2InputStream(archivoStream)
+                ' Crear un lector de archivos tar
+                Using tarArchive As New TarInputStream(bz2Stream)
+                    ' Iterar a través de los archivos en el archivo tar
+                    Dim entry As TarEntry = tarArchive.GetNextEntry()
+                    While entry IsNot Nothing
+                        ' Crear el nombre del archivo de destino
+                        Dim a = entry.Name
+                        If a.Contains("custom_card_pics/Chandra") Then
+                            a = a
+                        End If
+                        a = Replace(a, "" & ChrW(25) & "", "'")
+                        Dim archivoDestino As String = Path.Combine(directorioDestino, a)
 
-                    While entrada IsNot Nothing
-                        ' Crear la ruta completa del archivo de salida
-                        Dim archivoSalida As String = Path.Combine(directorioDestino, RChr(entrada.Name))
-
-                        ' Crear directorios si es necesario
-                        If entrada.IsDirectory AndAlso Not Directory.Exists(archivoSalida) Then
-                            Directory.CreateDirectory(archivoSalida)
-                        ElseIf Not entrada.IsDirectory Then
-                            ' Crear un stream para escribir el archivo de salida
-                            Using archivoSalidaStream As New FileStream(archivoSalida, FileMode.Create, FileAccess.Write)
-                                ' Leer y escribir los datos de la entrada
-                                tarStream.CopyEntryContents(archivoSalidaStream)
+                        ' Crear el directorio si es un directorio
+                        If entry.IsDirectory Then
+                            If Not Directory.Exists(archivoDestino) Then
+                                Directory.CreateDirectory(archivoDestino)
+                            End If
+                        Else
+                            ' Crear un flujo de salida para el archivo de destino
+                            Using fileStream As New FileStream(archivoDestino, FileMode.Create, FileAccess.Write)
+                                ' Leer y escribir los datos del archivo
+                                tarArchive.CopyEntryContents(fileStream)
                             End Using
                         End If
 
-                        ' Obtener la siguiente entrada del archivo tar
-                        entrada = tarStream.GetNextEntry()
+                        ' Obtener el siguiente archivo en el archivo tar
+                        entry = tarArchive.GetNextEntry()
                     End While
                 End Using
             End Using
         End Using
     End Sub
 
-    Public Shared Function RChr(valor As String)
 
-        valor = Replace(valor, ChrW(25), "'")
-        Return valor
-    End Function
-
-    Function ReemplazarCaracteresEspeciales(cadena As String) As String
-        ' Reemplazar todos los caracteres especiales
-        Dim caracteresEspeciales As New Dictionary(Of Char, String)()
-        caracteresEspeciales.Add(ChrW(25), "CaracterEspecial") ' Puedes agregar más caracteres según sea necesario
-
-        For Each par In caracteresEspeciales
-            cadena = cadena.Replace(par.Key, par.Value)
-        Next
-
-        Return cadena
-    End Function
     Public Shared Function UnzipFile(sZipFile As String, sDestPath As String) As Boolean
-        DescomprimirTarBz2(sZipFile, sDestPath)
-        Return True
+        Select Case Path.GetExtension(sZipFile).ToLower()
+            Case ".zip"
+                ZipFile.ExtractToDirectory(sZipFile, sDestPath)
+
+            Case ".bz2"
+                DescomprimirTarBz2(sZipFile, sDestPath)
+        End Select
+
     End Function
 
-    '    Dim bResult = False
-    '        On Error GoTo Problem
-    '        'Determine the archive type
-    '        Select Case Path.GetExtension(sZipFile)
-    '            Case ".zip"
-    '                'If it's a zip, then simply extract the contents
-    '                Dim fZ = New FastZip()
-    '                fZ.ExtractZip(sZipFile, sDestPath, "") '//use "" for File Filter if you want all files
-    '            Case ".bz2"
-    '                'If it's a tarball, then first decompress the tar, then extract the tar's contents
 
-    '                'Get the filename of the resulting tar file
-    '                Dim sTarFileName As String = Path.GetDirectoryName(sZipFile) & "\" &
-    '                                             Path.GetFileNameWithoutExtension(sZipFile)
-    '                'Create a new file stream for the tar ball
-    '                Dim fsIn As FileStream = File.OpenRead(sZipFile)
 
-    '                'If the resulting tar file exists alreay, delete it before creating it
-    '                If File.Exists(sTarFileName) Then
-    '                    File.Delete(sTarFileName)
-    '                End If
-
-    '                'Create a file stream to receive the decompressed tar file
-    '                Dim fsOut As FileStream = File.Create(sTarFileName)
-
-    '                'Perform the decompression of the tar file
-    '                BZip2.Decompress(fsIn, fsOut)
-
-    '                'Open a new file stream for the tar file
-    '                Dim fsTar As FileStream = File.OpenRead(sTarFileName)
-    '                'Create a TarArchive object for the tar file
-    '                Dim tArch As TarArchive = TarArchive.CreateInputTarArchive(fsTar)
-
-    '                'Extract the tar's contents
-    '                tArch.ExtractContents(sDestPath)
-
-    '                'Get a list of the files that were extracted within the tar folder
-    '                Dim sExtractedFiles() As String =
-    '                        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
-
-    '                'Move all the files to the requested destination directory
-    '                Dim sFile As String
-    '                For Each sFile In sExtractedFiles
-    '                    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
-    '                Next
-
-    '                'Delete the tar folder
-    '                Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
-
-    '                'Close the open file streams
-    '                tArch.Close()
-    '                fsIn.Close()
-
-    '                'Delete the decompressed tar file
-
-    '                File.Delete(sTarFileName)
-
-    '        End Select
-
-    '        bResult = True
-
-    'Problem:
-    '        Return bResult
-    'End Function
 
     Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)
         Dim myfile = Path.GetFileName(vtoupdate)
@@ -998,18 +929,33 @@ Public Class fn
                 Exit Sub
             End If
             If t <> v And getvalue <> Nothing Then
+
+                'If MsgBox("Forge Launcher New version Available. Launcher AutoUpdate is not available ATM, Visit Github for download last version", MsgBoxStyle.YesNo, v) = MsgBoxResult.Yes Then
+                '    Process.Start("https://github.com/churrufli/forgelauncher/releases")
+                'End If
+
+                'Exit Sub
+
                 If _
                      MsgBox("Forge Launcher New version Available. Update now?", MsgBoxStyle.YesNo, v) =
                     MsgBoxResult.Yes Then
                     Try
                         WriteUserLog("Downloading new version from GitHub..." & vbCrLf)
-                        Dim myUrl = "https://github.com/churrufli/forgelauncher/releases/download/v" & GetDelimitedText(x, "Forge Launcher v", "</p>", 1) & "/Forge.Launcher.zip"
+                        Dim myUrl = "https://github.com/churrufli/forgelauncher/releases/download/v" & getvalue & "/Forge.Launcher.zip"
                         DownloadFile(myUrl, "Forge Launcher New Version.zip")
                         WriteUserLog("Unpacking new version in " & Directory.GetCurrentDirectory() & "..." & vbCrLf)
                         UnzipFile(Directory.GetCurrentDirectory() & "/" & "Forge Launcher New Version.zip",
                                   Directory.GetCurrentDirectory() & "/fltmp")
-                        File.Delete("Forge Launcher New Version.zip")
+                    Catch
+                    End Try
+
+
+                    File.Delete("Forge Launcher New Version.zip")
+                    Try
                         File.Move("Forge Launcher.exe", "fltmp/Forge Launcher.bak")
+                    Catch ex As Exception
+                    End Try
+                    Try
                         File.Copy("fltmp/Forge Launcher.exe", "Forge Launcher.exe")
                         UpdateLog("showwhatsnew", "yes")
                     Catch
@@ -1024,7 +970,7 @@ Public Class fn
                     End Try
                     Try
                         Directory.Delete("fltmp", True)
-                    Catch
+                    Catch ex As Exception
                     End Try
                     Application.Restart()
                 End If
