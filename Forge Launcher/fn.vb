@@ -225,9 +225,14 @@ Public Class fn
         Dim myTx As String = ReadWeb("https://downloads.cardforge.org/dailysnapshots/")
         Dim myDate As String = ""
 
+
+        Dim takedate As String
+
         Try
+            takedate = FindIt(myTx, "<a href=""forge-gui-desktop", "<a")
+
             Dim pattern As String = "\b\d{1,2}-[a-zA-Z]{3}-\d{4} \d{1,2}:\d{2}\b"
-            Dim match As Match = Regex.Match(myTx, pattern)
+            Dim match As Match = Regex.Match(takedate, pattern)
 
             If match.Success Then
                 myDate = match.Value
@@ -235,6 +240,7 @@ Public Class fn
         Catch ex As Exception
             ' Manejar la excepción si es necesario
         End Try
+
 
         If String.IsNullOrEmpty(myDate) Then
             myDate = FindIt(myTx, "SNAPSHOT-", ".tar.bz2")
@@ -425,18 +431,26 @@ Public Class fn
     End Sub
 
     Public Shared Function FindIt(total As String, first As String, last As String) As String
-        If last.Length < 1 Then
-            Return total.Substring(total.IndexOf(first))
-        End If
-        If first.Length < 1 Then
-            Return total.Substring(0, total.IndexOf(last))
-        End If
-        Try
-            Return total.Substring(total.IndexOf(first), total.IndexOf(last) - total.IndexOf(first)).Replace(first, "").Replace(last, "")
-        Catch
+        If String.IsNullOrEmpty(total) OrElse (String.IsNullOrEmpty(first) AndAlso String.IsNullOrEmpty(last)) Then
             Return Nothing
-        End Try
+        End If
+
+        Dim startIndex As Integer = If(String.IsNullOrEmpty(first), 0, total.IndexOf(first))
+        Dim endIndex As Integer
+
+        If String.IsNullOrEmpty(last) Then
+            endIndex = total.Length
+        Else
+            endIndex = If(startIndex >= 0, total.IndexOf(last, startIndex + first.Length), -1)
+        End If
+
+        If startIndex >= 0 AndAlso endIndex >= 0 AndAlso endIndex > startIndex Then
+            Return total.Substring(startIndex, endIndex - startIndex).Replace(first, "").Replace(last, "")
+        Else
+            Return Nothing
+        End If
     End Function
+
 
 
 
@@ -617,66 +631,69 @@ Public Class fn
 
 
     Public Shared Function UnzipFile(sZipFile As String, sDestPath As String) As Boolean
-'        Dim bResult = False
-'        On Error GoTo Problem
-'        'Determine the archive type
-'        Select Case Path.GetExtension(sZipFile)
-'            Case ".zip"
-'                'If it's a zip, then simply extract the contents
-'                Dim fZ = New FastZip()
-'                fZ.ExtractZip(sZipFile, sDestPath, "") '//use "" for File Filter if you want all files
-'            Case ".bz2"
-'                'If it's a tarball, then first decompress the tar, then extract the tar's contents
+        Dim bResult = False
+        On Error GoTo Problem
+        'Determine the archive type
+        Select Case Path.GetExtension(sZipFile)
+            Case ".zip"
+                'If it's a zip, then simply extract the contents
+                Dim fZ = New FastZip()
+                fZ.ExtractZip(sZipFile, sDestPath, "") '//use "" for File Filter if you want all files
+            Case ".bz2"
+                'If it's a tarball, then first decompress the tar, then extract the tar's contents
 
-'                'Get the filename of the resulting tar file
-'                Dim sTarFileName As String = Path.GetDirectoryName(sZipFile) & "\" &
-'                                             Path.GetFileNameWithoutExtension(sZipFile)
-'                'Create a new file stream for the tar ball
-'                Dim fsIn As FileStream = File.OpenRead(sZipFile)
+                'Get the filename of the resulting tar file
+                Dim sTarFileName As String = Path.GetDirectoryName(sZipFile) & "\" &
+                                             Path.GetFileNameWithoutExtension(sZipFile)
+                'Create a new file stream for the tar ball
+                Dim fsIn As FileStream = File.OpenRead(sZipFile)
 
-'                'If the resulting tar file exists alreay, delete it before creating it
-'                If File.Exists(sTarFileName) Then
-'                    File.Delete(sTarFileName)
-'                End If
+                'If the resulting tar file exists alreay, delete it before creating it
+                If File.Exists(sTarFileName) Then
+                    File.Delete(sTarFileName)
+                End If
 
-'                'Create a file stream to receive the decompressed tar file
-'                Dim fsOut As FileStream = File.Create(sTarFileName)
+                'Create a file stream to receive the decompressed tar file
+                Dim fsOut As FileStream = File.Create(sTarFileName)
 
-'                'Perform the decompression of the tar file
-'                BZip2.Decompress(fsIn, fsOut)
+                'Perform the decompression of the tar file
+                BZip2.Decompress(fsIn, fsOut)
 
-'                'Open a new file stream for the tar file
-'                Dim fsTar As FileStream = File.OpenRead(sTarFileName)
-'                'Create a TarArchive object for the tar file
-'                Dim tArch As TarArchive = TarArchive.CreateInputTarArchive(fsTar)
+                'Open a new file stream for the tar file
+                Dim fsTar As FileStream = File.OpenRead(sTarFileName)
+                'Create a TarArchive object for the tar file
+                Dim tArch As TarArchive = TarArchive.CreateInputTarArchive(fsTar)
 
-'                'Extract the tar's contents
-'                tArch.ExtractContents(sDestPath)
+                'Extract the tar's contents
+                tArch.ExtractContents(sDestPath)
 
-'                ''Get a list of the files that were extracted within the tar folder
-'                'Dim sExtractedFiles() As String =
-'                '        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+                'Get a list of the files that were extracted within the tar folder
+                Dim sExtractedFiles() As String =
+                        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
-'                ''Move all the files to the requested destination directory
-'                'Dim sFile As String
-'                'For Each sFile In sExtractedFiles
-'                '    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
-'                'Next
+                'Move all the files to the requested destination directory
+                Dim sFile As String
+                For Each sFile In sExtractedFiles
+                    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
+                Next
 
-'                ''Delete the tar folder
-'                'Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+                'Delete the tar folder
+                Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
 
-'                'Close the open file streams
-'                tArch.Close()
-'                fsIn.Close()
+                'Close the open file streams
+                tArch.Close()
+                fsIn.Close()
 
-'                'Delete the decompressed tar file
-'                File.Delete(sTarFileName)
-'        End Select
-'        bResult = True
+                'Delete the decompressed tar file
 
-'Problem:
-'        Return bResult
+                File.Delete(sTarFileName)
+
+        End Select
+
+        bResult = True
+
+Problem:
+        Return bResult
     End Function
 
     Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)

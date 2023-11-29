@@ -48,10 +48,10 @@ Public Class Main
         DisableStuffs()
         fn.LoadListofExes()
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
-        try
-       fn.CheckforForgeUpdates(False)
-            Catch
-            End Try
+        Try
+            fn.CheckforForgeUpdates(False)
+        Catch
+        End Try
 
     End Sub
     Public Shared Function GetTitle() As String
@@ -229,7 +229,7 @@ Public Class Main
     End Sub
 
     Private Sub GithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GithubToolStripMenuItem.Click
-                Process.Start("https://github.com/churrufli/forgelauncher")
+        Process.Start("https://github.com/churrufli/forgelauncher")
 
     End Sub
 
@@ -237,8 +237,8 @@ Public Class Main
         fn.CheckLauncherUpdates()
     End Sub
 
-     Private Sub ForgeGithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ForgeGithubToolStripMenuItem.Click
-                  Process.Start("https://github.com/Card-Forge/forge")
+    Private Sub ForgeGithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ForgeGithubToolStripMenuItem.Click
+        Process.Start("https://github.com/Card-Forge/forge")
     End Sub
 
 End Class
