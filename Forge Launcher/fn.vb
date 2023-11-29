@@ -6,6 +6,8 @@ Imports ICSharpCode.SharpZipLib.BZip2
 Imports ICSharpCode.SharpZipLib.Tar
 Imports ICSharpCode.SharpZipLib.Zip
 
+
+
 Public Class fn
     Shared WithEvents downloader As WebClient
 
@@ -20,8 +22,9 @@ Public Class fn
         End Try
         Try
             Dim files =
-                    Directory.GetFiles(Environment.CurrentDirectory, "forge*", SearchOption.AllDirectories).Where(
-                        Function(s) s.EndsWith(".tar.bz") OrElse s.EndsWith(".bz2") OrElse s.EndsWith(".tar"))
+    Directory.GetFiles(Environment.CurrentDirectory, "forge-gui-desktop-*", SearchOption.TopDirectoryOnly).Where(
+        Function(s) Regex.IsMatch(s, "forge-gui-desktop-\d+(\.\d+)*(-\S+)?(\.tar(\.bz2)?)?$"))
+
             For Each Foundedfile As String In files
                 File.Delete(Foundedfile)
             Next
@@ -630,71 +633,126 @@ Public Class fn
 
 
 
-    Public Shared Function UnzipFile(sZipFile As String, sDestPath As String) As Boolean
-        Dim bResult = False
-        On Error GoTo Problem
-        'Determine the archive type
-        Select Case Path.GetExtension(sZipFile)
-            Case ".zip"
-                'If it's a zip, then simply extract the contents
-                Dim fZ = New FastZip()
-                fZ.ExtractZip(sZipFile, sDestPath, "") '//use "" for File Filter if you want all files
-            Case ".bz2"
-                'If it's a tarball, then first decompress the tar, then extract the tar's contents
+    Public Shared Sub DescomprimirTarBz2(archivoBz2 As String, directorioDestino As String)
+        ' Crear un stream para leer el archivo bz2
+        Using bz2Stream As New FileStream(archivoBz2, FileMode.Open, FileAccess.Read)
+            ' Crear un stream para descomprimir el archivo bz2
+            Using decompressionStream As New BZip2InputStream(bz2Stream)
 
-                'Get the filename of the resulting tar file
-                Dim sTarFileName As String = Path.GetDirectoryName(sZipFile) & "\" &
-                                             Path.GetFileNameWithoutExtension(sZipFile)
-                'Create a new file stream for the tar ball
-                Dim fsIn As FileStream = File.OpenRead(sZipFile)
+                ' Crear un stream para leer el archivo tar
+                Using tarStream As New TarInputStream(decompressionStream)
+                    ' Extraer cada entrada del archivo tar
+                    Dim entrada As TarEntry = tarStream.GetNextEntry()
 
-                'If the resulting tar file exists alreay, delete it before creating it
-                If File.Exists(sTarFileName) Then
-                    File.Delete(sTarFileName)
-                End If
+                    While entrada IsNot Nothing
+                        ' Crear la ruta completa del archivo de salida
+                        Dim archivoSalida As String = Path.Combine(directorioDestino, RChr(entrada.Name))
 
-                'Create a file stream to receive the decompressed tar file
-                Dim fsOut As FileStream = File.Create(sTarFileName)
+                        ' Crear directorios si es necesario
+                        If entrada.IsDirectory AndAlso Not Directory.Exists(archivoSalida) Then
+                            Directory.CreateDirectory(archivoSalida)
+                        ElseIf Not entrada.IsDirectory Then
+                            ' Crear un stream para escribir el archivo de salida
+                            Using archivoSalidaStream As New FileStream(archivoSalida, FileMode.Create, FileAccess.Write)
+                                ' Leer y escribir los datos de la entrada
+                                tarStream.CopyEntryContents(archivoSalidaStream)
+                            End Using
+                        End If
 
-                'Perform the decompression of the tar file
-                BZip2.Decompress(fsIn, fsOut)
+                        ' Obtener la siguiente entrada del archivo tar
+                        entrada = tarStream.GetNextEntry()
+                    End While
+                End Using
+            End Using
+        End Using
+    End Sub
 
-                'Open a new file stream for the tar file
-                Dim fsTar As FileStream = File.OpenRead(sTarFileName)
-                'Create a TarArchive object for the tar file
-                Dim tArch As TarArchive = TarArchive.CreateInputTarArchive(fsTar)
+    Public Shared Function RChr(valor As String)
 
-                'Extract the tar's contents
-                tArch.ExtractContents(sDestPath)
-
-                'Get a list of the files that were extracted within the tar folder
-                Dim sExtractedFiles() As String =
-                        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
-
-                'Move all the files to the requested destination directory
-                Dim sFile As String
-                For Each sFile In sExtractedFiles
-                    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
-                Next
-
-                'Delete the tar folder
-                Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
-
-                'Close the open file streams
-                tArch.Close()
-                fsIn.Close()
-
-                'Delete the decompressed tar file
-
-                File.Delete(sTarFileName)
-
-        End Select
-
-        bResult = True
-
-Problem:
-        Return bResult
+        valor = Replace(valor, ChrW(25), "'")
+        Return valor
     End Function
+
+    Function ReemplazarCaracteresEspeciales(cadena As String) As String
+        ' Reemplazar todos los caracteres especiales
+        Dim caracteresEspeciales As New Dictionary(Of Char, String)()
+        caracteresEspeciales.Add(ChrW(25), "CaracterEspecial") ' Puedes agregar más caracteres según sea necesario
+
+        For Each par In caracteresEspeciales
+            cadena = cadena.Replace(par.Key, par.Value)
+        Next
+
+        Return cadena
+    End Function
+    Public Shared Function UnzipFile(sZipFile As String, sDestPath As String) As Boolean
+        DescomprimirTarBz2(sZipFile, sDestPath)
+        Return True
+    End Function
+
+    '    Dim bResult = False
+    '        On Error GoTo Problem
+    '        'Determine the archive type
+    '        Select Case Path.GetExtension(sZipFile)
+    '            Case ".zip"
+    '                'If it's a zip, then simply extract the contents
+    '                Dim fZ = New FastZip()
+    '                fZ.ExtractZip(sZipFile, sDestPath, "") '//use "" for File Filter if you want all files
+    '            Case ".bz2"
+    '                'If it's a tarball, then first decompress the tar, then extract the tar's contents
+
+    '                'Get the filename of the resulting tar file
+    '                Dim sTarFileName As String = Path.GetDirectoryName(sZipFile) & "\" &
+    '                                             Path.GetFileNameWithoutExtension(sZipFile)
+    '                'Create a new file stream for the tar ball
+    '                Dim fsIn As FileStream = File.OpenRead(sZipFile)
+
+    '                'If the resulting tar file exists alreay, delete it before creating it
+    '                If File.Exists(sTarFileName) Then
+    '                    File.Delete(sTarFileName)
+    '                End If
+
+    '                'Create a file stream to receive the decompressed tar file
+    '                Dim fsOut As FileStream = File.Create(sTarFileName)
+
+    '                'Perform the decompression of the tar file
+    '                BZip2.Decompress(fsIn, fsOut)
+
+    '                'Open a new file stream for the tar file
+    '                Dim fsTar As FileStream = File.OpenRead(sTarFileName)
+    '                'Create a TarArchive object for the tar file
+    '                Dim tArch As TarArchive = TarArchive.CreateInputTarArchive(fsTar)
+
+    '                'Extract the tar's contents
+    '                tArch.ExtractContents(sDestPath)
+
+    '                'Get a list of the files that were extracted within the tar folder
+    '                Dim sExtractedFiles() As String =
+    '                        Directory.GetFiles(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+
+    '                'Move all the files to the requested destination directory
+    '                Dim sFile As String
+    '                For Each sFile In sExtractedFiles
+    '                    File.Move(sFile, sDestPath & "\" & Path.GetFileName(sFile))
+    '                Next
+
+    '                'Delete the tar folder
+    '                Directory.Delete(sDestPath & "\" & Path.GetFileNameWithoutExtension(sTarFileName))
+
+    '                'Close the open file streams
+    '                tArch.Close()
+    '                fsIn.Close()
+
+    '                'Delete the decompressed tar file
+
+    '                File.Delete(sTarFileName)
+
+    '        End Select
+
+    '        bResult = True
+
+    'Problem:
+    '        Return bResult
+    'End Function
 
     Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)
         Dim myfile = Path.GetFileName(vtoupdate)

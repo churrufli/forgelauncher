@@ -200,9 +200,6 @@ Public Class Main
         fn.CheckforForgeUpdates(True)
     End Sub
 
-    Private Sub fl_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
-        fn.DeleteDownloaded()
-    End Sub
 
     Private Sub Button5_Click_1(sender As Object, e As EventArgs)
         Dim opened = False
