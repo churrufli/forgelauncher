@@ -227,7 +227,7 @@ Public Class fn
         Dim takedate As String
 
         Try
-            takedate = FindIt(myTx, "<a href=""forge-gui-desktop", "<a")
+            takedate = FindIt(myTx, "<a href=""forge-installer", "<a")
 
             Dim pattern As String = "\b\d{1,2}-[a-zA-Z]{3}-\d{4} \d{1,2}:\d{2}\b"
             Dim match As Match = Regex.Match(takedate, pattern)
@@ -257,7 +257,7 @@ Public Class fn
             End If
         Next
 
-        Dim version As String = FindIt(lineLink, "forge-gui-desktop-", ".tar")
+        Dim version As String = FindIt(lineLink, "forge-installer-", ".tar")
 
         If Not String.IsNullOrEmpty(version) AndAlso Not String.IsNullOrEmpty(myDate) AndAlso Not String.IsNullOrEmpty(lineLink) Then
             Return $"Forge {version} {myDate}#{lineLink}"
@@ -277,7 +277,7 @@ Public Class fn
         doc.LoadXml(xml)
         Dim nodes As System.Xml.XmlNodeList = doc.DocumentElement.SelectNodes("//version")
         Dim lastVersion = nodes.Item(nodes.Count - 1).InnerText
-        Dim finalURL = String.Format("{0}{1}/forge-gui-desktop-{1}.tar.bz2", vars.url_release, lastVersion)
+        Dim finalURL = String.Format("{0}{1}/forge-installer-{1}.tar.bz2", vars.url_release, lastVersion)
         CheckRelease = finalURL
     End Function
     Public Shared Function StringToStream(input As String, enc As Encoding) As Stream
