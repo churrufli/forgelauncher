@@ -920,67 +920,73 @@ Public Class fn
         Try
             WriteUserLog("Checking for Launcher updates..." & vbCrLf)
 
-            Dim x As String = fn.ReadWeb("https://github.com/churrufli/forgelauncher/releases/")
-            Dim t As String = Main.GetTitle
-            Dim getvalue As String = GetDelimitedText(x, "Forge Launcher v", "<", 1)
-            Dim v As String = "Forge Launcher v" & GetDelimitedText(x, "Forge Launcher v", "<", 1)
-            If getvalue = Nothing Then
-                MsgBox("Can't get new version from https://github.com/churrufli/forgelauncher/releases/")
+            ' Obtener la página de lanzamientos desde GitHub
+            Dim pageContent As String = fn.ReadWeb("https://github.com/churrufli/forgelauncher/releases/")
+            Dim currentVersionTitle As String = Main.GetTitle
+            Dim latestVersionNumber As String = GetDelimitedText(pageContent, "Forge Launcher v", "<", 1)
+
+            ' Verificar si se obtuvo la versión más reciente
+            If String.IsNullOrEmpty(latestVersionNumber) Then
+                MsgBox("Can't retrieve the latest version from GitHub.")
                 Exit Sub
             End If
-            If t <> v And getvalue <> Nothing Then
 
-                'If MsgBox("Forge Launcher New version Available. Launcher AutoUpdate is not available ATM, Visit Github for download last version", MsgBoxStyle.YesNo, v) = MsgBoxResult.Yes Then
-                '    Process.Start("https://github.com/churrufli/forgelauncher/releases")
-                'End If
-
-                'Exit Sub
-
-                If _
-                     MsgBox("Forge Launcher New version Available. Update now?", MsgBoxStyle.YesNo, v) =
-                    MsgBoxResult.Yes Then
-                    Try
-                        WriteUserLog("Downloading new version from GitHub..." & vbCrLf)
-                        Dim myUrl = "https://github.com/churrufli/forgelauncher/releases/download/v" & getvalue & "/Forge.Launcher.zip"
-                        DownloadFile(myUrl, "Forge Launcher New Version.zip")
-                        WriteUserLog("Unpacking new version in " & Directory.GetCurrentDirectory() & "..." & vbCrLf)
-                        UnzipFile(Directory.GetCurrentDirectory() & "/" & "Forge Launcher New Version.zip",
-                                  Directory.GetCurrentDirectory() & "/fltmp")
-                    Catch
-                    End Try
-
-
-                    File.Delete("Forge Launcher New Version.zip")
-                    Try
-                        File.Move("Forge Launcher.exe", "fltmp/Forge Launcher.bak")
-                    Catch ex As Exception
-                    End Try
-                    Try
-                        File.Copy("fltmp/Forge Launcher.exe", "Forge Launcher.exe")
-                        UpdateLog("showwhatsnew", "yes")
-                    Catch
-                    End Try
-                    Try
-                        File.Delete("fldata/fl_whatsnew.txt")
-                    Catch
-                    End Try
-                    Try
-                        UpdateLog("launcher_version", v)
-                    Catch
-                    End Try
-                    Try
-                        Directory.Delete("fltmp", True)
-                    Catch ex As Exception
-                    End Try
-                    Application.Restart()
-                End If
-            Else
-                WriteUserLog("Your Launcher is up to date: " & v & vbCrLf)
+            Dim latestVersionTitle As String = "Forge Launcher v" & latestVersionNumber
+            If currentVersionTitle = latestVersionTitle Then
+                WriteUserLog("Your Launcher is up to date: " & latestVersionTitle & vbCrLf)
+                Exit Sub
             End If
-        Catch
 
+            ' Solicitar al usuario si desea actualizar
+            If MsgBox("New version of Forge Launcher available. Update now?", MsgBoxStyle.YesNo, latestVersionTitle) = MsgBoxResult.Yes Then
+                Try
+                    WriteUserLog("Downloading new version from GitHub..." & vbCrLf)
+                    Dim downloadUrl = "https://github.com/churrufli/forgelauncher/releases/download/v" & latestVersionNumber & "/Forge.Launcher.zip"
+                    Dim zipFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Forge Launcher New Version.zip")
+
+                    DownloadFile(downloadUrl, zipFilePath)
+                    WriteUserLog("Unpacking new version..." & vbCrLf)
+
+                    ' Crear o limpiar la carpeta temporal fltmp
+                    Dim extractionPath = Path.Combine(Directory.GetCurrentDirectory(), "fltmp")
+                    If Directory.Exists(extractionPath) Then
+                        Directory.Delete(extractionPath, True) ' Eliminar carpeta y contenido si ya existe
+                    End If
+                    Directory.CreateDirectory(extractionPath) ' Crear la carpeta vacía
+
+                    UnzipFile(zipFilePath, extractionPath)
+                    File.Delete(zipFilePath)
+
+                    ' Generar un script de actualización
+                    Dim batchScriptPath As String = Path.Combine(Directory.GetCurrentDirectory(), "UpdateLauncher.bat")
+                    Dim executablePath = Path.Combine(Directory.GetCurrentDirectory(), "Forge Launcher.exe")
+                    Dim newExecutablePath = Path.Combine(extractionPath, "Forge Launcher.exe")
+
+                    ' Crear el archivo .bat para ejecutar el reemplazo
+                    Using sw As New StreamWriter(batchScriptPath)
+                        sw.WriteLine("@echo off")
+                        sw.WriteLine("timeout /t 3 > nul") ' Esperar unos segundos para asegurar que el lanzador se cierre
+                        sw.WriteLine("copy /y """ & newExecutablePath & """ """ & executablePath & """")
+                        sw.WriteLine("rmdir /s /q """ & extractionPath & """") ' Eliminar carpeta temporal
+                        sw.WriteLine("start """" """ & executablePath & """") ' Reiniciar lanzador
+                        sw.WriteLine("del """ & batchScriptPath & """") ' Eliminar el propio script .bat
+                    End Using
+
+                    ' Ejecutar el script y cerrar el lanzador actual
+                    Process.Start(batchScriptPath)
+                    Application.Exit()
+                Catch ex As Exception
+                    WriteUserLog("Error updating launcher: " & ex.Message & vbCrLf)
+                    MsgBox("Failed to update. Please try again later.", MsgBoxStyle.Critical)
+                End Try
+            End If
+        Catch ex As Exception
+            WriteUserLog("Unexpected error: " & ex.Message & vbCrLf)
         End Try
     End Sub
+
+
+
 
     Public Shared Function GetDelimitedText(Text As String, OpenDelimiter As String,
   CloseDelimiter As String, index As Long) As String
