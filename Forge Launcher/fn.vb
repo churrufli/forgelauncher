@@ -692,7 +692,14 @@ Public Class fn
 
         If ReadLogUser("removepreviousjarfiles", False) = "yes" Then
             Try
-                Dim paths() As String = Directory.GetFiles(vars.UserDir, "forge-*-jar-with-dependencies.jar")
+                Dim pathsAdventure() As String = Directory.GetFiles(vars.UserDir, "forge-adventure-*-jar-with-dependencies.jar")
+                Dim pathsGuiDesktop() As String = Directory.GetFiles(vars.UserDir, "forge-gui-desktop-*-jar-with-dependencies.jar")
+                Dim pathsGuiMobileDev() As String = Directory.GetFiles(vars.UserDir, "forge-gui-mobile-dev-*-jar-with-dependencies.jar")
+
+                ' Combina todos los arrays en uno solo
+                Dim paths() As String = pathsAdventure.Concat(pathsGuiDesktop).Concat(pathsGuiMobileDev).ToArray()
+
+                ' Verifica si hay archivos que borrar
                 If paths.Length > 0 Then
                     For Each path As String In paths
                         File.Delete(path)

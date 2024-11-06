@@ -67,23 +67,23 @@ Partial Class Main
         '
         'txlog
         '
-        Me.txlog.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.8!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.txlog.BackColor = System.Drawing.Color.White
         Me.txlog.Location = New System.Drawing.Point(9, 105)
         Me.txlog.Multiline = True
         Me.txlog.Name = "txlog"
         Me.txlog.ReadOnly = True
         Me.txlog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txlog.Size = New System.Drawing.Size(587, 240)
+        Me.txlog.Size = New System.Drawing.Size(601, 240)
         Me.txlog.TabIndex = 8
         '
         'launchforge
         '
         Me.launchforge.BackColor = System.Drawing.Color.Gainsboro
-        Me.launchforge.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.0!, System.Drawing.FontStyle.Bold)
+        Me.launchforge.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Bold)
         Me.launchforge.ForeColor = System.Drawing.Color.Black
-        Me.launchforge.Location = New System.Drawing.Point(167, 20)
+        Me.launchforge.Location = New System.Drawing.Point(167, 24)
         Me.launchforge.Name = "launchforge"
-        Me.launchforge.Size = New System.Drawing.Size(237, 30)
+        Me.launchforge.Size = New System.Drawing.Size(237, 26)
         Me.launchforge.TabIndex = 4
         Me.launchforge.Text = "Launch Forge"
         Me.ToolTip1.SetToolTip(Me.launchforge, "Launch Forge")
@@ -93,7 +93,7 @@ Partial Class Main
         '
         Me.ProgressBar1.Location = New System.Drawing.Point(9, 351)
         Me.ProgressBar1.Name = "ProgressBar1"
-        Me.ProgressBar1.Size = New System.Drawing.Size(587, 20)
+        Me.ProgressBar1.Size = New System.Drawing.Size(601, 20)
         Me.ProgressBar1.TabIndex = 36
         Me.ProgressBar1.Visible = False
         '
@@ -101,9 +101,9 @@ Partial Class Main
         '
         Me.btnupdate.BackColor = System.Drawing.Color.Gainsboro
         Me.btnupdate.Image = CType(resources.GetObject("btnupdate.Image"), System.Drawing.Image)
-        Me.btnupdate.Location = New System.Drawing.Point(128, 20)
+        Me.btnupdate.Location = New System.Drawing.Point(128, 24)
         Me.btnupdate.Name = "btnupdate"
-        Me.btnupdate.Size = New System.Drawing.Size(33, 30)
+        Me.btnupdate.Size = New System.Drawing.Size(33, 26)
         Me.btnupdate.TabIndex = 3
         Me.ToolTip1.SetToolTip(Me.btnupdate, "Check for Forge Updates")
         Me.btnupdate.UseVisualStyleBackColor = False
@@ -113,9 +113,9 @@ Partial Class Main
         Me.btnlaunchmode.BackColor = System.Drawing.Color.Gainsboro
         Me.btnlaunchmode.FlatAppearance.BorderSize = 0
         Me.btnlaunchmode.Image = CType(resources.GetObject("btnlaunchmode.Image"), System.Drawing.Image)
-        Me.btnlaunchmode.Location = New System.Drawing.Point(410, 20)
+        Me.btnlaunchmode.Location = New System.Drawing.Point(410, 24)
         Me.btnlaunchmode.Name = "btnlaunchmode"
-        Me.btnlaunchmode.Size = New System.Drawing.Size(31, 28)
+        Me.btnlaunchmode.Size = New System.Drawing.Size(31, 24)
         Me.btnlaunchmode.TabIndex = 5
         Me.ToolTip1.SetToolTip(Me.btnlaunchmode, "Launch Options")
         Me.btnlaunchmode.UseVisualStyleBackColor = False
@@ -135,12 +135,11 @@ Partial Class Main
         'typeofupdate
         '
         Me.typeofupdate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.typeofupdate.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.0!, System.Drawing.FontStyle.Bold)
         Me.typeofupdate.FormattingEnabled = True
         Me.typeofupdate.Items.AddRange(New Object() {"release", "snapshot"})
         Me.typeofupdate.Location = New System.Drawing.Point(6, 26)
         Me.typeofupdate.Name = "typeofupdate"
-        Me.typeofupdate.Size = New System.Drawing.Size(85, 21)
+        Me.typeofupdate.Size = New System.Drawing.Size(85, 23)
         Me.typeofupdate.TabIndex = 35
         Me.ToolTip1.SetToolTip(Me.typeofupdate, "Type of update")
         '
@@ -149,7 +148,7 @@ Partial Class Main
         Me.vtoupdate.AutoSize = True
         Me.vtoupdate.Location = New System.Drawing.Point(447, 29)
         Me.vtoupdate.Name = "vtoupdate"
-        Me.vtoupdate.Size = New System.Drawing.Size(106, 13)
+        Me.vtoupdate.Size = New System.Drawing.Size(99, 15)
         Me.vtoupdate.TabIndex = 34
         Me.vtoupdate.Text = "version to update"
         Me.vtoupdate.Visible = False
@@ -157,101 +156,100 @@ Partial Class Main
         'MenuGeneral
         '
         Me.MenuGeneral.BackColor = System.Drawing.Color.Silver
-        Me.MenuGeneral.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.0!)
         Me.MenuGeneral.ImageScalingSize = New System.Drawing.Size(20, 20)
         Me.MenuGeneral.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SettingsToolStripMenuItem1, Me.ToolStripMenuItem1, Me.ToolsToolStripMenuItem, Me.AboutForgeToolStripMenuItem1, Me.AboutLauncherToolStripMenuItem})
         Me.MenuGeneral.Location = New System.Drawing.Point(0, 0)
         Me.MenuGeneral.Name = "MenuGeneral"
-        Me.MenuGeneral.Size = New System.Drawing.Size(606, 24)
+        Me.MenuGeneral.Size = New System.Drawing.Size(622, 24)
         Me.MenuGeneral.TabIndex = 1
         Me.MenuGeneral.Text = "MenuStrip1"
         '
         'SettingsToolStripMenuItem1
         '
         Me.SettingsToolStripMenuItem1.Name = "SettingsToolStripMenuItem1"
-        Me.SettingsToolStripMenuItem1.Size = New System.Drawing.Size(57, 20)
+        Me.SettingsToolStripMenuItem1.Size = New System.Drawing.Size(61, 20)
         Me.SettingsToolStripMenuItem1.Text = "Settings"
         '
         'ToolStripMenuItem1
         '
         Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ReadForgeLogFileToolStripMenuItem, Me.RestoreForgePreferencesToolStripMenuItem})
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(75, 20)
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(79, 20)
         Me.ToolStripMenuItem1.Text = "Forge Tools"
         '
         'ReadForgeLogFileToolStripMenuItem
         '
         Me.ReadForgeLogFileToolStripMenuItem.Name = "ReadForgeLogFileToolStripMenuItem"
-        Me.ReadForgeLogFileToolStripMenuItem.Size = New System.Drawing.Size(201, 22)
+        Me.ReadForgeLogFileToolStripMenuItem.Size = New System.Drawing.Size(210, 22)
         Me.ReadForgeLogFileToolStripMenuItem.Text = "Read Forge Log File"
         '
         'RestoreForgePreferencesToolStripMenuItem
         '
         Me.RestoreForgePreferencesToolStripMenuItem.Name = "RestoreForgePreferencesToolStripMenuItem"
-        Me.RestoreForgePreferencesToolStripMenuItem.Size = New System.Drawing.Size(201, 22)
+        Me.RestoreForgePreferencesToolStripMenuItem.Size = New System.Drawing.Size(210, 22)
         Me.RestoreForgePreferencesToolStripMenuItem.Text = "Restore Forge Preferences"
         '
         'ToolsToolStripMenuItem
         '
         Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RestartForgeLauncherToolStripMenuItem})
         Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
-        Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(93, 20)
+        Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(98, 20)
         Me.ToolsToolStripMenuItem.Text = "Launcher Tools"
         '
         'RestartForgeLauncherToolStripMenuItem
         '
         Me.RestartForgeLauncherToolStripMenuItem.Name = "RestartForgeLauncherToolStripMenuItem"
-        Me.RestartForgeLauncherToolStripMenuItem.Size = New System.Drawing.Size(186, 22)
+        Me.RestartForgeLauncherToolStripMenuItem.Size = New System.Drawing.Size(195, 22)
         Me.RestartForgeLauncherToolStripMenuItem.Text = "Restart Forge Launcher"
         '
         'AboutForgeToolStripMenuItem1
         '
         Me.AboutForgeToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ForgeDiscordChannelToolStripMenuItem, Me.ForgeGithubToolStripMenuItem, Me.ForgeWikiToolStripMenuItem, Me.ForgeForumToolStripMenuItem})
         Me.AboutForgeToolStripMenuItem1.Name = "AboutForgeToolStripMenuItem1"
-        Me.AboutForgeToolStripMenuItem1.Size = New System.Drawing.Size(77, 20)
+        Me.AboutForgeToolStripMenuItem1.Size = New System.Drawing.Size(85, 20)
         Me.AboutForgeToolStripMenuItem1.Text = "About Forge"
         '
         'ForgeDiscordChannelToolStripMenuItem
         '
         Me.ForgeDiscordChannelToolStripMenuItem.Name = "ForgeDiscordChannelToolStripMenuItem"
-        Me.ForgeDiscordChannelToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
+        Me.ForgeDiscordChannelToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
         Me.ForgeDiscordChannelToolStripMenuItem.Text = "Forge Discord Channel"
         '
         'ForgeGithubToolStripMenuItem
         '
         Me.ForgeGithubToolStripMenuItem.Name = "ForgeGithubToolStripMenuItem"
-        Me.ForgeGithubToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
+        Me.ForgeGithubToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
         Me.ForgeGithubToolStripMenuItem.Text = "Forge Github"
         '
         'ForgeWikiToolStripMenuItem
         '
         Me.ForgeWikiToolStripMenuItem.Name = "ForgeWikiToolStripMenuItem"
-        Me.ForgeWikiToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
+        Me.ForgeWikiToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
         Me.ForgeWikiToolStripMenuItem.Text = "Forge Wiki"
         '
         'ForgeForumToolStripMenuItem
         '
         Me.ForgeForumToolStripMenuItem.Name = "ForgeForumToolStripMenuItem"
-        Me.ForgeForumToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
+        Me.ForgeForumToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
         Me.ForgeForumToolStripMenuItem.Text = "Forge Forum"
         '
         'AboutLauncherToolStripMenuItem
         '
         Me.AboutLauncherToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CheckForUpdatesToolStripMenuItem, Me.GithubToolStripMenuItem})
         Me.AboutLauncherToolStripMenuItem.Name = "AboutLauncherToolStripMenuItem"
-        Me.AboutLauncherToolStripMenuItem.Size = New System.Drawing.Size(95, 20)
+        Me.AboutLauncherToolStripMenuItem.Size = New System.Drawing.Size(104, 20)
         Me.AboutLauncherToolStripMenuItem.Text = "About Launcher"
         '
         'CheckForUpdatesToolStripMenuItem
         '
         Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
-        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(211, 22)
+        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(223, 22)
         Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Launcher Updates"
         '
         'GithubToolStripMenuItem
         '
         Me.GithubToolStripMenuItem.Name = "GithubToolStripMenuItem"
-        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(211, 22)
+        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(223, 22)
         Me.GithubToolStripMenuItem.Text = "Visit Project on GitHub"
         '
         'ToolTip1
@@ -263,12 +261,11 @@ Partial Class Main
         'listofexes
         '
         Me.listofexes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.listofexes.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.listofexes.FormattingEnabled = True
         Me.listofexes.Items.AddRange(New Object() {"release", "snapshot"})
         Me.listofexes.Location = New System.Drawing.Point(447, 24)
         Me.listofexes.Name = "listofexes"
-        Me.listofexes.Size = New System.Drawing.Size(128, 21)
+        Me.listofexes.Size = New System.Drawing.Size(148, 23)
         Me.listofexes.TabIndex = 51
         Me.ToolTip1.SetToolTip(Me.listofexes, "EXE or CMD to Launch (only in normal mode)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Select an exe from the different exes" &
         " listed, such as adventure mode and other exes for other Java versions.")
@@ -279,7 +276,7 @@ Partial Class Main
         Me.Label1.AutoSize = True
         Me.Label1.Location = New System.Drawing.Point(12, 455)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(0, 13)
+        Me.Label1.Size = New System.Drawing.Size(0, 15)
         Me.Label1.TabIndex = 45
         '
         'Timer1
@@ -295,10 +292,9 @@ Partial Class Main
         Me.GroupForgeOptions.Controls.Add(Me.typeofupdate)
         Me.GroupForgeOptions.Controls.Add(Me.vtoupdate)
         Me.GroupForgeOptions.Controls.Add(Me.launchforge)
-        Me.GroupForgeOptions.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.GroupForgeOptions.Location = New System.Drawing.Point(9, 35)
         Me.GroupForgeOptions.Name = "GroupForgeOptions"
-        Me.GroupForgeOptions.Size = New System.Drawing.Size(587, 64)
+        Me.GroupForgeOptions.Size = New System.Drawing.Size(601, 64)
         Me.GroupForgeOptions.TabIndex = 39
         Me.GroupForgeOptions.TabStop = False
         Me.GroupForgeOptions.Text = "Update Options"
@@ -359,14 +355,14 @@ Partial Class Main
         '
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None
         Me.BackColor = System.Drawing.Color.WhiteSmoke
-        Me.ClientSize = New System.Drawing.Size(606, 376)
+        Me.ClientSize = New System.Drawing.Size(622, 378)
         Me.Controls.Add(Me.GroupForgeOptions)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.ProgressBar1)
         Me.Controls.Add(Me.MenuGeneral)
         Me.Controls.Add(Me.txlog)
         Me.Controls.Add(Me.group_install)
-        Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"),System.Drawing.Icon)
         Me.MaximizeBox = false

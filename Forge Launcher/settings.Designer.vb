@@ -44,53 +44,58 @@ Partial Class settings
         '
         'picsdirbutton
         '
-        Me.picsdirbutton.Location = New System.Drawing.Point(605, 546)
+        Me.picsdirbutton.Location = New System.Drawing.Point(706, 630)
+        Me.picsdirbutton.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.picsdirbutton.Name = "picsdirbutton"
-        Me.picsdirbutton.Size = New System.Drawing.Size(66, 22)
+        Me.picsdirbutton.Size = New System.Drawing.Size(77, 25)
         Me.picsdirbutton.TabIndex = 8
         Me.picsdirbutton.Text = "Brownse"
         Me.picsdirbutton.UseVisualStyleBackColor = True
         '
         'pics_dir
         '
-        Me.pics_dir.Location = New System.Drawing.Point(138, 546)
+        Me.pics_dir.Location = New System.Drawing.Point(161, 630)
+        Me.pics_dir.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.pics_dir.Name = "pics_dir"
-        Me.pics_dir.Size = New System.Drawing.Size(462, 21)
+        Me.pics_dir.Size = New System.Drawing.Size(538, 23)
         Me.pics_dir.TabIndex = 7
         '
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(57, 546)
+        Me.Label5.Location = New System.Drawing.Point(66, 630)
+        Me.Label5.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(52, 15)
+        Me.Label5.Size = New System.Drawing.Size(49, 15)
         Me.Label5.TabIndex = 6
         Me.Label5.Text = "Pics Dir:"
         '
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(-2, 561)
+        Me.Label3.Location = New System.Drawing.Point(-2, 647)
+        Me.Label3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(218, 15)
+        Me.Label3.Size = New System.Drawing.Size(207, 15)
         Me.Label3.TabIndex = 51
         Me.Label3.Text = "Downloaded Decks Root Folder Name"
         Me.Label3.Visible = False
         '
         'downloadeddecks_dir
         '
-        Me.downloadeddecks_dir.Location = New System.Drawing.Point(185, 561)
+        Me.downloadeddecks_dir.Location = New System.Drawing.Point(216, 647)
+        Me.downloadeddecks_dir.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.downloadeddecks_dir.Name = "downloadeddecks_dir"
-        Me.downloadeddecks_dir.Size = New System.Drawing.Size(88, 21)
+        Me.downloadeddecks_dir.Size = New System.Drawing.Size(102, 23)
         Me.downloadeddecks_dir.TabIndex = 50
         Me.downloadeddecks_dir.Visible = False
         '
         'Button2
         '
-        Me.Button2.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!)
-        Me.Button2.Location = New System.Drawing.Point(6, 29)
+        Me.Button2.Location = New System.Drawing.Point(24, 33)
+        Me.Button2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(166, 27)
+        Me.Button2.Size = New System.Drawing.Size(194, 31)
         Me.Button2.TabIndex = 56
         Me.Button2.Text = "Reset Forge Launcher settings"
         Me.ToolTip1.SetToolTip(Me.Button2, "Reset Forge Launcher will delete your launcher setting file")
@@ -99,10 +104,10 @@ Partial Class settings
         'removepreviousjarfiles
         '
         Me.removepreviousjarfiles.AutoSize = True
-        Me.removepreviousjarfiles.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!)
-        Me.removepreviousjarfiles.Location = New System.Drawing.Point(13, 22)
+        Me.removepreviousjarfiles.Location = New System.Drawing.Point(15, 25)
+        Me.removepreviousjarfiles.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.removepreviousjarfiles.Name = "removepreviousjarfiles"
-        Me.removepreviousjarfiles.Size = New System.Drawing.Size(237, 19)
+        Me.removepreviousjarfiles.Size = New System.Drawing.Size(224, 19)
         Me.removepreviousjarfiles.TabIndex = 58
         Me.removepreviousjarfiles.Text = "Delete previous Jar file in each update"
         Me.ToolTip1.SetToolTip(Me.removepreviousjarfiles, "only if you use releases. Not necessary if you use snapshots. ")
@@ -110,10 +115,10 @@ Partial Class settings
         '
         'UFL
         '
-        Me.UFL.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!)
-        Me.UFL.Location = New System.Drawing.Point(203, 28)
+        Me.UFL.Location = New System.Drawing.Point(237, 32)
+        Me.UFL.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.UFL.Name = "UFL"
-        Me.UFL.Size = New System.Drawing.Size(153, 28)
+        Me.UFL.Size = New System.Drawing.Size(178, 32)
         Me.UFL.TabIndex = 58
         Me.UFL.Text = "Uninstall Forge Launcher"
         Me.ToolTip1.SetToolTip(Me.UFL, "Uninstall and delete files used by Forge Launcher")
@@ -121,10 +126,10 @@ Partial Class settings
         '
         'Button1
         '
-        Me.Button1.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!, System.Drawing.FontStyle.Bold)
-        Me.Button1.Location = New System.Drawing.Point(20, 159)
+        Me.Button1.Location = New System.Drawing.Point(23, 183)
+        Me.Button1.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(379, 27)
+        Me.Button1.Size = New System.Drawing.Size(442, 31)
         Me.Button1.TabIndex = 55
         Me.Button1.Text = "Save Settings (restart needed)"
         Me.Button1.UseVisualStyleBackColor = True
@@ -132,10 +137,11 @@ Partial Class settings
         'flpref
         '
         Me.flpref.Controls.Add(Me.removepreviousjarfiles)
-        Me.flpref.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!, System.Drawing.FontStyle.Bold)
-        Me.flpref.Location = New System.Drawing.Point(20, 12)
+        Me.flpref.Location = New System.Drawing.Point(23, 14)
+        Me.flpref.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.flpref.Name = "flpref"
-        Me.flpref.Size = New System.Drawing.Size(379, 51)
+        Me.flpref.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.flpref.Size = New System.Drawing.Size(442, 59)
         Me.flpref.TabIndex = 57
         Me.flpref.TabStop = False
         Me.flpref.Text = "Launcher Preferences"
@@ -144,19 +150,20 @@ Partial Class settings
         '
         Me.GroupBox2.Controls.Add(Me.Button2)
         Me.GroupBox2.Controls.Add(Me.UFL)
-        Me.GroupBox2.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!, System.Drawing.FontStyle.Bold)
-        Me.GroupBox2.Location = New System.Drawing.Point(20, 79)
+        Me.GroupBox2.Location = New System.Drawing.Point(23, 91)
+        Me.GroupBox2.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(379, 74)
+        Me.GroupBox2.Padding = New System.Windows.Forms.Padding(4, 3, 4, 3)
+        Me.GroupBox2.Size = New System.Drawing.Size(442, 85)
         Me.GroupBox2.TabIndex = 59
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Forge Launcher Settings"
         '
-        'preferences
+        'settings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(417, 198)
+        Me.ClientSize = New System.Drawing.Size(486, 228)
         Me.Controls.Add(Me.picsdirbutton)
         Me.Controls.Add(Me.pics_dir)
         Me.Controls.Add(Me.GroupBox2)
@@ -165,14 +172,15 @@ Partial Class settings
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.downloadeddecks_dir)
-        Me.Font = New System.Drawing.Font("Microsoft Sans Serif", 7.2!)
+        Me.Font = New System.Drawing.Font("Segoe UI", 9.0!)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.Margin = New System.Windows.Forms.Padding(4, 3, 4, 3)
         Me.MaximizeBox = False
         Me.MinimizeBox = False
-        Me.Name = "preferences"
+        Me.Name = "settings"
         Me.ShowIcon = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Forge Launcher Settings"
+        Me.Text = "Forge Launcher - Settings"
         Me.TopMost = True
         Me.flpref.ResumeLayout(False)
         Me.flpref.PerformLayout()
