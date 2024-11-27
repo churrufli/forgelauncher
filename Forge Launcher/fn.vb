@@ -158,7 +158,7 @@ Public Class fn
     Public Shared Sub RestoreForgePreferences()
         Dim m As String
         m =
-            "If Forge does not load or freeze in the start screen, try restoring preferences (previous preferences will be removed) " &
+            "If Forge does not load or freeze in the start screen, try restoring user preferences (previous preferences will be removed) " &
             vbCrLf & " Are you sure?"
         If MsgBox(m, MsgBoxStyle.YesNoCancel, "Warning!") = MsgBoxResult.Yes Then
             Try
@@ -929,7 +929,7 @@ Public Class fn
 
             ' Obtener la página de lanzamientos desde GitHub
             Dim pageContent As String = fn.ReadWeb("https://github.com/churrufli/forgelauncher/releases/")
-            Dim currentVersionTitle As String = Main.GetTitle
+            Dim currentVersionTitle As String = Main.GetTitle()
             Dim latestVersionNumber As String = GetDelimitedText(pageContent, "Forge Launcher v", "<", 1)
 
             ' Verificar si se obtuvo la versión más reciente
@@ -964,24 +964,23 @@ Public Class fn
                     UnzipFile(zipFilePath, extractionPath)
                     File.Delete(zipFilePath)
 
-                    ' Generar un script de actualización
-                    Dim batchScriptPath As String = Path.Combine(Directory.GetCurrentDirectory(), "UpdateLauncher.bat")
+                    ' Reemplazar el ejecutable actual
                     Dim executablePath = Path.Combine(Directory.GetCurrentDirectory(), "Forge Launcher.exe")
                     Dim newExecutablePath = Path.Combine(extractionPath, "Forge Launcher.exe")
 
-                    ' Crear el archivo .bat para ejecutar el reemplazo
-                    Using sw As New StreamWriter(batchScriptPath)
-                        sw.WriteLine("@echo off")
-                        sw.WriteLine("timeout /t 3 > nul") ' Esperar unos segundos para asegurar que el lanzador se cierre
-                        sw.WriteLine("copy /y """ & newExecutablePath & """ """ & executablePath & """")
-                        sw.WriteLine("rmdir /s /q """ & extractionPath & """") ' Eliminar carpeta temporal
-                        sw.WriteLine("start """" """ & executablePath & """") ' Reiniciar lanzador
-                        sw.WriteLine("del """ & batchScriptPath & """") ' Eliminar el propio script .bat
-                    End Using
+                    ' Asegurarse de que el lanzador actual esté cerrado antes de reemplazar
+                    WriteUserLog("Closing current launcher instance..." & vbCrLf)
+                    Process.GetCurrentProcess().Kill()
 
-                    ' Ejecutar el script y cerrar el lanzador actual
-                    Process.Start(batchScriptPath)
-                    Application.Exit()
+                    ' Mover el nuevo ejecutable al directorio principal
+                    File.Copy(newExecutablePath, executablePath, True)
+
+                    ' Limpiar archivos temporales
+                    Directory.Delete(extractionPath, True)
+
+                    ' Reiniciar el lanzador
+                    WriteUserLog("Starting the new version of the launcher..." & vbCrLf)
+                    Process.Start(executablePath)
                 Catch ex As Exception
                     WriteUserLog("Error updating launcher: " & ex.Message & vbCrLf)
                     MsgBox("Failed to update. Please try again later.", MsgBoxStyle.Critical)
@@ -991,6 +990,7 @@ Public Class fn
             WriteUserLog("Unexpected error: " & ex.Message & vbCrLf)
         End Try
     End Sub
+
 
 
 
