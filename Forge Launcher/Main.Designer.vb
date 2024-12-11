@@ -235,7 +235,7 @@ Partial Class Main
         '
         'AboutLauncherToolStripMenuItem
         '
-        Me.AboutLauncherToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CheckForUpdatesToolStripMenuItem, Me.GithubToolStripMenuItem})
+        Me.AboutLauncherToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GithubToolStripMenuItem, Me.CheckForUpdatesToolStripMenuItem})
         Me.AboutLauncherToolStripMenuItem.Name = "AboutLauncherToolStripMenuItem"
         Me.AboutLauncherToolStripMenuItem.Size = New System.Drawing.Size(104, 20)
         Me.AboutLauncherToolStripMenuItem.Text = "About Launcher"
@@ -243,13 +243,13 @@ Partial Class Main
         'CheckForUpdatesToolStripMenuItem
         '
         Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
-        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(223, 22)
-        Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Launcher Updates"
+        Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Launcher updates"
         '
         'GithubToolStripMenuItem
         '
         Me.GithubToolStripMenuItem.Name = "GithubToolStripMenuItem"
-        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(223, 22)
+        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
         Me.GithubToolStripMenuItem.Text = "Visit Project on GitHub"
         '
         'ToolTip1

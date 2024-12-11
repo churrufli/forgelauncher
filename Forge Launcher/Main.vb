@@ -231,10 +231,18 @@ Public Class Main
     End Sub
 
     Private Sub CheckForUpdatesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CheckForUpdatesToolStripMenuItem.Click
-        fn.CheckLauncherUpdates()
+        Dim box = New about()
+        box.Show()
     End Sub
 
     Private Sub ForgeGithubToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ForgeGithubToolStripMenuItem.Click
         Process.Start("https://card-forge.github.io/forge/")
+    End Sub
+
+    Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        If fn.ReadLogUser("showabout", False) = "yes" Then
+            Dim box = New about()
+            box.Show()
+        End If
     End Sub
 End Class

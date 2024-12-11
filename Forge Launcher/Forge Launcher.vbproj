@@ -143,6 +143,12 @@
     <Compile Include="launchmode.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="My Project\about.Designer.vb">
+      <DependentUpon>about.vb</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\about.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -174,6 +180,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="launchmode.resx">
       <DependentUpon>launchmode.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\about.resx">
+      <DependentUpon>about.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
