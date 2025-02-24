@@ -1,7 +1,10 @@
 ﻿Imports System.ComponentModel
 Imports System.Net
+Imports System.Net.WebRequestMethods
+
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports System.Xml
 Imports ICSharpCode.SharpZipLib.BZip2
 Imports ICSharpCode.SharpZipLib.Tar
 Public Class fn
@@ -9,7 +12,7 @@ Public Class fn
 
     Public Shared Sub DeleteDownloaded()
         Try
-            File.Delete("fldata/updates.txt")
+            System.IO.File.Delete("fldata/updates.txt")
         Catch
         End Try
         Try
@@ -21,7 +24,7 @@ Public Class fn
                     Directory.GetFiles(Environment.CurrentDirectory, "forge*", SearchOption.AllDirectories).Where(
                         Function(s) s.EndsWith(".tar.bz") OrElse s.EndsWith(".bz2") OrElse s.EndsWith(".tar"))
             For Each Foundedfile As String In files
-                File.Delete(Foundedfile)
+                System.IO.File.Delete(Foundedfile)
             Next
         Catch ex As Exception
             ex = ex
@@ -29,10 +32,10 @@ Public Class fn
     End Sub
 
     Public Shared Sub DownloadFile(address As String, fileName As String, Optional force_download As Boolean = False)
-        If File.Exists(fileName) And force_download = False Then Exit Sub
+        If System.IO.File.Exists(fileName) And force_download = False Then Exit Sub
         Try
             Dim instance As New WebClient
-            If File.Exists(fileName) Then File.Delete(fileName)
+            If System.IO.File.Exists(fileName) Then System.IO.File.Delete(fileName)
             instance.DownloadFile(address, fileName)
         Catch
             PrintError(Err.Description)
@@ -51,10 +54,10 @@ Public Class fn
             PrintError(Err.Description)
         End Try
 
-        If File.Exists(vars.LogName) = False Then
+        If System.IO.File.Exists(vars.LogName) = False Then
             Directory.CreateDirectory(Directory.GetCurrentDirectory() & "/fldata")
 
-            File.Create(vars.LogName).Dispose()
+            System.IO.File.Create(vars.LogName).Dispose()
         End If
 
 
@@ -63,18 +66,18 @@ Public Class fn
         ladire = Replace(ladire, "\", "/")
         Dim LogUser = ""
         Try
-            LogUser = File.ReadAllText(ladire).ToString
+            LogUser = System.IO.File.ReadAllText(ladire).ToString
         Catch
         End Try
         If LogUser = "" Then
             Try
-                LogUser = File.ReadAllText(vars.UserDir & ladire).ToString
+                LogUser = System.IO.File.ReadAllText(vars.UserDir & ladire).ToString
             Catch
             End Try
         End If
         If LogUser = "" Then
             Try
-                LogUser = File.ReadAllText(Directory.GetCurrentDirectory & ladire).ToString
+                LogUser = System.IO.File.ReadAllText(Directory.GetCurrentDirectory & ladire).ToString
             Catch
             End Try
         End If
@@ -101,12 +104,12 @@ Public Class fn
         Dim logfile As String = vars.ForgeData & "\forge.log"
         Dim logfile2 As String = Directory.GetCurrentDirectory & "\UserDir\forge.log"
 
-        If File.Exists(logfile) = True Then
+        If System.IO.File.Exists(logfile) = True Then
             Process.Start("notepad.exe", logfile)
             Exit Sub
         End If
 
-        If File.Exists(logfile2) = True Then
+        If System.IO.File.Exists(logfile2) = True Then
             Process.Start("notepad.exe", logfile2)
             Exit Sub
         End If
@@ -120,15 +123,15 @@ Public Class fn
         m = "Are you sure to uninstall Forge Launcher and generated files? (Forge files will not be deleted)"
         If MsgBox(m, MsgBoxStyle.YesNoCancel, "Warning!") = MsgBoxResult.Yes Then
             Try
-                File.Delete("fldata/fl_whatsnew.txt")
+                System.IO.File.Delete("fldata/fl_whatsnew.txt")
             Catch
             End Try
             Try
-                File.Delete("fldata/version.txt")
+                System.IO.File.Delete("fldata/version.txt")
             Catch
             End Try
             Try
-                File.Delete("fldata/updates.txt")
+                System.IO.File.Delete("fldata/updates.txt")
             Catch
             End Try
             Try
@@ -163,7 +166,7 @@ Public Class fn
         If MsgBox(m, MsgBoxStyle.YesNoCancel, "Warning!") = MsgBoxResult.Yes Then
             Try
                 Dim dir As String = Path.Combine(vars.ForgeData, "preferences")
-                File.Delete(dir & "\forge.preferences")
+                System.IO.File.Delete(dir & "\forge.preferences")
                 MsgBox("Done!")
             Catch ex As Exception
                 WriteUserLog(ex.Message.ToString)
@@ -181,11 +184,11 @@ Public Class fn
         Dim newlog = Replace(mylog, "<" & idlog & ">" & previousmyvalue & "</" & idlog & ">",
                              "<" & idlog & ">" & myvalue & "</" & idlog & ">")
         Try
-            File.Delete(vars.UserDir & "/" & vars.LogName)
+            System.IO.File.Delete(vars.UserDir & "/" & vars.LogName)
         Catch
         End Try
         Try
-            File.WriteAllText(vars.UserDir & "/" & vars.LogName, newlog)
+            System.IO.File.WriteAllText(vars.UserDir & "/" & vars.LogName, newlog)
         Catch
         End Try
     End Sub
@@ -201,7 +204,7 @@ Public Class fn
     End Sub
 
     Public Shared Sub CheckIfICSharpCodeExist()
-        If File.Exists(vars.MyDll) = False Then
+        If System.IO.File.Exists(vars.MyDll) = False Then
             MsgBox("You need " & vars.MyDll & " in the same directory to extract .tar.bz2 files!")
             Application.Exit()
         End If
@@ -218,56 +221,94 @@ Public Class fn
         End Try
     End Function
 
+
     Public Shared Function GetCheckAutomatic() As String
-        Dim lineLink As String = ""
-        Dim myTx As String = ReadWeb("https://downloads.cardforge.org/dailysnapshots/")
-        Dim myDate As String = ""
+        Dim serverVersion As String = GetServerVersion()
+        Dim localVersion As String = GetLocalVersion()
 
-
-        Dim takedate As String
-
-        Try
-            takedate = FindIt(myTx, "<a href=""forge-installer", "<a")
-
-            Dim pattern As String = "\b\d{1,2}-[a-zA-Z]{3}-\d{4} \d{1,2}:\d{2}\b"
-            Dim match As Match = Regex.Match(takedate, pattern)
-
-            If match.Success Then
-                myDate = match.Value
+        If serverVersion IsNot Nothing AndAlso localVersion IsNot Nothing Then
+            If serverVersion <> localVersion Then
+                'MsgBox("New version available: " & serverVersion, MsgBoxStyle.Information, "Update Available")
+                Return serverVersion
+            Else
+                'MsgBox("No new versions available.", MsgBoxStyle.Information, "Up to Date")
+                Return serverVersion
             End If
-        Catch ex As Exception
-            ' Manejar la excepción si es necesario
-        End Try
-
-
-        If String.IsNullOrEmpty(myDate) Then
-            myDate = FindIt(myTx, "SNAPSHOT-", ".tar.bz2")
-            myDate = Replace(myDate, ".", "-")
-        End If
-
-        Dim lineLinkPattern As String = "<a href='"
-        Dim lineLinkSuffix As String = ".tar.bz2'>"
-
-        For Each line As String In myTx.Split(Environment.NewLine)
-            If line.Contains("tar.bz2") Then
-                line = Replace(line, """", "'")
-                Dim linkPart As String = FindIt(line, lineLinkPattern, lineLinkSuffix)
-                lineLink = "https://downloads.cardforge.org/dailysnapshots/" & linkPart & ".tar.bz2"
-                Exit For
-            End If
-        Next
-
-        Dim version As String = FindIt(lineLink, "forge-installer-", ".tar")
-
-        If Not String.IsNullOrEmpty(version) AndAlso Not String.IsNullOrEmpty(myDate) AndAlso Not String.IsNullOrEmpty(lineLink) Then
-            Return $"Forge {version} {myDate}#{lineLink}"
         Else
-            If MsgBox("Error trying to get new version from https://downloads.cardforge.org/dailysnapshots/" & vbCrLf & "Do you want to open the site in a browser?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
-                Process.Start("https://downloads.cardforge.org/dailysnapshots/")
-            End If
-            Return Nothing
+            'MsgBox("Could not retrieve the server version or the local version.", MsgBoxStyle.Critical, "Error")
+            Return serverVersion
         End If
     End Function
+
+    Public Shared Function GetServerVersion() As String
+        Try
+            Dim url As String = "https://github.com/Card-Forge/forge/releases/download/daily-snapshots/version.txt"
+
+            ' Forzar el uso de TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+
+            Using client As New WebClient()
+                Return client.DownloadString(url).Trim()
+            End Using
+        Catch ex As Exception
+            MsgBox("Error retrieving server version: " & ex.Message, MsgBoxStyle.Critical, "Error")
+            Return Nothing
+        End Try
+    End Function
+
+
+    Public Shared Function GetLocalVersion() As String
+        Return ReadLogUser("forge_version")
+    End Function
+
+    'Public Shared Function GetCheckAutomatic() As String
+    '    Dim lineLink As String = ""
+    '    Dim myTx As String = ReadWeb("https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/")
+    '    Dim myDate As String = ""
+    '    Dim takedate As String
+
+    '    Try
+    '        takedate = FindIt(myTx, "<a href=""/Card-Forge/forge/releases/download/daily-snapshots/forge-installer", "<a")
+
+    '        Dim pattern As String = "\b\d{1,2}-[a-zA-Z]{3}-\d{4} \d{1,2}:\d{2}\b"
+    '        Dim match As Match = Regex.Match(takedate, pattern)
+
+    '        If match.Success Then
+    '            myDate = match.Value
+    '        End If
+    '    Catch ex As Exception
+    '        ' Manejar la excepción si es necesario
+    '    End Try
+
+
+    '    If String.IsNullOrEmpty(myDate) Then
+    '        myDate = FindIt(myTx, "SNAPSHOT-", ".tar.bz2")
+    '        myDate = Replace(myDate, ".", "-")
+    '    End If
+
+    '    Dim lineLinkPattern As String = "<a href='"
+    '    Dim lineLinkSuffix As String = ".tar.bz2'>"
+
+    '    For Each line As String In myTx.Split(Environment.NewLine)
+    '        If line.Contains("tar.bz2") Then
+    '            line = Replace(line, """", "'")
+    '            Dim linkPart As String = FindIt(line, lineLinkPattern, lineLinkSuffix)
+    '            lineLink = "https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/" & linkPart & ".tar.bz2"
+    '            Exit For
+    '        End If
+    '    Next
+
+    '    Dim version As String = FindIt(lineLink, "forge-installer-", ".tar")
+
+    '    If Not String.IsNullOrEmpty(version) AndAlso Not String.IsNullOrEmpty(myDate) AndAlso Not String.IsNullOrEmpty(lineLink) Then
+    '        Return $"Forge {version} {myDate}#{lineLink}"
+    '    Else
+    '        If MsgBox("Error trying to get new version from https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/" & vbCrLf & "Do you want to open the site in a browser?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
+    '            Process.Start("https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/")
+    '        End If
+    '        Return Nothing
+    '    End If
+    'End Function
 
 
     Public Shared Function CheckRelease()
@@ -376,7 +417,7 @@ Public Class fn
                 If _
       MsgBox("Do you want to install " & vs & " in " & vars.UserDir & "?",
              MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
-                    Dim link = If(typeofupdate = "snapshot", Split(GetCheckAutomatic(), "#")(1), vs)
+                    Dim link = "https://github.com/Card-Forge/forge/releases/download/daily-snapshots/forge-installer-" & vs & ".tar.bz2"
                     UpdateForge(link)
                 End If
             End If
@@ -405,7 +446,7 @@ Public Class fn
 
         Dim urlcomplete = vtoupdate
         Dim myfile = Path.GetFileName(urlcomplete)
-        If File.Exists(myfile) = True Then File.Delete(myfile)
+        If System.IO.File.Exists(myfile) = True Then System.IO.File.Delete(myfile)
         WriteUserLog(vbCrLf & "Downloading update... please wait!" & vbCrLf)
         If InStr(urlcomplete, "http") > 0 Then
         End If
@@ -500,14 +541,14 @@ Public Class fn
     End Function
 
     Public Shared Function CheckIfForgeExists()
-        Return IIf(File.Exists("forge.exe"), True, False)
+        Return IIf(System.IO.File.Exists("forge.exe"), True, False)
     End Function
 
     Public Shared Sub CheckIfPreviousProfileProperties()
         Try
             Dim aa As String = ReadLogUser("profileproperties", False).ToString
-            If aa.ToString <> (IIf(File.Exists("forge.profile.properties"), "yes", "no")).ToString Then
-                UpdateLog("profileproperties", IIf(File.Exists("forge.profile.properties"), "yes", "no"))
+            If aa.ToString <> (IIf(System.IO.File.Exists("forge.profile.properties"), "yes", "no")).ToString Then
+                UpdateLog("profileproperties", IIf(System.IO.File.Exists("forge.profile.properties"), "yes", "no"))
             End If
         Catch
         End Try
@@ -515,15 +556,15 @@ Public Class fn
 
     Public Shared Sub RewriteLog()
         Try
-            Dim readText As String = File.ReadAllText(vars.UserDir & "/" & vars.LogName)
+            Dim readText As String = System.IO.File.ReadAllText(vars.UserDir & "/" & vars.LogName)
             Dim WriteLog = False
             WriteLog = True
             If WriteLog Then
                 Try
-                    File.Delete(vars.LogName)
+                    System.IO.File.Delete(vars.LogName)
                 Catch
                 End Try
-                File.WriteAllText(vars.LogName, readText)
+                System.IO.File.WriteAllText(vars.LogName, readText)
             End If
         Catch
         End Try
@@ -531,10 +572,10 @@ Public Class fn
 
     Public Shared Sub CheckLog()
         Dim hoy As String = DateTime.Now.ToString("dd'/'MM'/'yyyy")
-        Dim existpp As String = If(File.Exists("forge.profile.properties"), "yes", "no")
+        Dim existpp As String = If(System.IO.File.Exists("forge.profile.properties"), "yes", "no")
         Dim logFilePath As String = Path.Combine(vars.UserDir, vars.LogName)
 
-        If Not File.Exists(logFilePath) Then
+        If Not System.IO.File.Exists(logFilePath) Then
             Dim t As String = "<forge_version>Not found</forge_version>" & vbCrLf &
                           "<release_version>Not found</release_version>" & vbCrLf &
                           "<other_version>Not found</other_version>" & vbCrLf &
@@ -551,9 +592,9 @@ Public Class fn
                 Directory.CreateDirectory(Path.GetDirectoryName(logFilePath))
             End If
 
-            File.WriteAllText(logFilePath, t)
+            System.IO.File.WriteAllText(logFilePath, t)
         Else
-            Dim readText As String = File.ReadAllText(logFilePath)
+            Dim readText As String = System.IO.File.ReadAllText(logFilePath)
             Dim WriteLog As Boolean = False
 
             If Not readText.Contains("<forge_version>") Then
@@ -618,10 +659,10 @@ Public Class fn
 
             If WriteLog Then
                 Try
-                    File.Delete(logFilePath)
+                    System.IO.File.Delete(logFilePath)
                 Catch
                 End Try
-                File.WriteAllText(logFilePath, readText)
+                System.IO.File.WriteAllText(logFilePath, readText)
             End If
         End If
     End Sub
@@ -683,8 +724,6 @@ Public Class fn
     End Function
 
 
-
-
     Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)
         Dim myfile = Path.GetFileName(vtoupdate)
 
@@ -702,7 +741,7 @@ Public Class fn
                 ' Verifica si hay archivos que borrar
                 If paths.Length > 0 Then
                     For Each path As String In paths
-                        File.Delete(path)
+                        System.IO.File.Delete(path)
                     Next
                 End If
             Catch
@@ -715,7 +754,7 @@ Public Class fn
         WriteUserLog("Done!." & vbCrLf)
 
         Try
-            File.Delete(myfile)
+            System.IO.File.Delete(myfile)
         Catch
         End Try
 
@@ -726,8 +765,8 @@ Public Class fn
 
         If Main.rbt_properties.Checked = True Then
             Dim propPath = Path.Combine(Directory.GetCurrentDirectory(), "forge.profile.properties")
-            If File.Exists(propPath) Then
-                File.Delete(propPath)
+            If System.IO.File.Exists(propPath) Then
+                System.IO.File.Delete(propPath)
             End If
 
             Dim t As String = "userDir=./user" + Environment.NewLine
@@ -735,7 +774,7 @@ Public Class fn
             t = t + "cardPicsDir="
             t = t.Replace("\", "/")
 
-            Using fs As FileStream = File.Create(propPath)
+            Using fs As FileStream = System.IO.File.Create(propPath)
                 Dim info As Byte() = New UTF8Encoding(True).GetBytes(t)
                 fs.Write(info, 0, info.Length)
             End Using
@@ -811,7 +850,7 @@ Public Class fn
 
         Else
             WriteUserLog("Launching " & myexe & " ..." & vbCrLf)
-            If File.Exists(myexe) Then
+            If System.IO.File.Exists(myexe) Then
                 Process.Start(myexe)
                 Exit Sub
             End If
@@ -869,7 +908,7 @@ Public Class fn
     Public Shared Sub HitToLauncherUpdates(Optional ByVal forzar As Boolean = False)
         Try
             'compruebo sí existe
-            If File.Exists(vars.UserDir & "\fldata\" & vars.ServerLogName) Then
+            If System.IO.File.Exists(vars.UserDir & "\fldata\" & vars.ServerLogName) Then
                 'si, compruebo ultima fecha
                 Dim myLastDate = ReadLogUser("lastupdate")
                 If myLastDate <> DateTime.Now.ToString("dd'/'MM'/'yyyy") Then
@@ -880,7 +919,7 @@ Public Class fn
                 If forzar Then
                     If CheckAddress(vars.BaseUrl & vars.ServerLogName) Then
                         Try
-                            File.Delete(vars.UserDir & "\fldata\" & vars.ServerLogName)
+                            System.IO.File.Delete(vars.UserDir & "\fldata\" & vars.ServerLogName)
                         Catch
                         End Try
                         'fn.WriteUserLog("Checking for updates..." & vbCrLf)
@@ -898,13 +937,13 @@ Public Class fn
             End If
 
             Try
-                vars.MyLogServer = File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName).ToString & ""
+                vars.MyLogServer = System.IO.File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName).ToString & ""
             Catch ex As Exception
             End Try
 
             If vars.MyLogServer = "" Then
                 Try
-                    vars.MyLogServer = File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName)
+                    vars.MyLogServer = System.IO.File.ReadAllText(vars.UserDir & "\fldata\" & vars.ServerLogName)
                 Catch ex As Exception
 
                 End Try

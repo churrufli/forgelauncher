@@ -47,8 +47,8 @@ Partial Class Main
         Me.ForgeWikiToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ForgeForumToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AboutLauncherToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CheckForUpdatesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.GithubToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CheckForUpdatesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.listofexes = New System.Windows.Forms.ComboBox()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -130,13 +130,14 @@ Partial Class Main
         Me.PictureBox3.TabIndex = 49
         Me.PictureBox3.TabStop = False
         Me.ToolTip1.SetToolTip(Me.PictureBox3, "Snapshot: You get new cards and features earlier, but you also have a higher chan" &
-        "ce to encounter some bugs" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Release: Last stable version.")
+        "ce to encounter some bugs" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Release: Last stable version. (not available through " &
+        "launcher at the moment)")
         '
         'typeofupdate
         '
         Me.typeofupdate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.typeofupdate.FormattingEnabled = True
-        Me.typeofupdate.Items.AddRange(New Object() {"release", "snapshot"})
+        Me.typeofupdate.Items.AddRange(New Object() {"snapshot"})
         Me.typeofupdate.Location = New System.Drawing.Point(6, 26)
         Me.typeofupdate.Name = "typeofupdate"
         Me.typeofupdate.Size = New System.Drawing.Size(85, 23)
@@ -240,17 +241,17 @@ Partial Class Main
         Me.AboutLauncherToolStripMenuItem.Size = New System.Drawing.Size(104, 20)
         Me.AboutLauncherToolStripMenuItem.Text = "About Launcher"
         '
+        'GithubToolStripMenuItem
+        '
+        Me.GithubToolStripMenuItem.Name = "GithubToolStripMenuItem"
+        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(222, 22)
+        Me.GithubToolStripMenuItem.Text = "Visit Project on GitHub"
+        '
         'CheckForUpdatesToolStripMenuItem
         '
         Me.CheckForUpdatesToolStripMenuItem.Name = "CheckForUpdatesToolStripMenuItem"
         Me.CheckForUpdatesToolStripMenuItem.Size = New System.Drawing.Size(222, 22)
         Me.CheckForUpdatesToolStripMenuItem.Text = "Check for Launcher updates"
-        '
-        'GithubToolStripMenuItem
-        '
-        Me.GithubToolStripMenuItem.Name = "GithubToolStripMenuItem"
-        Me.GithubToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
-        Me.GithubToolStripMenuItem.Text = "Visit Project on GitHub"
         '
         'ToolTip1
         '
