@@ -10,6 +10,20 @@ Imports ICSharpCode.SharpZipLib.Tar
 Public Class fn
     Shared WithEvents downloader As WebClient
 
+    Shared Sub New()
+        ' Fuerza TLS 1.2 una única vez para toda la clase: .NET Framework 4.5.2 no lo habilita por defecto,
+        ' y sin esto las descargas (WebClient) pueden fallar en silencio en máquinas con TLS 1.0/1.1 deshabilitados.
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
+    End Sub
+
+    Public Shared Sub ExitApplication()
+        Application.Exit()
+        Try
+            Environment.Exit(1)
+        Catch
+        End Try
+    End Sub
+
     Public Shared Sub DeleteDownloaded()
         Try
             System.IO.File.Delete("fldata/updates.txt")
@@ -27,16 +41,16 @@ Public Class fn
                 System.IO.File.Delete(Foundedfile)
             Next
         Catch ex As Exception
-            ex = ex
         End Try
     End Sub
 
     Public Shared Sub DownloadFile(address As String, fileName As String, Optional force_download As Boolean = False)
         If System.IO.File.Exists(fileName) And force_download = False Then Exit Sub
         Try
-            Dim instance As New WebClient
-            If System.IO.File.Exists(fileName) Then System.IO.File.Delete(fileName)
-            instance.DownloadFile(address, fileName)
+            Using instance As New WebClient
+                If System.IO.File.Exists(fileName) Then System.IO.File.Delete(fileName)
+                instance.DownloadFile(address, fileName)
+            End Using
         Catch
             PrintError(Err.Description)
         End Try
@@ -143,7 +157,6 @@ Public Class fn
     End Sub
 
     Public Shared Sub Uninstall()
-        Process.Start("cmd.exe", "/C choice /C Y /N /D Y /T 3 & Del " + Application.ExecutablePath)
         Dim p As New ProcessStartInfo("cmd.exe")
         p.Arguments = "/C choice /C Y /N /D Y /T 3 & Del  " & ControlChars.Quote & Application.ExecutablePath &
                       ControlChars.Quote
@@ -151,11 +164,7 @@ Public Class fn
         p.ErrorDialog = False
         p.WindowStyle = ProcessWindowStyle.Hidden
         Process.Start(p)
-        Application.Exit()
-        Try
-            Environment.Exit(1)
-        Catch
-        End Try
+        ExitApplication()
     End Sub
 
     Public Shared Sub RestoreForgePreferences()
@@ -174,7 +183,7 @@ Public Class fn
         End If
     End Sub
 
-    Public Shared Sub UpdateLog(idlog, myvalue)
+    Public Shared Sub UpdateLog(idlog As String, myvalue As String)
         Try
             CheckLog()
         Catch
@@ -193,7 +202,7 @@ Public Class fn
         End Try
     End Sub
 
-    Public Shared Sub PrintError(tx)
+    Public Shared Sub PrintError(tx As String)
         Try
             If InStr(vars.TxtError.ToString & "", tx, CompareMethod.Text) = 0 Then
                 vars.TxtError = vars.TxtError & tx & vbCrLf
@@ -210,45 +219,39 @@ Public Class fn
         End If
     End Sub
 
-    Public Shared Function ReadWeb(MyUrl As String)
+    Public Shared Async Function ReadWebAsync(MyUrl As String) As Task(Of String)
         Try
-            Dim client As WebClient = New WebClient()
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
-            Dim reply As String = client.DownloadString(MyUrl)
-            Return reply
+            Using client As New WebClient()
+                Return Await client.DownloadStringTaskAsync(MyUrl)
+            End Using
         Catch
             Return Nothing
         End Try
     End Function
 
 
-    Public Shared Function GetCheckAutomatic() As String
-        Dim serverVersion As String = GetServerVersion()
+    Public Shared Async Function GetCheckAutomaticAsync() As Task(Of String)
+        Dim serverVersion As String = Await GetServerVersionAsync()
         Dim localVersion As String = GetLocalVersion()
 
         If serverVersion IsNot Nothing AndAlso localVersion IsNot Nothing Then
             If serverVersion <> localVersion Then
-                'MsgBox("New version available: " & serverVersion, MsgBoxStyle.Information, "Update Available")
                 Return serverVersion
             Else
-                'MsgBox("No new versions available.", MsgBoxStyle.Information, "Up to Date")
                 Return serverVersion
             End If
         Else
-            'MsgBox("Could not retrieve the server version or the local version.", MsgBoxStyle.Critical, "Error")
             Return serverVersion
         End If
     End Function
 
-    Public Shared Function GetServerVersion() As String
+    Public Shared Async Function GetServerVersionAsync() As Task(Of String)
         Try
             Dim url As String = "https://github.com/Card-Forge/forge/releases/download/daily-snapshots/version.txt"
 
-            ' Forzar el uso de TLS 1.2
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
-
             Using client As New WebClient()
-                Return client.DownloadString(url).Trim()
+                Dim reply As String = Await client.DownloadStringTaskAsync(url)
+                Return reply.Trim()
             End Using
         Catch ex As Exception
             MsgBox("Error retrieving server version: " & ex.Message, MsgBoxStyle.Critical, "Error")
@@ -261,65 +264,15 @@ Public Class fn
         Return ReadLogUser("forge_version")
     End Function
 
-    'Public Shared Function GetCheckAutomatic() As String
-    '    Dim lineLink As String = ""
-    '    Dim myTx As String = ReadWeb("https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/")
-    '    Dim myDate As String = ""
-    '    Dim takedate As String
-
-    '    Try
-    '        takedate = FindIt(myTx, "<a href=""/Card-Forge/forge/releases/download/daily-snapshots/forge-installer", "<a")
-
-    '        Dim pattern As String = "\b\d{1,2}-[a-zA-Z]{3}-\d{4} \d{1,2}:\d{2}\b"
-    '        Dim match As Match = Regex.Match(takedate, pattern)
-
-    '        If match.Success Then
-    '            myDate = match.Value
-    '        End If
-    '    Catch ex As Exception
-    '        ' Manejar la excepción si es necesario
-    '    End Try
-
-
-    '    If String.IsNullOrEmpty(myDate) Then
-    '        myDate = FindIt(myTx, "SNAPSHOT-", ".tar.bz2")
-    '        myDate = Replace(myDate, ".", "-")
-    '    End If
-
-    '    Dim lineLinkPattern As String = "<a href='"
-    '    Dim lineLinkSuffix As String = ".tar.bz2'>"
-
-    '    For Each line As String In myTx.Split(Environment.NewLine)
-    '        If line.Contains("tar.bz2") Then
-    '            line = Replace(line, """", "'")
-    '            Dim linkPart As String = FindIt(line, lineLinkPattern, lineLinkSuffix)
-    '            lineLink = "https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/" & linkPart & ".tar.bz2"
-    '            Exit For
-    '        End If
-    '    Next
-
-    '    Dim version As String = FindIt(lineLink, "forge-installer-", ".tar")
-
-    '    If Not String.IsNullOrEmpty(version) AndAlso Not String.IsNullOrEmpty(myDate) AndAlso Not String.IsNullOrEmpty(lineLink) Then
-    '        Return $"Forge {version} {myDate}#{lineLink}"
-    '    Else
-    '        If MsgBox("Error trying to get new version from https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/" & vbCrLf & "Do you want to open the site in a browser?", MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
-    '            Process.Start("https://github.com/Card-Forge/forge/releases/tag/daily-snapshots/")
-    '        End If
-    '        Return Nothing
-    '    End If
-    'End Function
-
-
-    Public Shared Function CheckRelease()
+    Public Shared Async Function CheckReleaseAsync() As Task(Of String)
         Dim metadata = vars.url_release + "maven-metadata.xml"
-        Dim xml = fn.ReadWeb(metadata)
+        Dim xml = Await fn.ReadWebAsync(metadata)
         Dim doc As New System.Xml.XmlDocument()
         doc.LoadXml(xml)
         Dim nodes As System.Xml.XmlNodeList = doc.DocumentElement.SelectNodes("//version")
         Dim lastVersion = nodes.Item(nodes.Count - 1).InnerText
         Dim finalURL = String.Format("{0}{1}/forge-installer-{1}.tar.bz2", vars.url_release, lastVersion)
-        CheckRelease = finalURL
+        Return finalURL
     End Function
     Public Shared Function StringToStream(input As String, enc As Encoding) As Stream
         Dim memoryStream = New MemoryStream()
@@ -329,12 +282,12 @@ Public Class fn
         memoryStream.Position = 0
         Return memoryStream
     End Function
-    Public Shared Sub CheckforForgeUpdates(Optional ByVal AskforReinstall = False, Optional ByVal NewInstall = False)
+    Public Shared Async Function CheckforForgeUpdatesAsync(Optional ByVal AskforReinstall = False, Optional ByVal NewInstall = False) As Task
         Try
             If NewInstall Then
                 If Main.rbt_normal.Checked = False And Main.rbt_properties.Checked = False Then
                     MsgBox("Please select normal or portable install.")
-                    Exit Sub
+                    Exit Function
                 End If
 
             End If
@@ -353,9 +306,9 @@ Public Class fn
             Dim typeofupdate As String = ReadLogUser("typeofupdate")
             Select Case typeofupdate
                 Case "snapshot"
-                    vars.LinkLine = GetCheckAutomatic()
+                    vars.LinkLine = Await GetCheckAutomaticAsync()
                 Case "release"
-                    vars.LinkLine = CheckRelease()
+                    vars.LinkLine = Await CheckReleaseAsync()
             End Select
 
             Dim vs, vu As String
@@ -379,7 +332,7 @@ Public Class fn
                 If CheckIfForgeExists() = False Then
                     If Main.rbt_normal.Checked = False And Main.rbt_properties.Checked = False Then
                         MsgBox("Please select normal or portable install.")
-                        Exit Sub
+                        Exit Function
                     End If
                 End If
             End If
@@ -392,10 +345,10 @@ Public Class fn
                     If MsgBox(
                                 "It's appears your Forge " & typeofupdate & " version is up to date (" & vu & "). Do you want to download again and reinstall it?",
                                 MsgBoxStyle.YesNo, "Warning!") = MsgBoxResult.Yes Then
-                        Dim link = If(typeofupdate = "snapshot", Split(GetCheckAutomatic(), "#")(1), vs)
-                        UpdateForge(link)
+                        Dim link = If(typeofupdate = "snapshot", Split(Await GetCheckAutomaticAsync(), "#")(1), vs)
+                        Await UpdateForgeAsync(link)
                     End If
-                    Exit Sub
+                    Exit Function
                 Else
 
                 End If
@@ -404,12 +357,8 @@ Public Class fn
                  "Do you want to start Forge and close Launcher?", MsgBoxStyle.YesNo, "Forge is up to date") =
                 MsgBoxResult.Yes Then
                     Launch()
-                    Application.Exit()
-                    Try
-                        Environment.Exit(1)
-                    Catch
-                    End Try
-                    Exit Sub
+                    ExitApplication()
+                    Exit Function
                 End If
 
             Else
@@ -418,7 +367,7 @@ Public Class fn
       MsgBox("Do you want to install " & vs & " in " & vars.UserDir & "?",
              MsgBoxStyle.YesNoCancel, "Version Available") = MsgBoxResult.Yes Then
                     Dim link = "https://github.com/Card-Forge/forge/releases/download/daily-snapshots/forge-installer-" & vs & ".tar.bz2"
-                    UpdateForge(link)
+                    Await UpdateForgeAsync(link)
                 End If
             End If
 
@@ -426,9 +375,9 @@ Public Class fn
 
         End Try
 
-    End Sub
+    End Function
 
-    Public Shared Sub UpdateForge(vtoupdate)
+    Public Shared Async Function UpdateForgeAsync(vtoupdate As String) As Task
 
         Main.vtoupdate.Text = vtoupdate
         Main.MenuGeneral.Enabled = False
@@ -438,9 +387,9 @@ Public Class fn
             Dim typeofupdate As String = ReadLogUser("typeofupdate")
             Select Case typeofupdate
                 Case "snapshot"
-                    vars.LinkLine = GetCheckAutomatic()
+                    vars.LinkLine = Await GetCheckAutomaticAsync()
                 Case Else
-                    vars.LinkLine = CheckRelease()
+                    vars.LinkLine = Await CheckReleaseAsync()
             End Select
         End If
 
@@ -451,12 +400,12 @@ Public Class fn
         If InStr(urlcomplete, "http") > 0 Then
         End If
         DownloadStart(urlcomplete, Path.GetFileName(urlcomplete))
-    End Sub
+    End Function
 
-    Public Shared Sub DownloadStart(dwl, fn)
+    Public Shared Sub DownloadStart(dwl As String, fileName As String)
         Main.ProgressBar1.Visible = True
         downloader = New WebClient
-        downloader.DownloadFileAsync(New Uri(dwl), fn)
+        downloader.DownloadFileAsync(New Uri(dwl), fileName)
     End Sub
 
     Public Shared Sub downloader_DownloadProgressChanged(sender As Object, e As DownloadProgressChangedEventArgs) _
@@ -464,9 +413,9 @@ Public Class fn
         Main.ProgressBar1.Value = e.ProgressPercentage
     End Sub
 
-    Public Shared Sub downloader_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) _
+    Public Shared Async Sub downloader_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) _
         Handles downloader.DownloadFileCompleted
-        ContinueInstallingForge(Main.vtoupdate.Text)
+        Await ContinueInstallingForgeAsync(Main.vtoupdate.Text)
     End Sub
 
     Public Shared Function FindIt(total As String, first As String, last As String) As String
@@ -684,9 +633,6 @@ Public Class fn
                     While entry IsNot Nothing
                         ' Crear el nombre del archivo de destino
                         Dim a = entry.Name
-                        If a.Contains("custom_card_pics/Chandra") Then
-                            a = a
-                        End If
                         a = Replace(a, "" & ChrW(25) & "", "'")
                         Dim archivoDestino As String = Path.Combine(directorioDestino, a)
 
@@ -724,7 +670,7 @@ Public Class fn
     End Function
 
 
-    Public Shared Sub ContinueInstallingForge(vtoupdate As String, Optional isabackup As Boolean = False)
+    Public Shared Async Function ContinueInstallingForgeAsync(vtoupdate As String, Optional isabackup As Boolean = False) As Task
         Dim myfile = Path.GetFileName(vtoupdate)
 
         WriteUserLog("Done!" & vbCrLf)
@@ -800,7 +746,7 @@ Public Class fn
 
         Select Case actual
             Case "forge_version"
-                Dim hi = GetCheckAutomatic()
+                Dim hi = Await GetCheckAutomaticAsync()
                 UpdateLog(actual, hi)
                 UpdateLog("release_version", "Not found")
                 UpdateLog("other_version", "Not found")
@@ -814,14 +760,10 @@ Public Class fn
 
         Launch()
 
-        Application.Exit()
-        Try
-            Environment.Exit(1)
-        Catch
-        End Try
+        ExitApplication()
 
-        Exit Sub
-    End Sub
+        Exit Function
+    End Function
 
 
     Public Shared Sub Launch()
@@ -838,11 +780,7 @@ Public Class fn
             WriteUserLog("Launching PlayForge.bat ..." & vbCrLf)
             Try
                 Process.Start("PlayForge.bat")
-                Application.Exit()
-                Try
-                    Environment.Exit(1)
-                Catch
-                End Try
+                ExitApplication()
                 Exit Sub
             Catch
                 WriteUserLog("Can't find PlayForge.bat ..." & vbCrLf)
@@ -858,7 +796,7 @@ Public Class fn
         End If
     End Sub
 
-    Public Shared Sub WriteUserLog(msg)
+    Public Shared Sub WriteUserLog(msg As String)
         If Main.txlog.Text.Contains(msg) = False Then
             Main.txlog.SelectedText = msg
             Main.txlog.SelectionStart = Main.txlog.Text.Length
@@ -955,7 +893,9 @@ Public Class fn
     Public Shared Function CheckAddress(URL As String) As Boolean
         Try
             Dim request As WebRequest = WebRequest.Create(URL)
-            Dim response As WebResponse = request.GetResponse()
+            request.Timeout = 5000
+            Using response As WebResponse = request.GetResponse()
+            End Using
         Catch ex As Exception
             Return False
         End Try
@@ -963,36 +903,4 @@ Public Class fn
     End Function
 
 
-
-
-
-
-    Public Shared Function GetDelimitedText(Text As String, OpenDelimiter As String,
-  CloseDelimiter As String, index As Long) As String
-        Dim i As Long, j As Long
-
-        If index = 0 Then index = 1
-
-        ' search the opening mark
-        i = InStr(index, Text, OpenDelimiter, vbTextCompare)
-        If i = 0 Then
-            index = 0
-            Exit Function
-        End If
-        i = i + Len(OpenDelimiter)
-
-        ' search the closing mark
-        j = InStr(i + 1, Text, CloseDelimiter, vbTextCompare)
-        If j = 0 Then
-            index = 0
-            Exit Function
-        End If
-
-        ' get the text between the two Delimiters
-        GetDelimitedText = Mid$(Text, i, j - i)
-
-        ' advanced the index after the closing Delimiter
-        index = j + Len(CloseDelimiter)
-
-    End Function
 End Class

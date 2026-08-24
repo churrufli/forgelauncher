@@ -1,7 +1,6 @@
 ﻿
 Imports System.ComponentModel
 Imports System.Net
-Imports System.Timers
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Reflection
@@ -9,30 +8,13 @@ Imports System.Reflection
 Public Class Main
 
     Public WithEvents downloader As WebClient
-    Dim second As Integer
 
-    Sub TimerElapsed(sender As Object, e As ElapsedEventArgs)
-        Dim time As DateTime = e.SignalTime
-    End Sub
-
-    Private Sub Fl_Shown(sender As Object, e As EventArgs) Handles Me.Shown
+    Private Async Sub Fl_Shown(sender As Object, e As EventArgs) Handles Me.Shown
         fn.WriteUserLog("Loading data..." & vbCrLf)
-        Timer1.Interval = 10
-        Timer1.Start()
+        Await InitProgramAsync()
     End Sub
 
-    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        second = second + 1
-        If second >= 1 Then
-            Timer1.Stop()
-            If vars.InitAll Then
-                InitProgram()
-                vars.InitAll = True
-            End If
-        End If
-    End Sub
-
-    Sub InitProgram()
+    Async Function InitProgramAsync() As Task
         fn.CheckIfICSharpCodeExist()
         fn.CheckLog()
         SetComboboxes()
@@ -49,11 +31,11 @@ Public Class Main
         fn.LoadListofExes()
         fn.WriteUserLog("Checking Forge Version..." & vbCrLf)
         Try
-            fn.CheckforForgeUpdates(False)
+            Await fn.CheckforForgeUpdatesAsync(False)
         Catch
         End Try
 
-    End Sub
+    End Function
     Public Shared Function GetTitle() As String
         Dim ass As Assembly = Assembly.GetExecutingAssembly()
         Dim name = ass.GetName()
@@ -94,12 +76,12 @@ Public Class Main
         fn.DeleteDownloaded()
     End Sub
 
-    Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click
+    Private Async Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click
         If rbt_normal.Checked = False And rbt_properties.Checked = False Then
             MsgBox("Please select normal or portable install.")
             Exit Sub
         End If
-        fn.CheckforForgeUpdates()
+        Await fn.CheckforForgeUpdatesAsync()
     End Sub
 
     Private Sub ForgeDiscordChannelToolStripMenuItem_Click(sender As Object, e As EventArgs) _
@@ -145,32 +127,23 @@ Public Class Main
         End If
     End Sub
 
-    Private Sub SettingsToolStripMenuItem_Click(sender As Object, e As EventArgs)
-        Dim opened = False
+    Private Sub ShowOrFocusForm(Of T As {Form, New})(formName As String)
         For Each frm As Form In Application.OpenForms
-            If frm.Name.Equals("preferences") Then
+            If frm.Name.Equals(formName) Then
                 frm.Show()
-                opened = True
+                Return
             End If
         Next
-        If opened = False Then
-            Dim box = New settings()
-            box.Show()
-        End If
+        Dim box As New T()
+        box.Show()
+    End Sub
+
+    Private Sub SettingsToolStripMenuItem_Click(sender As Object, e As EventArgs)
+        ShowOrFocusForm(Of settings)("settings")
     End Sub
 
     Private Sub btnlaunchmode_Click(sender As Object, e As EventArgs) Handles btnlaunchmode.Click
-        Dim opened = False
-        For Each frm As Form In Application.OpenForms
-            If frm.Name.Equals("lm") Then
-                frm.Show()
-                opened = True
-            End If
-        Next
-        If opened = False Then
-            Dim box = New LaunchMode()
-            box.Show()
-        End If
+        ShowOrFocusForm(Of LaunchMode)("LaunchMode")
     End Sub
 
     Public Shared Function IsFormOpen(FormType As Type) As Boolean
@@ -184,35 +157,15 @@ Public Class Main
 
     Private Sub SettingsToolStripMenuItem1_Click(sender As Object, e As EventArgs) _
         Handles SettingsToolStripMenuItem1.Click
-        Dim opened = False
-        For Each frm As Form In Application.OpenForms
-            If frm.Name.Equals("preferences") Then
-                frm.Show()
-                opened = True
-            End If
-        Next
-        If opened = False Then
-            Dim box = New settings()
-            box.Show()
-        End If
+        ShowOrFocusForm(Of settings)("settings")
     End Sub
-    Private Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
-        fn.CheckforForgeUpdates(True)
+    Private Async Sub btnupdate_Click(sender As Object, e As EventArgs) Handles btnupdate.Click
+        Await fn.CheckforForgeUpdatesAsync(True)
     End Sub
 
 
     Private Sub Button5_Click_1(sender As Object, e As EventArgs)
-        Dim opened = False
-        For Each frm As Form In Application.OpenForms
-            If frm.Name.Equals("lm") Then
-                frm.Show()
-                opened = True
-            End If
-        Next
-        If opened = False Then
-            Dim box = New LaunchMode()
-            box.Show()
-        End If
+        ShowOrFocusForm(Of LaunchMode)("LaunchMode")
     End Sub
 
     Private Sub AboutLauncherToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutLauncherToolStripMenuItem.Click
