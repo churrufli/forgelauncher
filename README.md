@@ -23,7 +23,7 @@ Forge Launcher is a small Windows program that installs, updates and launches Fo
 It consists of just two files:
 
 * `Forge Launcher.exe`
-* `ICSharpCode.SharpZipLib.dll`
+* `ICSharpCode.SharpZipLib.dll` Open-source SharpZipLib library used to extract .tar.bz2 archives.
 
 Put both files in your Forge folder, or in an empty folder for a new installation, and run the `.exe`.
 
