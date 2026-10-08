@@ -2,6 +2,13 @@
 
 Forge Launcher installs, updates and starts [Forge](https://card-forge.github.io/forge/) on Windows. Not related to Minecraft.
 
+<img width="622" height="472" alt="image" src="https://github.com/user-attachments/assets/de57a583-6a43-4a1e-8dc2-ad41de471d10" />
+<img width="642" height="680" alt="image" src="https://github.com/user-attachments/assets/00c688c9-8a56-42af-a23b-039674edd391" />
+
+**New and updated version. If you already knew it, we're back. If not, welcome!**
+
+Forge Launcher is developed by a member of the Forge team (churrufli). It is a separate project and is not included in the official release.
+
 It is a small Windows program made of two files: `Forge Launcher.exe` and `ICSharpCode.SharpZipLib.dll`. Put both in your Forge folder (or in an empty folder for a new installation) and run the exe. Nothing else is needed: no installer and no extra DLLs.
 
 ## Requirements
