@@ -758,7 +758,7 @@ Public Class MainForm
 
     ''' <summary>
     ''' Copies a problem report (system versions, settings and the end of launcher.log) to the clipboard and offers to
-    ''' open the Forge Discord to paste it.
+    ''' open the Forge Launcher issues page to paste it.
     ''' </summary>
     Private Async Function ReportProblemAsync() As Task
         Cursor = Cursors.WaitCursor
@@ -779,11 +779,11 @@ Public Class MainForm
             .Title = "Report a problem",
             .Kind = DialogKind.Success,
             .Heading = "Problem report copied",
-            .Message = "The report (versions and the end of launcher.log) is in your clipboard. Paste it into a message on the Forge Discord or a GitHub issue, with a short description of the problem.",
-            .PrimaryText = "Open Forge Discord",
+            .Message = "The report (versions and the end of launcher.log) is in your clipboard. Paste it into a new issue on the Forge Launcher GitHub page, with a short description of the problem.",
+            .PrimaryText = "Open GitHub Issues",
             .PrimaryGlyph = Theme.Glyphs.Link,
             .SecondaryText = "Close"})
-        If answer.Accepted Then OpenUrl(ForgeDiscordUrl)
+        If answer.Accepted Then OpenUrl(SelfUpdater.RepositoryUrl & "/issues/new")
     End Function
 
     ''' <summary>Asks for confirmation and removes Forge Launcher (never Forge or the user's data).</summary>

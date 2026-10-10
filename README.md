@@ -142,10 +142,10 @@ The **What's new** link in the update dialog opens either:
 
 ## Previous versions (rollback)
 
-In **Settings > Previous versions**, choose how many previous Forge versions to keep: **None** (default), **1** or **2**.
+In **Settings > Previous versions**, choose how many previous Forge versions to keep: **None** (default), **1**, **2** or **3**.
 
 * **How versions are kept.** When this is on, every package you install stays in `fldata\packages`. Next to it goes a small `.info` file with its channel, version and build time. The package of the installed version plus the chosen number of others are kept; older ones are deleted automatically.
-* **Disk space.** Each version takes about 300 MB, so 2 previous versions use up to about 900 MB.
+* **Disk space.** Each version takes about 300 MB, so 3 previous versions use up to about 1.2 GB.
 * **Why it matters for snapshots.** GitHub only publishes the latest snapshot, so a saved package is the only way back to an older one.
 
 **Forge > Restore a previous version** (also in Settings) lists the saved versions with their channel and build time. The installed one is marked and can't be chosen.
@@ -226,7 +226,7 @@ Settings are migrated automatically on first start:
 | `CheckOnStartup`          | `True`, `False`                                  | `True`                                                                                             |
 | `CheckLauncherUpdates`    | `True`, `False`                                  | `True`                                                                                             |
 | `AskToLaunchWhenUpToDate` | `True`, `False`                                  | `True`                                                                                             |
-| `KeepPreviousVersions`    | `0`, `1`, `2`                                    | `0`                                                                                                |
+| `KeepPreviousVersions`    | `0`, `1`, `2`, `3`                                | `0`                                                                                                |
 | `LaunchMode`              | `Normal`, `CustomJava`                           | `Normal`                                                                                           |
 | `LaunchTarget`            | File name in the Forge folder                    | `forge.exe`                                                                                        |
 | `CustomApp`               | `Desktop`, `Adventure`                           | `Desktop`                                                                                          |
@@ -238,7 +238,7 @@ Settings are migrated automatically on first start:
 
 ## Reporting a problem
 
-**Help > Report a problem** copies a report to the clipboard and offers to open the Forge Discord.
+**Help > Report a problem** copies a report to the clipboard and offers to open the Forge Launcher issues page on GitHub.
 
 The report contains:
 
@@ -262,10 +262,6 @@ The update:
 4. if anything fails halfway through, puts the original files back, so the current version keeps working.
 
 The new version waits for the old one to exit, then deletes the leftovers.
-
-While the repository is private, GitHub answers "not found" to the launcher's anonymous requests. The startup check then finds nothing and stays silent.
-
-It starts working, without any code change, as soon as the repository is public.
 
 ### Publishing a new launcher version
 
@@ -378,7 +374,7 @@ The 1.3.3 `net45` build is used because it has no dependencies. SharpZipLib 1.4 
 | "Not enough free disk space"                             | An update needs about 750 MB free during installation.                                            |
 | "Java couldn't be started" (custom mode)                 | Set the full path to `javaw.exe` in Settings > Launch.                                            |
 | An installation was interrupted                          | Click Check for updates and choose Reinstall.                                                     |
-| A new Forge version misbehaves                           | Use Restore a previous version (requires Settings > Previous versions on 1 or 2 before updating). |
+| A new Forge version misbehaves                           | Use Restore a previous version (requires Settings > Previous versions on 1, 2 or 3 before updating). |
 | Forge freezes on the splash screen                       | Use Forge > Reset Forge preferences.                                                              |
 
 
