@@ -101,7 +101,7 @@ Public NotInheritable Class PackageStore
     ''' Deletes packages the user no longer wants to keep: the package of the installed build plus the
     ''' <paramref name="keepPrevious"/> newest other packages are kept. With 0, every package is deleted.
     ''' </summary>
-    ''' <param name="keepPrevious">Number of previous versions to keep (0, 1 or 2).</param>
+    ''' <param name="keepPrevious">Number of previous versions to keep (0, 1, 2 or 3).</param>
     ''' <param name="installedBuild">Build time of the installed Forge, used to recognize its package.</param>
     ''' <returns>The deleted packages.</returns>
     Public Function Prune(keepPrevious As Integer, installedBuild As Date?) As List(Of StoredPackage)

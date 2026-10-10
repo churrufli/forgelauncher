@@ -130,7 +130,7 @@ Partial Class SettingsForm
         Me.lblKeepInfo.Size = New System.Drawing.Size(286, 15)
         Me.lblKeepInfo.TabIndex = 1
 
-        Me.segKeep.Items = New String() {"None", "1", "2"}
+        Me.segKeep.Items = New String() {"None", "1", "2", "3"}
         Me.segKeep.Location = New System.Drawing.Point(306, 12)
         Me.segKeep.Name = "segKeep"
         Me.segKeep.Size = New System.Drawing.Size(170, 28)
