@@ -42,7 +42,7 @@ Public NotInheritable Class LauncherSettings
     Public Const DefaultMaxMemoryMB As Integer = 4096
 
     ''' <summary>Largest number of previous Forge versions the user can keep for rollback.</summary>
-    Public Const MaxPreviousVersions As Integer = 2
+    Public Const MaxPreviousVersions As Integer = 3
 
     ''' <summary>
     ''' Default JVM arguments for the custom Java launch mode: the module access flags Forge needs on
@@ -91,7 +91,7 @@ Public NotInheritable Class LauncherSettings
     ''' </summary>
     Public Property AskToLaunchWhenUpToDate As Boolean = True
 
-    ''' <summary>How many previous Forge versions to keep for rollback (0, 1 or 2).</summary>
+    ''' <summary>How many previous Forge versions to keep for rollback (0, 1, 2 or 3).</summary>
     Public Property KeepPreviousVersions As Integer = 0
 
     ''' <summary>How "Launch Forge" starts Forge.</summary>
