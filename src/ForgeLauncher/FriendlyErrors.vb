@@ -41,6 +41,9 @@ Public NotInheritable Class FriendlyErrors
             End Select
         End If
 
+        Dim gitHub = FindInner(Of GitHubHttpException)(ex)
+        If gitHub IsNot Nothing Then Return DescribeGitHubStatus(gitHub)
+
         If TypeOf ex Is HttpRequestException AndAlso ex.Message.Contains("404") Then
             Return "The file wasn't found on GitHub. A new version may still be uploading; try again in a few minutes."
         End If
@@ -82,6 +85,32 @@ Public NotInheritable Class FriendlyErrors
                TypeOf ex Is ICSharpCode.SharpZipLib.SharpZipBaseException OrElse
                (TypeOf ex Is IOException AndAlso (ex.HResult = SharingViolation OrElse ex.HResult = LockViolation OrElse
                                                   ex.Message.StartsWith("The download is incomplete", StringComparison.Ordinal)))
+    End Function
+
+    ''' <summary>
+    ''' Explains an error answer from GitHub. The status code is always included, so a problem report tells
+    ''' rate limiting apart from missing files or GitHub outages.
+    ''' </summary>
+    Private Shared Function DescribeGitHubStatus(ex As GitHubHttpException) As String
+        Dim code = CInt(ex.StatusCode)
+        Select Case code
+            Case 404
+                Return $"The file wasn't found on GitHub (HTTP 404). A new version may still be uploading; try again in a few minutes."
+            Case 403, 429
+                Return $"GitHub is temporarily limiting requests from your connection (HTTP {code}). {WaitHint(ex.RetryAfter)}"
+            Case Is >= 500
+                Return $"GitHub is having problems right now (HTTP {code}). Try again in a few minutes."
+            Case Else
+                Return $"GitHub returned an error (HTTP {code}). Try again in a few minutes."
+        End Select
+    End Function
+
+    ''' <summary>Tells how long to wait, using GitHub's <c>Retry-After</c> when it sent one.</summary>
+    Private Shared Function WaitHint(retryAfter As TimeSpan?) As String
+        If Not retryAfter.HasValue Then Return "Wait a few minutes and try again."
+        Dim minutes = CInt(Math.Ceiling(retryAfter.Value.TotalMinutes))
+        If minutes <= 1 Then Return "Wait a minute and try again."
+        Return $"Wait about {minutes} minutes and try again."
     End Function
 
     ''' <summary>Finds an exception of a given type in the chain of inner exceptions.</summary>

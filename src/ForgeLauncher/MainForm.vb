@@ -319,6 +319,7 @@ Public Class MainForm
         If failure IsNot Nothing Then
             Dim message = FriendlyErrors.Describe(failure)
             Log($"Could not check for updates: {message}")
+            LogGitHubDetails(failure)
             UpdateHeader(HeaderState.CheckFailed)
             SetStatus(message)
             ShowStatusAction("Retry", Theme.Glyphs.Refresh, Function() CheckForUpdatesAsync(mode))
@@ -458,6 +459,7 @@ Public Class MainForm
 
             PackageInstaller.TryDelete(archivePath)
             Log($"Download failed: {FriendlyErrors.Describe(failure)}")
+            LogGitHubDetails(failure)
             SetStatus("Download failed.")
             TaskbarProgress.SetError(Me)
             If Not AskRetry(failure, "The download failed") Then
@@ -522,6 +524,8 @@ Public Class MainForm
                     Log($"Removed old file: {jar}")
                 Next
             End If
+            Dim cleaned = PackageInstaller.CleanForgeOwnedFolders(_paths.ForgeFolder, extracted)
+            If cleaned.Count > 0 Then Log($"Removed {cleaned.Count:N0} outdated edition files.")
             PackageInstaller.WriteManifest(_paths.ManifestFile, extracted)
         Catch ex As Exception
             failure = ex
@@ -1047,6 +1051,13 @@ Public Class MainForm
             .PrimaryIsDanger = danger,
             .SecondaryText = secondaryText}).Accepted
     End Function
+
+    ''' <summary>Adds the status code and URL of a GitHub error to the log, so problem reports show what failed.</summary>
+    Private Sub LogGitHubDetails(failure As Exception)
+        Dim gitHub = TryCast(failure, GitHubHttpException)
+        If gitHub Is Nothing Then gitHub = TryCast(failure?.InnerException, GitHubHttpException)
+        If gitHub IsNot Nothing Then Log($"Details: {gitHub.Message}")
+    End Sub
 
     ''' <summary>
     ''' Explains an error. Problems that can go away by themselves offer "Retry"; the result tells whether the user
