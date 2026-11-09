@@ -16,6 +16,8 @@ Imports ICSharpCode.SharpZipLib.Tar
 ''' <item>The new package is extracted over the existing files.</item>
 ''' <item>Files listed for the previous package (in <c>installed-files.txt</c>) that the new package does not
 ''' contain are deleted, together with folders that become empty.</item>
+''' <item>Folders that belong only to Forge (<c>res/editions</c>) are cleaned of files the new package does
+''' not contain, even when there is no previous list.</item>
 ''' <item>The list of files of the new package is saved for the next update.</item>
 ''' </list>
 ''' The result is the same as deleting the old version first, but without the risk.
@@ -176,6 +178,47 @@ Public NotInheritable Class PackageInstaller
             Dim name = Path.GetFileName(jarPath)
             If extracted.Contains(name) Then Continue For
             If TryDelete(jarPath) Then removed.Add(name)
+        Next
+        Return removed
+    End Function
+
+    ''' <summary>
+    ''' Folders that belong entirely to Forge. Any file in them that the new package does not contain is deleted,
+    ''' even when there is no file list from a previous update. Forge sometimes renames files here (for example the
+    ''' M19/M20/M21 edition files), and two files for the same edition make parts of Forge crash.
+    ''' </summary>
+    Private Shared ReadOnly ForgeOwnedFolders As String() = {Path.Combine("res", "editions")}
+
+    ''' <summary>
+    ''' Deletes the files in <see cref="ForgeOwnedFolders"/> that the package just extracted does not contain.
+    ''' A folder is only cleaned when the package itself has files in it, so a damaged or unusual package never
+    ''' empties it.
+    ''' </summary>
+    ''' <param name="folder">Forge folder.</param>
+    ''' <param name="extracted">Files of the package that was just extracted.</param>
+    ''' <returns>Relative paths of the deleted files.</returns>
+    Public Shared Function CleanForgeOwnedFolders(folder As String, extracted As ISet(Of String)) As List(Of String)
+        Dim root = WithTrailingSeparator(Path.GetFullPath(folder))
+        Dim removed As New List(Of String)
+
+        For Each ownedFolder In ForgeOwnedFolders
+            Dim prefix = WithTrailingSeparator(ownedFolder)
+            If Not extracted.Any(Function(name) name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) Then Continue For
+
+            Dim fullFolder = Path.Combine(root, ownedFolder)
+            If Not Directory.Exists(fullFolder) Then Continue For
+            Dim files As String()
+            Try
+                files = Directory.GetFiles(fullFolder, "*", SearchOption.AllDirectories)
+            Catch ex As Exception When TypeOf ex Is IOException OrElse TypeOf ex Is UnauthorizedAccessException
+                Continue For
+            End Try
+
+            For Each filePath In files
+                Dim relativePath = filePath.Substring(root.Length)
+                If extracted.Contains(relativePath) Then Continue For
+                If TryDelete(filePath) Then removed.Add(relativePath)
+            Next
         Next
         Return removed
     End Function
