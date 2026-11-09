@@ -1,0 +1,67 @@
+# Builds Forge Launcher on Windows and publishes a GitHub release that the launcher's self-updater can find.
+#
+# To publish version X.Y.Z:
+#   1. Set X.Y.Z in src/ForgeLauncher/AssemblyInfo.vb.
+#   2. Add the release notes as docs/release-notes/X.Y.Z.md.
+#   3. Run this workflow (Actions > Release > Run workflow) with version X.Y.Z.
+#
+# It creates the tag vX.Y.Z and attaches ForgeLauncher-X.Y.Z-win.zip, the names SelfUpdater.vb expects.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (X.Y.Z). Must match AssemblyInfo.vb."
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      VERSION: ${{ inputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check version, notes and tag
+        shell: pwsh
+        run: |
+          if ($env:VERSION -notmatch '^\d+\.\d+\.\d+$') { throw "Version must look like 3.2.0, got '$env:VERSION'." }
+          $info = Get-Content src/ForgeLauncher/AssemblyInfo.vb -Raw
+          if ($info -notmatch ('AssemblyInformationalVersion\("' + [regex]::Escape($env:VERSION) + '"\)')) {
+            throw "AssemblyInfo.vb does not have version $env:VERSION."
+          }
+          if (-not (Test-Path "docs/release-notes/$env:VERSION.md")) { throw "Missing docs/release-notes/$env:VERSION.md." }
+          gh release view "v$env:VERSION" *> $null
+          if ($LASTEXITCODE -eq 0) { throw "Release v$env:VERSION already exists." }
+          $global:LASTEXITCODE = 0
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Build
+        shell: pwsh
+        run: msbuild src/ForgeLauncher/ForgeLauncher.vbproj /p:Configuration=Release /v:minimal /nologo
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $bin = "src/ForgeLauncher/bin/Release"
+          Compress-Archive -Path "$bin/Forge Launcher.exe", "$bin/ICSharpCode.SharpZipLib.dll" -DestinationPath "ForgeLauncher-$env:VERSION-win.zip"
+          Get-FileHash "ForgeLauncher-$env:VERSION-win.zip" -Algorithm SHA256 | Format-List
+
+      - name: Publish release
+        shell: pwsh
+        run: |
+          gh release create "v$env:VERSION" "ForgeLauncher-$env:VERSION-win.zip" `
+            --target "$env:GITHUB_SHA" `
+            --title "Forge Launcher $env:VERSION" `
+            --notes-file "docs/release-notes/$env:VERSION.md"
